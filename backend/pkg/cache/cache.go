@@ -5,7 +5,6 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -19,7 +18,7 @@ var (
 	CacheEXTime = 15
 )
 
-func Init(Addr string, Password string, DB int) {
+func Init(Addr string, Password string, DB int) error {
 	CacheConn = redis.NewClient(&redis.Options{
 		Addr:     Addr,
 		Password: Password,
@@ -28,8 +27,10 @@ func Init(Addr string, Password string, DB int) {
 
 	err := CacheConn.Ping(ctx).Err()
 	if err != nil {
-		log.Fatalf("Произошла ошибка при инициализации: %v", err)
+		return err
 	}
+
+	return nil
 }
 
 /*

@@ -1,33 +1,27 @@
 package auth_test
 
 import (
-	"CoggersProject/backend/config"
-	"CoggersProject/backend/pkg/service/cacher"
-	"CoggersProject/backend/pkg/service/logger"
 	"fmt"
 	"io"
 	"log"
+	"moscowhack/internal/app/config"
+	"moscowhack/internal/app/service/cacher"
+	"moscowhack/pkg/logger"
 	"net/http"
 	"testing"
 
-	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 )
 
 func TestAuth(t *testing.T) {
-	// инициализируем конфиг, .env, логгер и кэш
-	config.Init()
-	config := config.GetConfig()
-
-	err := godotenv.Load(config.EnvPath)
-
+	cfg, err := config.NewConfig()
 	if err != nil {
-		log.Fatal("Ошибка при открытии .env файла: ", err)
-		return
+		log.Fatalf("Ошибка при попытке спарсить .env файл в структуру: %v", err)
 	}
 
-	logger.Init(config.LoggerMode)
-	cacher.Init(config.Cache.UpdateInterval)
+	logger.Init(cfg.LoggerLevel)
+	cacher.Init(cfg.Cache.CacheEXTime)
+
 	client := &http.Client{}
 
 	t.Run("NewUserRegistration Test", func(t *testing.T) {

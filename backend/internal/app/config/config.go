@@ -1,11 +1,10 @@
 package config
 
 import (
-	"moscowhack/pkg/logger"
+	"log"
 
 	"github.com/caarlos0/env"
 	"github.com/joho/godotenv"
-	"go.uber.org/zap"
 )
 
 type Configuration struct {
@@ -33,6 +32,7 @@ type Redis struct {
 	RedisAddr     string `env:"REDIS_ADDR,required"`
 	RedisPort     string `env:"REDIS_PORT" envDefault:"6379"`
 	RedisPassword string `env:"REDIS_PASSWORD,required"`
+	RedisDBId     int    `env:"REDIS_DB_IDё,required"`
 }
 
 /*
@@ -51,6 +51,7 @@ type Redis struct {
 	RedisAddr     string
 	RedisPort     string
 	RedisPassword string
+	RedisDBid     int
 	-------CACHE--------
 	CacheInterval string
 	CacheEXTime   int
@@ -58,7 +59,7 @@ type Redis struct {
 func NewConfig(files ...string) (*Configuration, error) {
 	err := godotenv.Load(files...)
 	if err != nil {
-		logger.Error("Файл .env не найден", zap.Error(err), zap.Any("Все файлы в директории", files))
+		log.Fatalf("Файл .env не найден: %s", err)
 	}
 
 	cfg := Configuration{}

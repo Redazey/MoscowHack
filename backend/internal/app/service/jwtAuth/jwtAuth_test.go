@@ -1,8 +1,10 @@
 package jwtAuth_test
 
 import (
+	"log"
 	"moscowhack/internal/app/config"
 	"moscowhack/internal/app/errorz"
+	"moscowhack/internal/app/service/cacher"
 	"moscowhack/internal/app/service/jwtAuth"
 	"moscowhack/pkg/logger"
 
@@ -11,20 +13,20 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
-	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestJwtAuth(t *testing.T) {
-	s := jwtAuth.New()
+	// инициализируем конфиг, логгер и кэш
+	cfg, err := config.NewConfig()
+	if err != nil {
+		log.Fatalf("Ошибка при попытке спарсить .env файл в структуру: %v", err)
+	}
 
-	config.Init()
-	config := config.GetConfig()
-	logger.Init(config.LoggerMode)
-	godotenv.Load(config.EnvPath)
+	logger.Init(cfg.LoggerLevel)
+	cacher.Init(cfg.Cache.CacheEXTime)
 
-	err := godotenv.Load(config.EnvPath)
-	assert.Nil(t, err, "Ошибка при открытии env файла: %v", err)
+	auth := jwtAuth.New()
 
 	secret := os.Getenv("JWT_KEY")
 	username := "username"
@@ -32,7 +34,7 @@ func TestJwtAuth(t *testing.T) {
 
 	t.Run("GenerateToken", func(t *testing.T) {
 		// Вызов тестируемой функции
-		tokenString, err := s.Keygen(username, password)
+		tokenString, err := auth.Keygen(username, password)
 		assert.Nil(t, err, "Не ожидаем ошибку, получили: %v", err)
 
 		// Проверка наличия сообщения возвращаемого токена
@@ -52,9 +54,9 @@ func TestJwtAuth(t *testing.T) {
 		assert.False(t, expTime.Before(time.Now()), "Срок действия токена истек")
 	})
 	t.Run("TokenAuth", func(t *testing.T) {
-		tokenString, err := s.Keygen(username, password)
+		tokenString, err := auth.Keygen(username, password)
 		// Вызываем тестируемую функцию
-		isTokenValid, err := s.TokenAuth(tokenString)
+		isTokenValid, err := auth.TokenAuth(tokenString)
 		assert.Equal(t, isTokenValid, true)
 		assert.Nil(t, err, "Не ожидаем ошибку, получили: %v", err)
 
@@ -72,7 +74,7 @@ func TestJwtAuth(t *testing.T) {
 
 		tokenString, _ = jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(secret))
 
-		isTokenValid, err = s.TokenAuth(tokenString)
+		isTokenValid, err = auth.TokenAuth(tokenString)
 		assert.Equal(t, isTokenValid, false)
 		assert.EqualError(t, err, errorz.ErrTokenExpired.Error(),
 			"Ожидаем ошибку TokenExpired, получили другую ошибку: %v", err)

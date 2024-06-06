@@ -6,6 +6,7 @@ import (
 	"moscowhack/internal/app/endpoint/auth"
 	"moscowhack/internal/app/service/cacher"
 	"moscowhack/internal/app/service/jwtAuth"
+	"moscowhack/pkg/cache"
 	"moscowhack/pkg/db"
 	"moscowhack/pkg/logger"
 
@@ -20,13 +21,6 @@ type App struct {
 }
 
 func New() (*App, error) {
-	a := &App{}
-	// обьявляем сервисы
-	a.jwt = jwtAuth.New()
-
-	// обьявляем эндпоинты
-	a.auth = auth.New(a.jwt)
-
 	// инициализируем конфиг, логгер и кэш
 	cfg, err := config.NewConfig()
 	if err != nil {
@@ -36,12 +30,25 @@ func New() (*App, error) {
 	logger.Init(cfg.LoggerLevel)
 	cacher.Init(cfg.Cache.CacheEXTime)
 
+	a := &App{}
+	// обьявляем сервисы
+	a.jwt = jwtAuth.New()
+
+	// обьявляем эндпоинты
+	a.auth = auth.New(a.jwt)
+
 	a.echo = echo.New()
 
 	a.echo.GET("/UserLogin", a.auth.UserLogin)
 	a.echo.GET("/NewUserRegistration", a.auth.NewUserRegistration)
 
-	db.Init(cfg.DB.DBUser, cfg.DB.DBPassword, cfg.DB.DBHost, cfg.DB.DBName)
+	err = cache.Init(cfg.Redis.RedisAddr+":"+cfg.Redis.RedisPort, cfg.Redis.RedisPassword, cfg.Redis.RedisDBId)
+	if err != nil {
+		logger.Error("ошибка при инициализации кэша: ", zap.Error(err))
+		return nil, err
+	}
+
+	err = db.Init(cfg.DB.DBUser, cfg.DB.DBPassword, cfg.DB.DBHost, cfg.DB.DBName)
 	if err != nil {
 		logger.Fatal("ошибка при инициализации БД: ", zap.Error(err))
 		return nil, err

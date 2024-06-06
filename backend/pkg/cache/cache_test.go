@@ -1,13 +1,14 @@
 package cache_test
 
 import (
-	"CoggersProject/backend/config"
-	"CoggersProject/backend/pkg/cache"
-	"CoggersProject/backend/pkg/service/logger"
+	"log"
+	"moscowhack/internal/app/config"
+	"moscowhack/internal/app/service/cacher"
+	"moscowhack/pkg/cache"
+	"moscowhack/pkg/logger"
 	"net/http"
 	"testing"
 
-	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -23,10 +24,15 @@ var (
 )
 
 func TestCreateDummyData(t *testing.T) {
-	config.Init()
-	config := config.GetConfig()
-	logger.Init(config.LoggerMode)
-	godotenv.Load(config.EnvPath)
+	// инициализируем конфиг, логгер и кэш
+	cfg, err := config.NewConfig()
+	if err != nil {
+		log.Fatalf("Ошибка при попытке спарсить .env файл в структуру: %v", err)
+	}
+
+	logger.Init(cfg.LoggerLevel)
+	cacher.Init(cfg.Cache.CacheEXTime)
+
 	cache.ClearCache()
 
 	// Добавляем значения в dummydata

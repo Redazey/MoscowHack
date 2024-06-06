@@ -1,43 +1,18 @@
 syntax = "proto3";
-package pb;
-option go_package = "/pb";
-import "google/api/annotations.proto";
 
-service Gateway {
-    rpc PostExample(Message) returns (Message) {
-        option (google.api.http) = {
-        post: "/post"
-        body: "*"
-        };
-    }
+package auth;
+option go_package = "./auth";
 
-    rpc GetExample(Message) returns (Message) {
-        option (google.api.http) = {
-        get: "/get/{id}"
-        };
-    }
+message AuthRequest {
+  string username = 1;
+  string password = 2;
+}
 
-    rpc DeleteExample(Message) returns (Message) {
-        option (google.api.http) = {
-        delete: "/delete/{id}"
-        };
-    }
+message AuthResponse {
+  string key = 1;
+}
 
-    rpc PutExample(Message) returns (Message) {
-        option (google.api.http) = {
-        put: "/put"
-        body: "*"
-        };
-    }
-    
-    rpc PatchExample(Message) returns (Message) {
-        option (google.api.http) = {
-        patch: "/patch"
-        body: "*"
-        };
-        }
-    }
-
-    message Message {
-    uint64 id = 1;
+service AuthService {
+    rpc UserLogin(AuthRequest) returns (AuthResponse) {}
+    rpc NewUserRegistration(AuthRequest) returns (AuthResponse) {}
 }

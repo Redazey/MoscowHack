@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package news;
+
+option go_package = "./news";
+
+message NewsRequest {
+    string category = 1;
+}
+
+message NewsResponse {
+    map<string, NewsItem> news = 1;
+}
+
+message NewsItem {
+    map<string, NewsContent> newsItem = 1;
+}
+
+message NewsContent {
+    string title = 1;
+    string text = 2;
+    string pathToImg = 3;
+}
+
+service NewsService {
+    rpc News(NewsRequest) returns (NewsResponse) {}
+}

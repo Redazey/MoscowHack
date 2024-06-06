@@ -31,7 +31,6 @@ func New(s Service) *Endpoint {
 	}
 }
 
-// передаем в эту функцию username и password
 func (e *Endpoint) UserLogin(ctx echo.Context) error {
 	message := ctx.Request().Header
 	username := message.Get("username")
@@ -60,7 +59,6 @@ func (e *Endpoint) UserLogin(ctx echo.Context) error {
 
 		return ctx.JSON(http.StatusOK, returnMsg)
 	} else if cachePwd == nil {
-		// написать функцию для получения юзера из бд здесь
 		dbMap, err := db.FetchUserData(username)
 		if err != nil {
 			return err
