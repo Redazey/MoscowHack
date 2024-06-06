@@ -5,7 +5,6 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
-	"net/http"
 	"strings"
 	"time"
 
@@ -56,7 +55,7 @@ columns - поля, по которым будет сгенерирован md5h
 	}
 	+ md5hash key
 */
-func ConvertMap(inputMap http.Header, columns ...string) (map[string]map[string]interface{}, string) {
+func ConvertMap(inputMap map[string]string, columns ...string) (map[string]map[string]interface{}, string) {
 	var mainKey string
 
 	hash := md5.Sum([]byte(strings.Join(columns, "")))
@@ -66,7 +65,7 @@ func ConvertMap(inputMap http.Header, columns ...string) (map[string]map[string]
 	outputMap[mainKey] = make(map[string]interface{})
 
 	for key, value := range inputMap {
-		outputMap[mainKey][key] = value[0]
+		outputMap[mainKey][key] = value
 	}
 
 	return outputMap, mainKey

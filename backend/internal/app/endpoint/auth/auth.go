@@ -1,20 +1,16 @@
 package auth
 
 import (
+	"context"
 	"database/sql"
 	"moscowhack/internal/app/errorz"
 	"moscowhack/internal/app/service/db"
 	"moscowhack/pkg/cache"
 	"moscowhack/pkg/logger"
-	"net/http"
+	pb "moscowhack/protos/auth"
 
-	"github.com/labstack/echo"
 	"go.uber.org/zap"
 )
-
-type Message struct {
-	Text string `json:"text"`
-}
 
 type Service interface {
 	Keygen(string, string) (string, error)
@@ -22,7 +18,12 @@ type Service interface {
 }
 
 type Endpoint struct {
-	s Service
+	s      Service
+	server AuthServiceServer
+}
+
+type AuthServiceServer struct {
+	pb.UnimplementedAuthServiceServer
 }
 
 func New(s Service) *Endpoint {
@@ -31,89 +32,83 @@ func New(s Service) *Endpoint {
 	}
 }
 
-func (e *Endpoint) UserLogin(ctx echo.Context) error {
-	message := ctx.Request().Header
-	username := message.Get("username")
-	password := message.Get("password")
-
-	userData, hashKey := cache.ConvertMap(message, "username", "password")
+func (e *Endpoint) UserLogin(ctx context.Context, req *pb.AuthRequest) (*pb.AuthResponse, error) {
+	msg := map[string]string{
+		"username": req.Username,
+		"password": req.Password,
+	}
+	userData, hashKey := cache.ConvertMap(msg, "username", "password")
 
 	cachePwd, err := cache.IsDataInCache("users", hashKey, "password")
 	if err != nil {
 		logger.Error("ошибка при поиске данных в кэше Redis: ", zap.Error(err))
-		return err
+		return nil, err
 	}
 
 	// генерируем jwt токен и данных юзера для использования в дальнейшем
-	key, err := e.s.Keygen(username, password)
+	key, err := e.s.Keygen(req.Username, req.Password)
 	if err != nil {
 		logger.Error("ошибка при генерации токена: %s", zap.Error(err))
-		return err
+		return nil, err
 	}
 
-	returnMsg := Message{
-		Text: key,
-	}
+	if cachePwd != "" && cachePwd == req.Password {
 
-	if cachePwd != nil && cachePwd == message.Get("password") {
-
-		return ctx.JSON(http.StatusOK, returnMsg)
+		return &pb.AuthResponse{Key: key}, nil
 	} else if cachePwd == nil {
-		dbMap, err := db.FetchUserData(username)
+		dbMap, err := db.FetchUserData(req.Username)
 		if err != nil {
-			return err
+			return nil, err
 		}
-		if dbMap != nil && dbMap["password"] == password {
+		if dbMap != nil && dbMap["password"] == req.Password {
 			// сохраняем залогиненого юзера в кэш
 			cache.SaveCache("users", userData)
 
 			// авторизуем его
-			return ctx.JSON(http.StatusOK, returnMsg)
+			return &pb.AuthResponse{Key: key}, nil
 		}
 	}
 
-	return errorz.ErrUserNotFound
+	return nil, errorz.ErrUserNotFound
 }
 
 // передаем в эту функцию username и password
-func (e *Endpoint) NewUserRegistration(ctx echo.Context) error {
-	message := ctx.Request().Header
-	username := message.Get("username")
-	password := message.Get("password")
-	userData, hashKey := cache.ConvertMap(message, "username", "password")
+func (e *Endpoint) NewUserRegistration(ctx context.Context, req *pb.AuthRequest) (*pb.AuthResponse, error) {
+	msg := map[string]string{
+		"username": req.Username,
+		"password": req.Password,
+	}
+	userData, hashKey := cache.ConvertMap(msg, "username", "password")
 
 	cachePwd, err := cache.IsDataInCache("users", hashKey, "password")
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// если пароль у юзера есть, значит и юзер существует
 	if cachePwd != "" {
-		dbMap, err := db.FetchUserData(username)
+		dbMap, err := db.FetchUserData(req.Username)
 		if err != sql.ErrNoRows && err != nil {
-			return err
+			return nil, err
 		}
 
 		if len(dbMap) != 0 {
 			logger.Info("такой пользователь уже существует")
-			return errorz.ErrUserExists
+			return nil, errorz.ErrUserExists
 		}
 	}
 
 	err = cache.SaveCache("users", userData)
 	if err != nil {
 		logger.Error("ошибка при регистрации пользователя: %s", zap.Error(err))
-		return err
+		return nil, err
 	}
 
-	key, err := e.s.Keygen(username, password)
+	key, err := e.s.Keygen(req.Username, req.Password)
 	if err != nil {
 		logger.Error("ошибка при генерации токена: %s", zap.Error(err))
-		return err
+		return nil, err
 	}
 
-	returnMsg := Message{
-		Text: key,
-	}
-	return ctx.JSON(http.StatusOK, returnMsg)
+	return &pb.AuthResponse{Key: key}, nil
 }

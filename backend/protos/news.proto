@@ -1,8 +1,7 @@
 syntax = "proto3";
-
 package news;
-
 option go_package = "./news";
+import "google/protobuf/api/annotations.proto";
 
 message NewsRequest {
     string category = 1;
@@ -23,5 +22,9 @@ message NewsContent {
 }
 
 service NewsService {
-    rpc News(NewsRequest) returns (NewsResponse) {}
+    rpc News(NewsRequest) returns (NewsResponse) {
+        option (google.api.http) = {
+            get: "/News"
+        };
+    }
 }

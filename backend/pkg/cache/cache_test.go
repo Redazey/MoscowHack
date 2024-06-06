@@ -6,22 +6,16 @@ import (
 	"moscowhack/internal/app/service/cacher"
 	"moscowhack/pkg/cache"
 	"moscowhack/pkg/logger"
-	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-var (
-	// Создаем пустой Header
-	dummydata = make(http.Header)
-
-	values = map[string]string{
-		"username": "testuser",
-		"password": "exampass",
-		"roleid":   "1",
-	}
-)
+var dummydata = map[string]string{
+	"username": "testuser",
+	"password": "exampass",
+	"roleid":   "1",
+}
 
 func TestCreateDummyData(t *testing.T) {
 	// инициализируем конфиг, логгер и кэш
@@ -35,13 +29,6 @@ func TestCreateDummyData(t *testing.T) {
 
 	cache.ClearCache()
 
-	// Добавляем значения в dummydata
-	dummydata.Set("Content-Type", "application/json")
-
-	// Выводим значения dummydata
-	for key, values := range values {
-		dummydata.Add(key, values)
-	}
 	convertedData, hashKey := cache.ConvertMap(dummydata, "username", "password")
 
 	t.Run("FillingWithData Test", func(t *testing.T) {

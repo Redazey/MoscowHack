@@ -9,15 +9,17 @@ import (
 	"moscowhack/pkg/cache"
 	"moscowhack/pkg/db"
 	"moscowhack/pkg/logger"
+	pbAuth "moscowhack/protos/auth"
+	"net"
 
-	"github.com/labstack/echo"
 	"go.uber.org/zap"
+	"google.golang.org/grpc"
 )
 
 type App struct {
-	auth *auth.Endpoint
-	jwt  *jwtAuth.Service
-	echo *echo.Echo
+	auth   *auth.Endpoint
+	jwt    *jwtAuth.Service
+	server *grpc.Server
 }
 
 func New() (*App, error) {
@@ -31,16 +33,17 @@ func New() (*App, error) {
 	cacher.Init(cfg.Cache.CacheEXTime)
 
 	a := &App{}
+
+	a.server = grpc.NewServer()
+
 	// обьявляем сервисы
 	a.jwt = jwtAuth.New()
 
 	// обьявляем эндпоинты
 	a.auth = auth.New(a.jwt)
 
-	a.echo = echo.New()
-
-	a.echo.GET("/UserLogin", a.auth.UserLogin)
-	a.echo.GET("/NewUserRegistration", a.auth.NewUserRegistration)
+	service := &auth.AuthServiceServer{}
+	pbAuth.RegisterAuthServiceServer(a.server, service)
 
 	err = cache.Init(cfg.Redis.RedisAddr+":"+cfg.Redis.RedisPort, cfg.Redis.RedisPassword, cfg.Redis.RedisDBId)
 	if err != nil {
@@ -58,21 +61,22 @@ func New() (*App, error) {
 }
 
 func (a *App) Run() error {
-	err := a.echo.Start(":8080")
+	lis, err := net.Listen("tcp", "[::1]:8080")
+	if err != nil {
+		logger.Fatal("Ошибка при открытии listener: ", zap.Error(err))
+	}
+
+	err = a.server.Serve(lis)
 	if err != nil {
 		logger.Fatal("Ошибка при инициализации сервера: ", zap.Error(err))
 		return err
 	}
+
+	a.server.Serve(lis)
 
 	return nil
 }
 
-func (a *App) Stop() error {
-	err := a.echo.Close()
-	if err != nil {
-		logger.Fatal("Ошибка при инициализации сервера: ", zap.Error(err))
-		return err
-	}
-
-	return nil
+func (a *App) Stop() {
+	a.server.Stop()
 }
