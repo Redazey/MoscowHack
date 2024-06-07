@@ -12,20 +12,20 @@ import (
 )
 
 var (
-	ctx         = context.Background()
-	CacheConn   *redis.Client
+	Ctx         = context.Background()
+	Rdb         *redis.Client
 	CacheEXTime = 15
 )
 
 func Init(Addr string, Username string, Password string, DB int) error {
-	CacheConn = redis.NewClient(&redis.Options{
+	Rdb = redis.NewClient(&redis.Options{
 		Addr:     Addr,
 		Username: Username,
 		Password: Password,
 		DB:       DB,
 	})
 
-	err := CacheConn.Ping(ctx).Err()
+	err := Rdb.Ping(Ctx).Err()
 	if err != nil {
 		return err
 	}

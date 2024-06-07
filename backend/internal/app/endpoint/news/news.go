@@ -1,7 +1,9 @@
 package news
 
 import (
-	"github.com/labstack/echo"
+	"moscowhack/internal/app/service/news"
+	pb "moscowhack/protos/news"
+	"strconv"
 )
 
 type Message struct {
@@ -9,11 +11,16 @@ type Message struct {
 }
 
 type Service interface {
-	GetNews() (map[string]map[string]string, error)
+	GetNewsFromDB(id int) (map[string]*news.NewsItem, error)
 }
 
 type Endpoint struct {
-	s Service
+	s      Service
+	server NewsServiceServer
+}
+
+type NewsServiceServer struct {
+	pb.UnimplementedAuthServiceServer
 }
 
 func New(s Service) *Endpoint {
@@ -22,6 +29,16 @@ func New(s Service) *Endpoint {
 	}
 }
 
-func (e *Endpoint) News(ctx echo.Context) error {
-	return nil
+func (e *Endpoint) News(req *pb.NewsRequest) (*pb.NewsResponse, error) {
+	id, err := strconv.Atoi(req.Id)
+	if err != nil {
+		return &pb.NewsResponse{}, err
+	}
+
+	newsData, err := news.GetNewsFromDB(id)
+	if err != nil {
+		return &pb.NewsResponse{}, err
+	}
+
+	return &pb.NewsResponse{News: newsData}, nil
 }
