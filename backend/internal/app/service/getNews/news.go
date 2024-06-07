@@ -3,9 +3,9 @@ package getNews
 import (
 	"encoding/json"
 	"fmt"
+	"moscowhack/gen/go/news"
 	"moscowhack/pkg/cache"
 	"moscowhack/pkg/db"
-	"moscowhack/protos/news"
 	"strings"
 	"time"
 )

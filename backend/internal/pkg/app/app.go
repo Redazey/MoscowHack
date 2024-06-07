@@ -2,6 +2,8 @@ package app
 
 import (
 	"log"
+	pbAuth "moscowhack/gen/go/auth"
+	pbNews "moscowhack/gen/go/news"
 	"moscowhack/internal/app/config"
 	"moscowhack/internal/app/endpoint/auth"
 	"moscowhack/internal/app/endpoint/news"
@@ -12,8 +14,6 @@ import (
 	"moscowhack/pkg/cache"
 	"moscowhack/pkg/db"
 	"moscowhack/pkg/logger"
-	pbAuth "moscowhack/protos/auth"
-	pbNews "moscowhack/protos/news"
 	"net"
 
 	"go.uber.org/zap"

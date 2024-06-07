@@ -1,7 +1,7 @@
 package news
 
 import (
-	pb "moscowhack/protos/news"
+	pb "moscowhack/gen/go/news"
 	"strconv"
 )
 

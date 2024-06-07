@@ -1,65 +1,60 @@
 package auth_test
 
 import (
+	"context"
 	"fmt"
-	"io"
 	"log"
-	"moscowhack/internal/app/config"
-	"moscowhack/internal/app/service/cacher"
-	"moscowhack/pkg/logger"
-	"net/http"
+	pbAuth "moscowhack/gen/go/auth"
 	"testing"
 
-	"go.uber.org/zap"
+	"google.golang.org/grpc"
 )
 
 func TestAuth(t *testing.T) {
-	cfg, err := config.NewConfig()
-	if err != nil {
-		log.Fatalf("Ошибка при попытке спарсить .env файл в структуру: %v", err)
+	req := &pbAuth.AuthRequest{
+		Username: "testUser",
+		Password: "testPassword",
 	}
 
-	logger.Init(cfg.LoggerLevel)
-	cacher.Init(cfg.Cache.CacheEXTime)
-
-	client := &http.Client{}
-
 	t.Run("NewUserRegistration Test", func(t *testing.T) {
-		req, err := http.NewRequest(http.MethodGet, "http://localhost:8080/NewUserRegistration", nil)
+		conn, err := grpc.NewClient("localhost:50051")
 		if err != nil {
-			logger.Error("Ошибка при отправке запроса: ", zap.Error(err))
-			return
+			log.Fatalf("Failed to dial server: %v", err)
+		}
+		defer conn.Close()
+
+		// Инициализируем клиент
+		client := pbAuth.AuthServiceClient(
+
+		// Пример вызова функции на сервере
+		request := &pb.YourRequest{
+			// Укажите данные для запроса
+		}
+		response, err := client.YourFunction(context.Background(), request)
+		if err != nil {
+			log.Fatalf("Error when calling YourFunction: %v", err)
 		}
 
-		req.Header.Set("username", "testuser")
-		req.Header.Set("password", "testpass")
-		res, err := client.Do(req)
-		if err != nil {
-			logger.Error("Ошибка при отправке запроса: ", zap.Error(err))
-			return
-		}
-
-		receivedData, _ := io.ReadAll(res.Body)
-
-		fmt.Printf("Получены данные от сервера: %s", receivedData)
+		log.Printf("Response from server: %v", response)
+		fmt.Printf("Получены данные от сервера: %s", authResp)
 	})
+	/*
+		t.Run("UserLogin Test", func(t *testing.T) {
+			req, err := http.NewRequest(http.MethodGet, "http://localhost:8080/NewUserRegistration", nil)
+			if err != nil {
+				logger.Error("Ошибка при отправке запроса: ", zap.Error(err))
+				return
+			}
 
-	t.Run("UserLogin Test", func(t *testing.T) {
-		req, err := http.NewRequest(http.MethodGet, "http://localhost:8080/NewUserRegistration", nil)
-		if err != nil {
-			logger.Error("Ошибка при отправке запроса: ", zap.Error(err))
-			return
-		}
+			req.Header.Set("username", "testuser")
+			req.Header.Set("password", "testpass")
+			res, err := client.Do(req)
+			if err != nil {
+				logger.Error("Ошибка при отправке запроса: ", zap.Error(err))
+				return
+			}
 
-		req.Header.Set("username", "testuser")
-		req.Header.Set("password", "testpass")
-		res, err := client.Do(req)
-		if err != nil {
-			logger.Error("Ошибка при отправке запроса: ", zap.Error(err))
-			return
-		}
-
-		receivedData, _ := io.ReadAll(res.Body)
-		fmt.Printf("Получены данные от сервера: %v", receivedData)
-	})
+			receivedData, _ := io.ReadAll(res.Body)
+			fmt.Printf("Получены данные от сервера: %v", receivedData)
+		})*/
 }

@@ -3,11 +3,11 @@ package auth
 import (
 	"context"
 	"database/sql"
+	pb "moscowhack/gen/go/auth"
 	"moscowhack/internal/app/errorz"
 	"moscowhack/internal/app/service/db"
 	"moscowhack/pkg/cache"
 	"moscowhack/pkg/logger"
-	pb "moscowhack/protos/auth"
 
 	"go.uber.org/zap"
 )
@@ -86,7 +86,7 @@ func (e *Endpoint) NewUserRegistration(ctx context.Context, req *pb.AuthRequest)
 	}
 
 	// если пароль у юзера есть, значит и юзер существует
-	if cachePwd != "" {
+	if cachePwd == "" {
 		dbMap, err := db.FetchUserData(req.Username)
 		if err != sql.ErrNoRows && err != nil {
 			return nil, err
