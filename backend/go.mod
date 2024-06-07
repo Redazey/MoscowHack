@@ -5,6 +5,7 @@ go 1.22.3
 require (
 	github.com/caarlos0/env v3.5.0+incompatible
 	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0
 	github.com/jackc/pgx/v5 v5.6.0
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/joho/godotenv v1.5.1

@@ -1,0 +1,15 @@
+# ./Taskfile.yaml
+# See: https://taskfile.dev/api/  
+
+version: "3"  
+
+tasks:  
+  default: # Если не указать конкретную команду, будут выполнены дефолтные
+    cmds:  
+      - task: generate  
+  generate:  ## Команда для генерации
+    aliases: ## Алиасы команды, для простоты использования
+      - gen  
+    desc: "Generate code from proto files"  
+    cmds:  ## Тут описываем необходимые bash-команды
+      - protoc -I googleapis -I protos protos/*.proto --go_out=gen/go/. --go-grpc_out=gen/go/.

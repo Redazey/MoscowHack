@@ -2,13 +2,12 @@ package app
 
 import (
 	"log"
+	"moscowhack/config"
 	pbAuth "moscowhack/gen/go/auth"
 	pbNews "moscowhack/gen/go/news"
-	"moscowhack/internal/app/config"
 	"moscowhack/internal/app/endpoint/auth"
 	"moscowhack/internal/app/endpoint/news"
-	"moscowhack/internal/app/service"
-	"moscowhack/internal/app/service/cacher"
+	"moscowhack/internal/app/lib/cacher"
 	"moscowhack/internal/app/service/getNews"
 	"moscowhack/internal/app/service/jwtAuth"
 	"moscowhack/pkg/cache"
@@ -16,8 +15,11 @@ import (
 	"moscowhack/pkg/logger"
 	"net"
 
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type App struct {
@@ -25,7 +27,6 @@ type App struct {
 	news    *news.Endpoint
 	jwt     *jwtAuth.Service
 	getNews *getNews.Service
-	service *service.Service
 	server  *grpc.Server
 }
 
@@ -41,7 +42,20 @@ func New() (*App, error) {
 
 	a := &App{}
 
-	a.server = grpc.NewServer()
+	recoveryOpts := []recovery.Option{
+		recovery.WithRecoveryHandler(func(p interface{}) (err error) {
+			// Логируем информацию о панике с уровнем Error
+			logger.Error("Recovered from panic: ", zap.Error(err))
+
+			// Можете либо честно вернуть клиенту содержимое паники
+			// Либо ответить - "internal error", если не хотим делиться внутренностями
+			return status.Errorf(codes.Internal, err.Error())
+		}),
+	}
+
+	a.server = grpc.NewServer(grpc.ChainUnaryInterceptor(
+		recovery.UnaryServerInterceptor(recoveryOpts...),
+	))
 
 	// обьявляем сервисы
 	a.jwt = jwtAuth.New()
@@ -51,7 +65,7 @@ func New() (*App, error) {
 	a.auth = auth.New(a.jwt)
 	a.news = news.New(a.getNews)
 
-	serviceAuth := &auth.AuthServiceServer{}
+	serviceAuth := &auth.Endpoint{}
 	pbAuth.RegisterAuthServiceServer(a.server, serviceAuth)
 
 	serviceNews := &news.NewsServiceServer{}
@@ -93,5 +107,7 @@ func (a *App) Run() error {
 }
 
 func (a *App) Stop() {
-	a.server.Stop()
+	logger.Info("закрытие gRPC сервера")
+
+	a.server.GracefulStop()
 }

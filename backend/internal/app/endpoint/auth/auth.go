@@ -5,30 +5,31 @@ import (
 	"database/sql"
 	pb "moscowhack/gen/go/auth"
 	"moscowhack/internal/app/errorz"
-	"moscowhack/internal/app/service/db"
+	"moscowhack/internal/app/lib/db"
 	"moscowhack/pkg/cache"
 	"moscowhack/pkg/logger"
 
 	"go.uber.org/zap"
+	"google.golang.org/grpc"
 )
 
-type Service interface {
+type Auth interface {
 	Keygen(string, string) (string, error)
 	TokenAuth(string) (bool, error)
 }
 
 type Endpoint struct {
-	s      Service
-	server AuthServiceServer
-}
-
-type AuthServiceServer struct {
+	auth Auth
 	pb.UnimplementedAuthServiceServer
 }
 
-func New(s Service) *Endpoint {
+func Register(gRPCServer *grpc.Server, auth Auth) {
+	pb.RegisterAuthServiceServer(gRPCServer, &Endpoint{auth: auth})
+}
+
+func New(auth Auth) *Endpoint {
 	return &Endpoint{
-		s: s,
+		auth: auth,
 	}
 }
 
@@ -46,7 +47,7 @@ func (e *Endpoint) UserLogin(ctx context.Context, req *pb.AuthRequest) (*pb.Auth
 	}
 
 	// генерируем jwt токен и данных юзера для использования в дальнейшем
-	key, err := e.s.Keygen(req.Username, req.Password)
+	key, err := e.auth.Keygen(req.Username, req.Password)
 	if err != nil {
 		logger.Error("ошибка при генерации токена: %s", zap.Error(err))
 		return nil, err
@@ -104,7 +105,7 @@ func (e *Endpoint) NewUserRegistration(ctx context.Context, req *pb.AuthRequest)
 		return nil, err
 	}
 
-	key, err := e.s.Keygen(req.Username, req.Password)
+	key, err := e.auth.Keygen(req.Username, req.Password)
 	if err != nil {
 		logger.Error("ошибка при генерации токена: %s", zap.Error(err))
 		return nil, err

@@ -24,7 +24,7 @@ func TestAuth(t *testing.T) {
 		defer conn.Close()
 
 		// Инициализируем клиент
-		client := pbAuth.AuthServiceClient(
+		client := pbAuth.AuthServiceClient()
 
 		// Пример вызова функции на сервере
 		request := &pb.YourRequest{
