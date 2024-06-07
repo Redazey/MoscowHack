@@ -113,13 +113,13 @@ func SaveCache(table string, cacheMap map[string]map[string]interface{}) error {
 			return err
 		}
 
-		err = CacheConn.HSet(ctx, table, key, jsonMap).Err()
+		err = Rdb.HSet(Ctx, table, key, jsonMap).Err()
 		if err != nil {
 			return err
 		}
 
 		// Устанавливаем время жизни ключа
-		err = CacheConn.Expire(ctx, key, time.Minute*time.Duration(CacheEXTime)).Err()
+		err = Rdb.Expire(Ctx, key, time.Minute*time.Duration(CacheEXTime)).Err()
 		if err != nil {
 			return err
 		}
@@ -150,7 +150,7 @@ func ReadCache(table string) (map[string]map[string]interface{}, error) {
 	cacheMap := make(map[string]map[string]interface{})
 
 	// Получаем все поля и значения из хэша
-	result, err := CacheConn.HGetAll(ctx, table).Result()
+	result, err := Rdb.HGetAll(Ctx, table).Result()
 	if err != nil {
 		return nil, err
 	}
@@ -174,7 +174,7 @@ func ReadCache(table string) (map[string]map[string]interface{}, error) {
 автоматически применяется при сохранении кэша при помощи функции SaveCache
 */
 func DeleteEX(table string) error {
-	keys, err := CacheConn.HKeys(ctx, table).Result()
+	keys, err := Rdb.HKeys(Ctx, table).Result()
 	if err != nil {
 		return err
 	}
@@ -182,11 +182,11 @@ func DeleteEX(table string) error {
 	// удаляем все протухшие ключи из Redis
 	for _, key := range keys {
 		// Получаем время до истечения срока действия ключа
-		ttl := CacheConn.TTL(ctx, key).Val()
+		ttl := Rdb.TTL(Ctx, key).Val()
 
 		if ttl <= 0 {
 			// Если TTL < 0, значит ключ уже истек и можно его удалить
-			err := CacheConn.Del(ctx, key).Err()
+			err := Rdb.Del(Ctx, key).Err()
 			if err != nil {
 				return err
 			}
@@ -203,7 +203,7 @@ func DeleteEX(table string) error {
 */
 func ClearCache() {
 	// Удаление всего кэша из Redis
-	err := CacheConn.FlushAll(ctx).Err()
+	err := Rdb.FlushAll(Ctx).Err()
 	if err != nil {
 		return
 	}

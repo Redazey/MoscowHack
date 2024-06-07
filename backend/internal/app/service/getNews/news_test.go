@@ -1,0 +1,1 @@
+package getNews_test

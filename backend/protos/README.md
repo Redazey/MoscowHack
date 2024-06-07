@@ -5,11 +5,6 @@ go get google.golang.org/protobuf/cmd/protoc-gen-go
 git clone https://github.com/googleapis/googleapis.git
 ```
 # Генерация proto-файлов
-- auth.proto
 ```
-protoc -I . -I googleapis --go_out=. auth.proto 
-```
-- news.proto
-```
-protoc -I . -I googleapis --go_out=. news.proto 
+ protoc -I . -I googleapis --go_out=. --go-grpc_out=. *.proto 
 ```

@@ -1,17 +1,12 @@
 package news
 
 import (
-	"moscowhack/internal/app/service/news"
 	pb "moscowhack/protos/news"
 	"strconv"
 )
 
-type Message struct {
-	news map[string]map[string]string
-}
-
 type Service interface {
-	GetNewsFromDB(id int) (map[string]*news.NewsItem, error)
+	GetNewsFromDB(id int) (*pb.NewsItem, error)
 }
 
 type Endpoint struct {
@@ -20,7 +15,7 @@ type Endpoint struct {
 }
 
 type NewsServiceServer struct {
-	pb.UnimplementedAuthServiceServer
+	pb.UnimplementedNewsServiceServer
 }
 
 func New(s Service) *Endpoint {
@@ -29,16 +24,18 @@ func New(s Service) *Endpoint {
 	}
 }
 
-func (e *Endpoint) News(req *pb.NewsRequest) (*pb.NewsResponse, error) {
+func (e *Endpoint) NewsById(req *pb.NewsRequest) (*pb.NewsResponse, error) {
 	id, err := strconv.Atoi(req.Id)
 	if err != nil {
 		return &pb.NewsResponse{}, err
 	}
 
-	newsData, err := news.GetNewsFromDB(id)
+	newsData, err := e.s.GetNewsFromDB(id)
 	if err != nil {
 		return &pb.NewsResponse{}, err
 	}
 
-	return &pb.NewsResponse{News: newsData}, nil
+	newsItem := map[string]*pb.NewsItem{"NewsItem": newsData}
+
+	return &pb.NewsResponse{News: newsItem}, nil
 }

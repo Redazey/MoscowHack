@@ -1,4 +1,4 @@
-package news
+package getNews
 
 import (
 	"encoding/json"
@@ -10,16 +10,25 @@ import (
 	"time"
 )
 
-func GetNewsFromDB(id int) (map[string]*news.NewsContent, error) {
+type Service struct {
+}
+
+func New() *Service {
+	return &Service{}
+}
+
+func (s *Service) GetNewsFromDB(id int) (*news.NewsItem, error) {
 	// Initialize newsSlice
-	newsSlice := make(map[string]*news.NewsContent)
+	var newsSlice map[string]*news.NewsContent
 
 	// Try to get news from Redis cache
 	newsData, err := cache.Rdb.Get(cache.Ctx, "News_"+fmt.Sprint(id)).Result()
 	if err == nil && newsData != "" {
 		// If news is found in cache, unmarshal and return
 		if err := json.Unmarshal([]byte(newsData), &newsSlice); err == nil {
-			return newsSlice, nil
+			newsItem := news.NewsItem{NewsItem: newsSlice}
+
+			return &newsItem, nil
 		}
 	}
 
@@ -64,5 +73,7 @@ func GetNewsFromDB(id int) (map[string]*news.NewsContent, error) {
 		return nil, err
 	}
 
-	return newsSlice, nil
+	newsItem := news.NewsItem{NewsItem: newsSlice}
+
+	return &newsItem, nil
 }
