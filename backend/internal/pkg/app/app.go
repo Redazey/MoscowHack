@@ -45,7 +45,7 @@ func New() (*App, error) {
 	service := &auth.AuthServiceServer{}
 	pbAuth.RegisterAuthServiceServer(a.server, service)
 
-	err = cache.Init(cfg.Redis.RedisAddr+":"+cfg.Redis.RedisPort, cfg.Redis.RedisPassword, cfg.Redis.RedisDBId)
+	err = cache.Init(cfg.Redis.RedisAddr+":"+cfg.Redis.RedisPort, cfg.Redis.RedisUsername, cfg.Redis.RedisPassword, cfg.Redis.RedisDBId)
 	if err != nil {
 		logger.Error("ошибка при инициализации кэша: ", zap.Error(err))
 		return nil, err
@@ -72,7 +72,10 @@ func (a *App) Run() error {
 		return err
 	}
 
-	a.server.Serve(lis)
+	err = a.server.Serve(lis)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

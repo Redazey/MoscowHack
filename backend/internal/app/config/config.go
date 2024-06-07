@@ -18,7 +18,7 @@ type Configuration struct {
 
 type Cache struct {
 	CacheInterval string `env:"CACHE_CREATE_INTERVAL" envDefault:"15"`
-	CacheEXTime   string `env:"CacheEXTime" envDefault:"15"`
+	CacheEXTime   string `env:"CACHE_EX_TIME" envDefault:"15"`
 }
 
 type DB struct {
@@ -31,8 +31,9 @@ type DB struct {
 type Redis struct {
 	RedisAddr     string `env:"REDIS_ADDR,required"`
 	RedisPort     string `env:"REDIS_PORT" envDefault:"6379"`
+	RedisUsername string `env:"REDIS_USERNAME,required"`
 	RedisPassword string `env:"REDIS_PASSWORD,required"`
-	RedisDBId     int    `env:"REDIS_DB_IDё,required"`
+	RedisDBId     int    `env:"REDIS_DB_ID,required"`
 }
 
 /*
@@ -64,6 +65,18 @@ func NewConfig(files ...string) (*Configuration, error) {
 
 	cfg := Configuration{}
 	err = env.Parse(&cfg)
+	if err != nil {
+		return nil, err
+	}
+	err = env.Parse(&cfg.Redis)
+	if err != nil {
+		return nil, err
+	}
+	err = env.Parse(&cfg.DB)
+	if err != nil {
+		return nil, err
+	}
+	err = env.Parse(&cfg.Cache)
 	if err != nil {
 		return nil, err
 	}

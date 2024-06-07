@@ -1,7 +1,7 @@
 syntax = "proto3";
 package news;
 option go_package = "./news";
-import "google/protobuf/api/annotations.proto";
+import "google.com/protobuf/api/annotations.proto";
 
 message NewsRequest {
     string category = 1;

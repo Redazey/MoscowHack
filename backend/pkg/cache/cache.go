@@ -17,9 +17,10 @@ var (
 	CacheEXTime = 15
 )
 
-func Init(Addr string, Password string, DB int) error {
+func Init(Addr string, Username string, Password string, DB int) error {
 	CacheConn = redis.NewClient(&redis.Options{
 		Addr:     Addr,
+		Username: Username,
 		Password: Password,
 		DB:       DB,
 	})
