@@ -5,11 +5,11 @@ import (
 	"moscowhack/config"
 	pbAuth "moscowhack/gen/go/auth"
 	pbNews "moscowhack/gen/go/news"
-	"moscowhack/internal/app/endpoint/auth"
-	"moscowhack/internal/app/endpoint/news"
+	"moscowhack/internal/app/endpoint/grpcAuth"
+	"moscowhack/internal/app/endpoint/grpcNews"
 	"moscowhack/internal/app/lib/cacher"
+	"moscowhack/internal/app/service/auth"
 	"moscowhack/internal/app/service/getNews"
-	"moscowhack/internal/app/service/jwtAuth"
 	"moscowhack/pkg/cache"
 	"moscowhack/pkg/db"
 	"moscowhack/pkg/logger"
@@ -23,11 +23,13 @@ import (
 )
 
 type App struct {
-	auth    *auth.Endpoint
-	news    *news.Endpoint
-	jwt     *jwtAuth.Service
+	grpcAuth *grpcAuth.Endpoint
+	grpcNews *grpcNews.Endpoint
+
+	auth    *auth.Service
 	getNews *getNews.Service
-	server  *grpc.Server
+
+	server *grpc.Server
 }
 
 func New() (*App, error) {
@@ -58,17 +60,17 @@ func New() (*App, error) {
 	))
 
 	// обьявляем сервисы
-	a.jwt = jwtAuth.New()
+	a.auth = auth.New()
 	a.getNews = getNews.New()
 
 	// обьявляем эндпоинты
-	a.auth = auth.New(a.jwt)
-	a.news = news.New(a.getNews)
+	a.grpcAuth = grpcAuth.New(a.auth)
+	a.grpcNews = grpcNews.New(a.getNews)
 
-	serviceAuth := &auth.Endpoint{}
+	serviceAuth := &grpcAuth.Endpoint{}
 	pbAuth.RegisterAuthServiceServer(a.server, serviceAuth)
 
-	serviceNews := &news.Endpoint{}
+	serviceNews := &grpcNews.Endpoint{}
 	pbNews.RegisterNewsServiceServer(a.server, serviceNews)
 
 	err = cache.Init(cfg.Redis.RedisAddr+":"+cfg.Redis.RedisPort, cfg.Redis.RedisUsername, cfg.Redis.RedisPassword, cfg.Redis.RedisDBId)
@@ -95,11 +97,6 @@ func (a *App) Run() error {
 	err = a.server.Serve(lis)
 	if err != nil {
 		logger.Fatal("Ошибка при инициализации сервера: ", zap.Error(err))
-		return err
-	}
-
-	err = a.server.Serve(lis)
-	if err != nil {
 		return err
 	}
 

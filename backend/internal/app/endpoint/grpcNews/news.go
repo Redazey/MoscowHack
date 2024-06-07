@@ -1,4 +1,4 @@
-package news
+package grpcNews
 
 import (
 	pb "moscowhack/gen/go/news"
@@ -10,11 +10,7 @@ type Service interface {
 }
 
 type Endpoint struct {
-	s      Service
-	server NewsServiceServer
-}
-
-type NewsServiceServer struct {
+	s Service
 	pb.UnimplementedNewsServiceServer
 }
 

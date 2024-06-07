@@ -1,24 +1,15 @@
-package jwtAuth
+package jwt
 
 import (
 	"os"
 	"time"
 
 	"moscowhack/internal/app/errorz"
-	"moscowhack/pkg/logger"
 
 	"github.com/golang-jwt/jwt"
-	"go.uber.org/zap"
 )
 
-type Service struct {
-}
-
-func New() *Service {
-	return &Service{}
-}
-
-func (s *Service) Keygen(username string, pwd string) (string, error) {
+func Keygen(username string, pwd string) (string, error) {
 	// Создаем новый JWT токен
 	token := jwt.New(jwt.SigningMethodHS256)
 
@@ -34,14 +25,13 @@ func (s *Service) Keygen(username string, pwd string) (string, error) {
 	tokenString, err := token.SignedString(secretKey)
 
 	if err != nil {
-		logger.Error("ошибка при подписи токена: ", zap.Error(err))
 		return "", err
 	}
 
 	return tokenString, nil
 }
 
-func (s *Service) TokenAuth(tokenString string) (bool, error) {
+func TokenAuth(tokenString string) (bool, error) {
 	secretKey := []byte(os.Getenv("JWT_KEY"))
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -49,7 +39,6 @@ func (s *Service) TokenAuth(tokenString string) (bool, error) {
 	})
 
 	if err != nil {
-		logger.Error("ошибка при чтении токена: ", zap.Error(err))
 		return false, err
 	}
 
@@ -63,7 +52,6 @@ func (s *Service) TokenAuth(tokenString string) (bool, error) {
 		}
 
 	} else {
-		logger.Error("невалидный токен: ", zap.Error(errorz.ErrValidation))
 		return false, errorz.ErrValidation
 	}
 

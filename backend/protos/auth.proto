@@ -13,14 +13,14 @@ message AuthResponse {
 }
 
 service AuthService {
-    rpc UserLogin(AuthRequest) returns (AuthResponse) {
+    rpc Login(AuthRequest) returns (AuthResponse) {
       option (google.api.http) = {
         get: "/auth/login"
       };
     }
-    rpc NewUserRegistration(AuthRequest) returns (AuthResponse) {
+    rpc Registration(AuthRequest) returns (AuthResponse) {
       option (google.api.http) = {
-        get: "/auth/register"
+        get: "/auth/registration"
       };
     }
 }
