@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"database/sql"
+	"errors"
 	pb "moscowhack/gen/go/auth"
 	"moscowhack/internal/app/errorz"
 	"moscowhack/internal/app/lib/db"
@@ -34,6 +35,10 @@ func New(auth Auth) *Endpoint {
 }
 
 func (e *Endpoint) UserLogin(ctx context.Context, req *pb.AuthRequest) (*pb.AuthResponse, error) {
+	if req.Username == "" && req.Password == "" {
+		return nil, errors.New("username и password пусты в UserLogin")
+	}
+
 	msg := map[string]string{
 		"username": req.Username,
 		"password": req.Password,
@@ -54,7 +59,6 @@ func (e *Endpoint) UserLogin(ctx context.Context, req *pb.AuthRequest) (*pb.Auth
 	}
 
 	if cachePwd != "" && cachePwd == req.Password {
-
 		return &pb.AuthResponse{Key: key}, nil
 	} else if cachePwd == nil {
 		dbMap, err := db.FetchUserData(req.Username)
@@ -63,7 +67,10 @@ func (e *Endpoint) UserLogin(ctx context.Context, req *pb.AuthRequest) (*pb.Auth
 		}
 		if dbMap != nil && dbMap["password"] == req.Password {
 			// сохраняем залогиненого юзера в кэш
-			cache.SaveCache("users", userData)
+			err := cache.SaveCache("users", userData)
+			if err != nil {
+				return nil, err
+			}
 
 			// авторизуем его
 			return &pb.AuthResponse{Key: key}, nil
@@ -75,6 +82,10 @@ func (e *Endpoint) UserLogin(ctx context.Context, req *pb.AuthRequest) (*pb.Auth
 
 // передаем в эту функцию username и password
 func (e *Endpoint) NewUserRegistration(ctx context.Context, req *pb.AuthRequest) (*pb.AuthResponse, error) {
+	if req.Username == "" && req.Password == "" {
+		return nil, errors.New("username и password пусты в UserLogin")
+	}
+
 	msg := map[string]string{
 		"username": req.Username,
 		"password": req.Password,

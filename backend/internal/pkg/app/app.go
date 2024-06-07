@@ -68,7 +68,7 @@ func New() (*App, error) {
 	serviceAuth := &auth.Endpoint{}
 	pbAuth.RegisterAuthServiceServer(a.server, serviceAuth)
 
-	serviceNews := &news.NewsServiceServer{}
+	serviceNews := &news.Endpoint{}
 	pbNews.RegisterNewsServiceServer(a.server, serviceNews)
 
 	err = cache.Init(cfg.Redis.RedisAddr+":"+cfg.Redis.RedisPort, cfg.Redis.RedisUsername, cfg.Redis.RedisPassword, cfg.Redis.RedisDBId)

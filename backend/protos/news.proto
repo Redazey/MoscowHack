@@ -24,9 +24,19 @@ message NewsContent {
 }
 
 service NewsService {
-    rpc News(NewsRequest) returns (NewsResponse) {
+    rpc GetNews(NewsRequest) returns (NewsResponse) {
+        option (google.api.http) = {
+            get: "/news"
+        };
+    }
+    rpc GetNewsById(NewsRequest) returns (NewsResponse) {
         option (google.api.http) = {
             get: "/news/id/{id}"
+        };
+    }
+    rpc GetNewsByCategory(NewsRequest) returns (NewsResponse) {
+        option (google.api.http) = {
+            get: "/news/category/{category}"
         };
     }
 }

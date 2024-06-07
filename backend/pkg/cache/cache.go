@@ -89,6 +89,26 @@ func IsDataInCache(table string, input string, output string) (interface{}, erro
 }
 
 /*
+функция для проверки существования таблицы в кэше
+
+принимает:
+
+	table - имя таблицы
+
+возвращает:
+
+	bool - true, если таблица существует, иначе false
+	error - ошибка, если возникла
+*/
+func IsExistInCache(table string) (bool, error) {
+	exists, err := Rdb.Exists(Ctx, table).Result()
+	if err != nil {
+		return false, err
+	}
+	return exists > 0, nil
+}
+
+/*
 функция для записи данных в кэш, принимает мапы, после конвертации функцией ConvertMap
 
 Вид входящей мапы:
