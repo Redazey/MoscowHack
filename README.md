@@ -56,8 +56,9 @@ go run main.go
 ```
 - Запустите Frontend:
 ```
-cd ../frontend
-npm start
+cd frontend
+npm install
+npm run dev
 ```
 
 # Вкладчики
