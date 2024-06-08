@@ -1,6 +1,7 @@
-package getNews
+package news
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"moscowhack/gen/go/news"
@@ -17,7 +18,7 @@ func New() *Service {
 	return &Service{}
 }
 
-func (s *Service) GetNews() (*news.NewsItem, error) {
+func (s *Service) GetNewsService(ctx context.Context) (*news.NewsItem, error) {
 	// Initialize newsSlice
 	newsMap := make(map[string]map[string]interface{})
 
@@ -47,12 +48,13 @@ func (s *Service) GetNews() (*news.NewsItem, error) {
 	}
 
 	// Данных нет
-	rows, err := db.Conn.Queryx(`
-		SELECT n.id, n.title, n.text, n.datetime, array_agg(c.name) AS categories
+	rows, err := db.Conn.Query(`
+		SELECT n.id, n.title, n.text, n.datetime, string_agg(c.name, ',') AS categories
 		FROM news n
 		JOIN "categoriesNews" cn ON n.id = cn."newsID"
 		JOIN categories c ON cn."categoryID" = c.id
-		GROUP BY n.id`)
+		GROUP BY n.id;
+	`)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
@@ -60,9 +62,7 @@ func (s *Service) GetNews() (*news.NewsItem, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var id, title, text string
-		var datetime time.Time
-		var categories []string
+		var id, title, text, datetime, categories string
 		err := rows.Scan(
 			&id,
 			&title,
@@ -78,7 +78,7 @@ func (s *Service) GetNews() (*news.NewsItem, error) {
 			"title":      title,
 			"text":       text,
 			"datetime":   datetime,
-			"categories": strings.Join(categories, ","),
+			"categories": categories,
 		}
 	}
 
@@ -104,7 +104,7 @@ func (s *Service) GetNews() (*news.NewsItem, error) {
 	return &newsItem, nil
 }
 
-func (s *Service) GetNewsById(id int) (*news.NewsItem, error) {
+func (s *Service) GetNewsByIdService(ctx context.Context, id int) (*news.NewsItem, error) {
 	// Initialize newsSlice
 	var newsSlice map[string]*news.NewsContent
 

@@ -3,39 +3,33 @@ package grpcNews
 import (
 	"context"
 	"errors"
-	"fmt"
 	"google.golang.org/grpc"
 	pb "moscowhack/gen/go/news"
 	"strconv"
 )
 
 type News interface {
-	GetNews() (*pb.NewsItem, error)
-	GetNewsById(id int) (*pb.NewsItem, error)
+	GetNewsService(ctx context.Context) (*pb.NewsItem, error)
+	GetNewsByIdService(ctx context.Context, id int) (*pb.NewsItem, error)
 }
 
 type Endpoint struct {
-<<<<<<< HEAD:backend/internal/app/endpoint/grpcNews/news.go
-	s Service
-=======
-	getNews News
->>>>>>> 60922d964ce532a3c8a9fed716754e95e23ddd83:backend/internal/app/endpoint/news/news.go
+	News News
 	pb.UnimplementedNewsServiceServer
 }
 
 func Register(gRPCServer *grpc.Server, news News) {
-	pb.RegisterNewsServiceServer(gRPCServer, &Endpoint{getNews: news})
+	pb.RegisterNewsServiceServer(gRPCServer, &Endpoint{News: news})
 }
 
 func New(news News) *Endpoint {
 	return &Endpoint{
-		getNews: news,
+		News: news,
 	}
 }
 
 func (e *Endpoint) GetNews(ctx context.Context, req *pb.NewsRequest) (*pb.NewsResponse, error) {
-	fmt.Println(e, " ААА ", e.getNews)
-	newsData, err := e.getNews.GetNews()
+	newsData, err := e.News.GetNewsService(ctx)
 	if err != nil {
 		return &pb.NewsResponse{}, err
 	}
@@ -55,7 +49,7 @@ func (e *Endpoint) GetNewsById(ctx context.Context, req *pb.NewsRequest) (*pb.Ne
 		return &pb.NewsResponse{}, err
 	}
 
-	newsData, err := e.getNews.GetNewsById(id)
+	newsData, err := e.News.GetNewsByIdService(ctx, id)
 	if err != nil {
 		return &pb.NewsResponse{}, err
 	}

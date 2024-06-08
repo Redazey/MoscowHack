@@ -3,11 +3,10 @@ package grpcAuth
 import (
 	"context"
 	"errors"
-	pb "moscowhack/gen/go/auth"
-	"moscowhack/internal/app/errorz"
-
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	pb "moscowhack/gen/go/auth"
+	"moscowhack/internal/app/errorz"
 )
 
 type Auth interface {
@@ -16,13 +15,13 @@ type Auth interface {
 }
 
 type Endpoint struct {
-	auth Auth
+	Auth Auth
 	pb.UnimplementedAuthServiceServer
 }
 
 func New(auth Auth) *Endpoint {
 	return &Endpoint{
-		auth: auth,
+		Auth: auth,
 	}
 }
 
@@ -35,7 +34,7 @@ func (e *Endpoint) Login(ctx context.Context, req *pb.AuthRequest) (*pb.AuthResp
 		return nil, status.Error(codes.InvalidArgument, "password пустое значение")
 	}
 
-	token, err := e.auth.UserLogin(ctx, req.GetUsername(), req.GetPassword())
+	token, err := e.Auth.UserLogin(ctx, req.GetUsername(), req.GetPassword())
 	if err != nil {
 		if errors.Is(err, errorz.ErrUserNotFound) {
 			return nil, status.Error(codes.InvalidArgument, "неверный username или password")
@@ -57,7 +56,7 @@ func (e *Endpoint) Registration(ctx context.Context, req *pb.AuthRequest) (*pb.A
 		return nil, status.Error(codes.InvalidArgument, "password пустое значение")
 	}
 
-	token, err := e.auth.NewUserRegistration(ctx, req.GetUsername(), req.GetPassword())
+	token, err := e.Auth.NewUserRegistration(ctx, req.GetUsername(), req.GetPassword())
 	if err != nil {
 		if errors.Is(err, errorz.ErrUserExists) {
 			return nil, status.Error(codes.InvalidArgument, "пользователь с таким именем уже существует")

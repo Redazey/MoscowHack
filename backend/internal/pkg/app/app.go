@@ -9,25 +9,22 @@ import (
 	"moscowhack/internal/app/endpoint/grpcNews"
 	"moscowhack/internal/app/lib/cacher"
 	"moscowhack/internal/app/service/auth"
-	"moscowhack/internal/app/service/getNews"
+	"moscowhack/internal/app/service/news"
 	"moscowhack/pkg/cache"
 	"moscowhack/pkg/db"
 	"moscowhack/pkg/logger"
 	"net"
 
-	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type App struct {
 	grpcAuth *grpcAuth.Endpoint
 	grpcNews *grpcNews.Endpoint
 
-	auth    *auth.Service
-	getNews *getNews.Service
+	auth *auth.Service
+	news *news.Service
 
 	server *grpc.Server
 }
@@ -44,33 +41,24 @@ func New() (*App, error) {
 
 	a := &App{}
 
-	recoveryOpts := []recovery.Option{
-		recovery.WithRecoveryHandler(func(p interface{}) (err error) {
-			// Логируем информацию о панике с уровнем Error
-			logger.Error("Recovered from panic: ", zap.Error(err))
-
-			// Можете либо честно вернуть клиенту содержимое паники
-			// Либо ответить - "internal error", если не хотим делиться внутренностями
-			return status.Errorf(codes.Internal, err.Error())
-		}),
-	}
-
-	a.server = grpc.NewServer(grpc.ChainUnaryInterceptor(
-		recovery.UnaryServerInterceptor(recoveryOpts...),
-	))
+	a.server = grpc.NewServer()
 
 	// обьявляем сервисы
 	a.auth = auth.New()
-	a.getNews = getNews.New()
+	a.news = news.New()
 
 	// обьявляем эндпоинты
 	a.grpcAuth = grpcAuth.New(a.auth)
-	a.grpcNews = grpcNews.New(a.getNews)
+	a.grpcNews = grpcNews.New(a.news)
 
-	serviceAuth := &grpcAuth.Endpoint{}
+	serviceAuth := &grpcAuth.Endpoint{
+		Auth: a.auth,
+	}
 	pbAuth.RegisterAuthServiceServer(a.server, serviceAuth)
 
-	serviceNews := &grpcNews.Endpoint{}
+	serviceNews := &grpcNews.Endpoint{
+		News: a.news,
+	}
 	pbNews.RegisterNewsServiceServer(a.server, serviceNews)
 
 	err = cache.Init(cfg.Redis.RedisAddr+":"+cfg.Redis.RedisPort, cfg.Redis.RedisUsername, cfg.Redis.RedisPassword, cfg.Redis.RedisDBId)
