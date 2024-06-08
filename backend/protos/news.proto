@@ -5,6 +5,7 @@ import "google/api/annotations.proto";
 
 message NewsRequest {
     string id = 1;
+    string category = 2;
 }
 
 message NewsResponse {
