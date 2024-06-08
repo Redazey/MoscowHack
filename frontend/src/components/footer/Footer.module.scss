@@ -5,31 +5,39 @@
 }
 .footer {
   display: flex;
-
+  justify-content: space-between;
   background-color: var(--footer-background-color);
   padding: 20px;
-  width: 100%;
 
-  .column {
-    h3 {
-      font-size: 1.2em;
-      color: #333;
-    }
+  .column-left,
+  .column-right {
+    flex: 1;
+  }
+  div{width: 30%}
 
-    ul {
-      list-style: none;
-      padding: 0;
+  .column-center {
+    flex: 1;
+    text-align: center;
+  }
 
-      li {
-        margin-bottom: 5px;
+  h3 {
+    font-size: 1.2em;
+    color: #333;
+  }
 
-        a {
-          color: #666;
-          text-decoration: none;
+  ul {
+    list-style: none;
+    padding: 0;
 
-          &:hover {
-            color: #000;
-          }
+    li {
+      margin-bottom: 5px;
+
+      a {
+        color: #666;
+        text-decoration: none;
+
+        &:hover {
+          color: #000;
         }
       }
     }
