@@ -5,10 +5,10 @@ import (
 )
 
 var (
-	ErrTokenExpired        = errors.New("tokenExpiredError")
-	ErrUserExists          = errors.New("userAlreadyRegisteredError")
-	ErrValidation          = errors.New("validationError")
-	ErrUserNotFound        = errors.New("userNotFound")
-	ErrPanicHandle         = errors.New("panicHandle")
-	ErrServerIsNotResponse = errors.New("serverIsNotResponse")
+	ErrTokenExpired        = errors.New("jwt token expired")
+	ErrUserExists          = errors.New("user already exists")
+	ErrValidation          = errors.New("jwt token validation failed")
+	ErrUserNotFound        = errors.New("user not found")
+	ErrPanicHandle         = errors.New("panic was handled")
+	ErrServerIsNotResponse = errors.New("server is not response")
 )

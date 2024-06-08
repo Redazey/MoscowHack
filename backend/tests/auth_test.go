@@ -1,4 +1,4 @@
-package jwtAuth_test
+package tests
 
 import (
 	"log"

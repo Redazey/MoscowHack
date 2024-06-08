@@ -1,4 +1,4 @@
-package grpcAuth_test
+package tests
 
 import (
 	"context"

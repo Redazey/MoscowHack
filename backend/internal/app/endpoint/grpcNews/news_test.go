@@ -1,1 +1,0 @@
-package grpcNews_test

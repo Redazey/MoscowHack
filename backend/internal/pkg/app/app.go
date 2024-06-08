@@ -20,9 +20,6 @@ import (
 )
 
 type App struct {
-	grpcAuth *grpcAuth.Endpoint
-	grpcNews *grpcNews.Endpoint
-
 	auth *auth.Service
 	news *news.Service
 
@@ -47,10 +44,7 @@ func New() (*App, error) {
 	a.auth = auth.New()
 	a.news = news.New()
 
-	// обьявляем эндпоинты
-	a.grpcAuth = grpcAuth.New(a.auth)
-	a.grpcNews = grpcNews.New(a.news)
-
+	// регистрируем эндпоинты
 	serviceAuth := &grpcAuth.Endpoint{
 		Auth: a.auth,
 	}
