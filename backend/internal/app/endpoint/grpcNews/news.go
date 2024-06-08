@@ -6,11 +6,13 @@ import (
 	"google.golang.org/grpc"
 	pb "moscowhack/gen/go/news"
 	"strconv"
+	"strings"
 )
 
 type News interface {
 	GetNewsService(ctx context.Context) (*pb.NewsItem, error)
 	GetNewsByIdService(ctx context.Context, id int) (*pb.NewsItem, error)
+	GetNewsByCategoryService(ctx context.Context, categoryId []string) (*pb.NewsItem, error)
 }
 
 type Endpoint struct {
@@ -35,7 +37,6 @@ func (e *Endpoint) GetNews(ctx context.Context, req *pb.NewsRequest) (*pb.NewsRe
 	}
 
 	newsItem := map[string]*pb.NewsItem{"NewsItem": newsData}
-
 	return &pb.NewsResponse{News: newsItem}, nil
 }
 
@@ -50,6 +51,23 @@ func (e *Endpoint) GetNewsById(ctx context.Context, req *pb.NewsRequest) (*pb.Ne
 	}
 
 	newsData, err := e.News.GetNewsByIdService(ctx, id)
+	if err != nil {
+		return &pb.NewsResponse{}, err
+	}
+
+	newsItem := map[string]*pb.NewsItem{"NewsItem": newsData}
+
+	return &pb.NewsResponse{News: newsItem}, nil
+}
+
+func (e *Endpoint) GetNewsByCategory(ctx context.Context, req *pb.NewsRequest) (*pb.NewsResponse, error) {
+	if req.Category == "" {
+		return nil, errors.New("id категории не указан")
+	}
+
+	categorySlice := strings.Split(req.Category, ",")
+
+	newsData, err := e.News.GetNewsByCategoryService(ctx, categorySlice)
 	if err != nil {
 		return &pb.NewsResponse{}, err
 	}

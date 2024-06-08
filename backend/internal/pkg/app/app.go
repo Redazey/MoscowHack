@@ -1,6 +1,8 @@
 package app
 
 import (
+	"go.uber.org/zap"
+	"google.golang.org/grpc"
 	"log"
 	"moscowhack/config"
 	pbAuth "moscowhack/gen/go/auth"
@@ -14,9 +16,8 @@ import (
 	"moscowhack/pkg/db"
 	"moscowhack/pkg/logger"
 	"net"
-
-	"go.uber.org/zap"
-	"google.golang.org/grpc"
+	"net/http"
+	_ "net/http/pprof"
 )
 
 type App struct {
@@ -30,6 +31,10 @@ type App struct {
 }
 
 func New() (*App, error) {
+	go func() {
+		log.Println(http.ListenAndServe("localhost:6060", nil))
+	}()
+
 	// инициализируем конфиг, логгер и кэш
 	cfg, err := config.NewConfig()
 	if err != nil {

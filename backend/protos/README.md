@@ -14,5 +14,5 @@ git clone https://github.com/googleapis/googleapis.git
 ```
 # Генерация proto-файлов (генерацию проводим в backend)
 ```
-protoc -I googleapis -I protos protos/*.proto --go_out=gen/go/. --go-grpc_out=gen/go/.    
+protoc -I protos/googleapis -I protos protos/*.proto --go_out=gen/go/. --go-grpc_out=gen/go/.    
 ```

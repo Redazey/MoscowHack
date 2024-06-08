@@ -2,13 +2,11 @@ package news
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"moscowhack/gen/go/news"
 	"moscowhack/pkg/cache"
 	"moscowhack/pkg/db"
 	"strings"
-	"time"
 )
 
 type Service struct {
@@ -23,25 +21,13 @@ func (s *Service) GetNewsService(ctx context.Context) (*news.NewsItem, error) {
 	newsMap := make(map[string]map[string]interface{})
 
 	newsCheck, err := cache.IsExistInCache("news")
-	fmt.Println(newsCheck)
 	if newsCheck && err == nil {
 		newsMap, err = cache.ReadCache("news")
 		if err != nil {
 			return nil, err
 		}
 
-		newsContentMap := make(map[string]*news.NewsContent)
-		for id, data := range newsMap {
-			newsContent := &news.NewsContent{
-				Id:         id,
-				Title:      data["title"].(string),
-				Text:       data["text"].(string),
-				Datetime:   data["datetime"].(string),
-				Categories: data["categories"].(string),
-			}
-			newsContentMap[id] = newsContent
-		}
-
+		newsContentMap := createNewsContentMap(newsMap)
 		newsItem := news.NewsItem{NewsItem: newsContentMap}
 
 		return &newsItem, nil
@@ -75,6 +61,7 @@ func (s *Service) GetNewsService(ctx context.Context) (*news.NewsItem, error) {
 		}
 
 		newsMap[id] = map[string]interface{}{
+			"id":         id,
 			"title":      title,
 			"text":       text,
 			"datetime":   datetime,
@@ -87,18 +74,7 @@ func (s *Service) GetNewsService(ctx context.Context) (*news.NewsItem, error) {
 		return nil, err
 	}
 
-	newsContentMap := make(map[string]*news.NewsContent)
-	for id, data := range newsMap {
-		newsContent := &news.NewsContent{
-			Id:         id,
-			Title:      data["title"].(string),
-			Text:       data["text"].(string),
-			Datetime:   data["datetime"].(string),
-			Categories: data["categories"].(string),
-		}
-		newsContentMap[id] = newsContent
-	}
-
+	newsContentMap := createNewsContentMap(newsMap)
 	newsItem := news.NewsItem{NewsItem: newsContentMap}
 
 	return &newsItem, nil
@@ -106,26 +82,29 @@ func (s *Service) GetNewsService(ctx context.Context) (*news.NewsItem, error) {
 
 func (s *Service) GetNewsByIdService(ctx context.Context, id int) (*news.NewsItem, error) {
 	// Initialize newsSlice
-	var newsSlice map[string]*news.NewsContent
+	newsMap := make(map[string]map[string]interface{})
 
-	// Try to get news from Redis cache
-	newsData, err := cache.Rdb.Get(cache.Ctx, "News_"+fmt.Sprint(id)).Result()
-	if err == nil && newsData != "" {
-		// If news is found in cache, unmarshal and return
-		if err := json.Unmarshal([]byte(newsData), &newsSlice); err == nil {
-			newsItem := news.NewsItem{NewsItem: newsSlice}
-
-			return &newsItem, nil
+	newsCheck, err := cache.IsExistInCache("news_" + fmt.Sprint(id))
+	if newsCheck && err == nil {
+		newsMap, err = cache.ReadCache("news_" + fmt.Sprint(id))
+		if err != nil {
+			return nil, err
 		}
+
+		newsContentMap := createNewsContentMap(newsMap)
+		newsItem := news.NewsItem{NewsItem: newsContentMap}
+
+		return &newsItem, nil
 	}
 
-	// Data not in Redis, get from database
-	rows, err := db.Conn.Queryx(`
-		SELECT n.id, n.title, n.text, n.datetime, array_agg(c.name) AS categories
+	// Данных нет
+	rows, err := db.Conn.Query(`
+		SELECT n.id, n.title, n.text, n.datetime, string_agg(c.name, ',') AS categories
 		FROM news n
 		JOIN "categoriesNews" cn ON n.id = cn."newsID"
 		JOIN categories c ON cn."categoryID" = c.id
-		GROUP BY n.id WHERE n.id = $1`, id)
+		WHERE n.id = $1 GROUP BY n.id;
+	`, id)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
@@ -133,34 +112,116 @@ func (s *Service) GetNewsByIdService(ctx context.Context, id int) (*news.NewsIte
 	defer rows.Close()
 
 	for rows.Next() {
-		var newsContent news.NewsContent
-		var categories []string
+		var id, title, text, datetime, categories string
 		err := rows.Scan(
-			&newsContent.Id,
-			&newsContent.Title,
-			&newsContent.Text,
-			&newsContent.Datetime,
+			&id,
+			&title,
+			&text,
+			&datetime,
 			&categories,
 		)
 		if err != nil {
 			return nil, err
 		}
-		newsContent.Categories = strings.Join(categories, ",")
-		// Store news content in newsSlice
-		newsSlice[newsContent.Id] = &newsContent
+
+		newsMap[id] = map[string]interface{}{
+			"id":         id,
+			"title":      title,
+			"text":       text,
+			"datetime":   datetime,
+			"categories": categories,
+		}
+		fmt.Println(newsMap[id])
 	}
 
-	// Save data to Redis
-	newsJSON, err := json.Marshal(newsSlice)
+	err = cache.SaveCache("news_"+fmt.Sprint(id), newsMap)
 	if err != nil {
 		return nil, err
 	}
-	err = cache.Rdb.Set(cache.Ctx, "News_"+fmt.Sprint(id), newsJSON, 1*time.Minute).Err()
-	if err != nil {
-		return nil, err
-	}
 
-	newsItem := news.NewsItem{NewsItem: newsSlice}
+	newsContentMap := createNewsContentMap(newsMap)
+	newsItem := news.NewsItem{NewsItem: newsContentMap}
 
 	return &newsItem, nil
+}
+
+func (s *Service) GetNewsByCategoryService(ctx context.Context, categoryId []string) (*news.NewsItem, error) {
+	// Initialize newsSlice
+	newsMap := make(map[string]map[string]interface{})
+
+	// Преобразование []string в строку с разделителем ","
+	categoryIdString := strings.Join(categoryId, ",")
+
+	newsCheck, err := cache.IsExistInCache("news_category_" + categoryIdString)
+	if newsCheck && err == nil {
+		newsMap, err = cache.ReadCache("news_category_" + categoryIdString)
+		if err != nil {
+			return nil, err
+		}
+
+		newsContentMap := createNewsContentMap(newsMap)
+		newsItem := news.NewsItem{NewsItem: newsContentMap}
+
+		return &newsItem, nil
+	}
+
+	// Данных нет
+	rows, err := db.Conn.Query(`SELECT n.*, c."name"
+    FROM "news" n
+    JOIN "categoriesNews" cn ON n."id" = cn."newsID"
+    JOIN "categories" c ON cn."categoryID" = c."id"
+    WHERE cn."categoryID" IN (` + categoryIdString + `)`)
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var id, title, text, datetime, categories string
+		err := rows.Scan(
+			&id,
+			&title,
+			&text,
+			&datetime,
+			&categories,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		newsMap[id] = map[string]interface{}{
+			"id":         id,
+			"title":      title,
+			"text":       text,
+			"datetime":   datetime,
+			"categories": categories,
+		}
+	}
+
+	err = cache.SaveCache("news_category_"+fmt.Sprint(categoryId), newsMap)
+	if err != nil {
+		return nil, err
+	}
+
+	newsContentMap := createNewsContentMap(newsMap)
+	newsItem := news.NewsItem{NewsItem: newsContentMap}
+
+	return &newsItem, nil
+}
+
+func createNewsContentMap(newsMap map[string]map[string]interface{}) map[string]*news.NewsContent {
+	newsContentMap := make(map[string]*news.NewsContent)
+	for _, data := range newsMap {
+		newsContent := &news.NewsContent{
+			Id:         data["id"].(string),
+			Title:      data["title"].(string),
+			Text:       data["text"].(string),
+			Datetime:   data["datetime"].(string),
+			Categories: data["categories"].(string),
+		}
+		newsContentMap[data["id"].(string)] = newsContent
+	}
+	return newsContentMap
 }
