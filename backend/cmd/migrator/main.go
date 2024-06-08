@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"flag"
 	"fmt"
 	"log"
 	"moscowhack/config"
@@ -13,34 +12,15 @@ import (
 )
 
 func main() {
-	var storagePath, migrationsPath, migrationsTable string
-
 	cfg, err := config.NewConfig()
 	if err != nil {
 		log.Fatalf("Ошибка при инициализации конфига: %s", err)
 	}
 
-	flag.StringVar(&storagePath, "storage-path", "", "path to storage")
-	// Путь до папки с миграциями.
-	flag.StringVar(&migrationsPath, "migrations-path", "", "path to migrations")
-	// Таблица, в которой будет храниться информация о миграциях. Она нужна
-	// для того, чтобы понимать, какие миграции уже применены, а какие нет.
-	// Дефолтное значение - 'migrations'.
-	flag.StringVar(&migrationsTable, "migrations-table", "migrations", "name of migrations table")
-	flag.Parse() // Выполняем парсинг флагов
-
-	// Валидация параметров
-	if storagePath == "" {
-		panic("storage-path is required")
-	}
-	if migrationsPath == "" {
-		panic("migrations-path is required")
-	}
-
-	connStr := fmt.Sprintf("postgresql://%s:%s@%s:5432/%s", cfg.DB.DBUser, cfg.DB.DBPassword, cfg.DB.DBHost, cfg.DB.DBName)
+	connStr := fmt.Sprintf("postgresql://%s:%s@%s:5432/%s?sslmode=disable", cfg.DB.DBUser, cfg.DB.DBPassword, cfg.DB.DBHost, cfg.DB.DBName)
 
 	m, err := migrate.New(
-		"file://"+migrationsPath,
+		"file://migrations",
 		connStr)
 	if err != nil {
 		log.Fatal(err)
