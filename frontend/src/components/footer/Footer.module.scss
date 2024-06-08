@@ -1,0 +1,45 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+.footer {
+  display: flex;
+  justify-content: space-between;
+  background-color: var(--footer-background-color);
+  padding: 20px;
+
+  .column-left,
+  .column-right {
+    flex: 1;
+  }
+  div{width: 30%}
+
+  .column-center {
+    flex: 1;
+    text-align: center;
+  }
+
+  h3 {
+    font-size: 1.2em;
+    color: #333;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+
+    li {
+      margin-bottom: 5px;
+
+      a {
+        color: #666;
+        text-decoration: none;
+
+        &:hover {
+          color: #000;
+        }
+      }
+    }
+  }
+}
