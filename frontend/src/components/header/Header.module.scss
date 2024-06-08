@@ -1,0 +1,81 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: var(--footer-background-color);
+  color: var(--text-color);
+
+
+  .logo {
+    display: flex;
+    align-items: center;
+
+    img {
+      width: 50px;
+      height: 50px;
+    }
+
+    h1 {
+      margin-left: 10px;
+    }
+  }
+
+  .menu {
+    display: flex;
+
+    a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: #333;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .user {
+    display: flex;
+    align-items: center;
+
+    img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .login {
+      margin-right: 10px;
+      background-color: #0066cc;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .settings {
+      position: relative;
+      img {
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+      }
+      .settings-popup {
+        display: none;
+        position: absolute;
+        top: 50px;
+        right: 0;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding: 10px;
+      }
+      &:hover {
+        .settings-popup {
+          display: block;
+        }
+      }
+    }
+  }
+}
