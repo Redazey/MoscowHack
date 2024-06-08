@@ -6,7 +6,9 @@ import (
 	"moscowhack/gen/go/news"
 	"moscowhack/pkg/cache"
 	"moscowhack/pkg/db"
+	"strconv"
 	"strings"
+	"time"
 )
 
 type Service struct {
@@ -145,16 +147,13 @@ func (s *Service) GetNewsByIdService(ctx context.Context, id int) (*news.NewsIte
 	return &newsItem, nil
 }
 
-func (s *Service) GetNewsByCategoryService(ctx context.Context, categoryId []string) (*news.NewsItem, error) {
+func (s *Service) GetNewsByCategoryService(ctx context.Context, categoryId string) (*news.NewsItem, error) {
 	// Initialize newsSlice
 	newsMap := make(map[string]map[string]interface{})
 
-	// Преобразование []string в строку с разделителем ","
-	categoryIdString := strings.Join(categoryId, ",")
-
-	newsCheck, err := cache.IsExistInCache("news_category_" + categoryIdString)
+	newsCheck, err := cache.IsExistInCache("news_category_" + categoryId)
 	if newsCheck && err == nil {
-		newsMap, err = cache.ReadCache("news_category_" + categoryIdString)
+		newsMap, err = cache.ReadCache("news_category_" + categoryId)
 		if err != nil {
 			return nil, err
 		}
@@ -170,7 +169,7 @@ func (s *Service) GetNewsByCategoryService(ctx context.Context, categoryId []str
     FROM "news" n
     JOIN "categoriesNews" cn ON n."id" = cn."newsID"
     JOIN "categories" c ON cn."categoryID" = c."id"
-    WHERE cn."categoryID" IN (` + categoryIdString + `)`)
+    WHERE cn."categoryID" IN (` + categoryId + `)`)
 
 	if err != nil {
 		fmt.Println(err)
@@ -209,6 +208,98 @@ func (s *Service) GetNewsByCategoryService(ctx context.Context, categoryId []str
 	newsItem := news.NewsItem{NewsItem: newsContentMap}
 
 	return &newsItem, nil
+}
+
+func (s *Service) AddNewsService(ctx context.Context, title string, text string, datetime string, categories string) (int, error) {
+	t, err := time.Parse("2006-01-02 15:04:05", datetime)
+	if err != nil {
+		return 0, err
+	}
+
+	// Начало транзакции
+	tx, err := db.Conn.Beginx()
+	if err != nil {
+		return 0, err
+	}
+
+	// Добавление новости в таблицу news
+	var newsID int
+	err = tx.QueryRowx("INSERT INTO news (title, text, datetime) VALUES ($1, $2, $3) RETURNING id", title, text, t).Scan(&newsID)
+	if err != nil {
+		errRollback := tx.Rollback()
+		if errRollback != nil {
+			return 0, err
+		}
+		return 0, err
+	}
+
+	categoriesSlice := strings.Split(categories, ",")
+
+	// Привязка категорий к новости
+	for _, category := range categoriesSlice {
+		var categoryID int
+		categoryID, err = strconv.Atoi(category)
+		if err != nil {
+			errRollback := tx.Rollback()
+			if errRollback != nil {
+				return 0, err
+			}
+			return 0, err
+		}
+
+		_, err = tx.Exec("INSERT INTO \"categoriesNews\" (\"newsID\", \"categoryID\") VALUES ($1, $2)", newsID, categoryID)
+		if err != nil {
+			errRollback := tx.Rollback()
+			if errRollback != nil {
+				return 0, err
+			}
+			return 0, err
+		}
+	}
+
+	// Фиксация транзакции
+	err = tx.Commit()
+	if err != nil {
+		return 0, err
+	}
+
+	return newsID, nil
+}
+
+func (s *Service) DelNewsService(ctx context.Context, newsID int) error {
+	// Начало транзакции
+	tx, err := db.Conn.Beginx()
+	if err != nil {
+		return err
+	}
+
+	// Удаление связей новости с категориями
+	_, err = tx.Exec("DELETE FROM \"categoriesNews\" WHERE \"newsID\" = $1", newsID)
+	if err != nil {
+		errRollback := tx.Rollback()
+		if errRollback != nil {
+			return errRollback
+		}
+		return err
+	}
+
+	// Удаление самой новости
+	_, err = tx.Exec("DELETE FROM news WHERE id = $1", newsID)
+	if err != nil {
+		errRollback := tx.Rollback()
+		if errRollback != nil {
+			return errRollback
+		}
+		return err
+	}
+
+	// Фиксация транзакции
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func createNewsContentMap(newsMap map[string]map[string]interface{}) map[string]*news.NewsContent {

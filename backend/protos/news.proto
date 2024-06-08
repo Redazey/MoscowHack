@@ -5,11 +5,16 @@ import "google/api/annotations.proto";
 
 message NewsRequest {
     string id = 1;
-    string category = 2;
+    string title = 2;
+    string text = 3;
+    string datetime = 4;
+    string categories = 5;
 }
 
 message NewsResponse {
     map<string, NewsItem> news = 1;
+    string id = 2;
+    string err = 3;
 }
 
 message NewsItem {
@@ -38,6 +43,17 @@ service NewsService {
     rpc GetNewsByCategory(NewsRequest) returns (NewsResponse) {
         option (google.api.http) = {
             get: "/news/category/{category}"
+        };
+    }
+    rpc AddNews(NewsRequest) returns (NewsResponse) {
+        option (google.api.http) = {
+            post: "/news/add"
+            body: "*"
+        };
+    }
+    rpc DelNews(NewsRequest) returns (NewsResponse) {
+        option (google.api.http) = {
+            delete: "/news/del/{id}"
         };
     }
 }

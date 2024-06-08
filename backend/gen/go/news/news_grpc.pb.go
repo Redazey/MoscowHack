@@ -25,6 +25,8 @@ type NewsServiceClient interface {
 	GetNews(ctx context.Context, in *NewsRequest, opts ...grpc.CallOption) (*NewsResponse, error)
 	GetNewsById(ctx context.Context, in *NewsRequest, opts ...grpc.CallOption) (*NewsResponse, error)
 	GetNewsByCategory(ctx context.Context, in *NewsRequest, opts ...grpc.CallOption) (*NewsResponse, error)
+	AddNews(ctx context.Context, in *NewsRequest, opts ...grpc.CallOption) (*NewsResponse, error)
+	DelNews(ctx context.Context, in *NewsRequest, opts ...grpc.CallOption) (*NewsResponse, error)
 }
 
 type newsServiceClient struct {
@@ -62,6 +64,24 @@ func (c *newsServiceClient) GetNewsByCategory(ctx context.Context, in *NewsReque
 	return out, nil
 }
 
+func (c *newsServiceClient) AddNews(ctx context.Context, in *NewsRequest, opts ...grpc.CallOption) (*NewsResponse, error) {
+	out := new(NewsResponse)
+	err := c.cc.Invoke(ctx, "/news.NewsService/AddNews", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *newsServiceClient) DelNews(ctx context.Context, in *NewsRequest, opts ...grpc.CallOption) (*NewsResponse, error) {
+	out := new(NewsResponse)
+	err := c.cc.Invoke(ctx, "/news.NewsService/DelNews", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // NewsServiceServer is the server API for NewsService service.
 // All implementations must embed UnimplementedNewsServiceServer
 // for forward compatibility
@@ -69,6 +89,8 @@ type NewsServiceServer interface {
 	GetNews(context.Context, *NewsRequest) (*NewsResponse, error)
 	GetNewsById(context.Context, *NewsRequest) (*NewsResponse, error)
 	GetNewsByCategory(context.Context, *NewsRequest) (*NewsResponse, error)
+	AddNews(context.Context, *NewsRequest) (*NewsResponse, error)
+	DelNews(context.Context, *NewsRequest) (*NewsResponse, error)
 	mustEmbedUnimplementedNewsServiceServer()
 }
 
@@ -84,6 +106,12 @@ func (UnimplementedNewsServiceServer) GetNewsById(context.Context, *NewsRequest)
 }
 func (UnimplementedNewsServiceServer) GetNewsByCategory(context.Context, *NewsRequest) (*NewsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNewsByCategory not implemented")
+}
+func (UnimplementedNewsServiceServer) AddNews(context.Context, *NewsRequest) (*NewsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddNews not implemented")
+}
+func (UnimplementedNewsServiceServer) DelNews(context.Context, *NewsRequest) (*NewsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DelNews not implemented")
 }
 func (UnimplementedNewsServiceServer) mustEmbedUnimplementedNewsServiceServer() {}
 
@@ -152,6 +180,42 @@ func _NewsService_GetNewsByCategory_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _NewsService_AddNews_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NewsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NewsServiceServer).AddNews(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/news.NewsService/AddNews",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NewsServiceServer).AddNews(ctx, req.(*NewsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NewsService_DelNews_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NewsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NewsServiceServer).DelNews(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/news.NewsService/DelNews",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NewsServiceServer).DelNews(ctx, req.(*NewsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // NewsService_ServiceDesc is the grpc.ServiceDesc for NewsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -170,6 +234,14 @@ var NewsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetNewsByCategory",
 			Handler:    _NewsService_GetNewsByCategory_Handler,
+		},
+		{
+			MethodName: "AddNews",
+			Handler:    _NewsService_AddNews_Handler,
+		},
+		{
+			MethodName: "DelNews",
+			Handler:    _NewsService_DelNews_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
