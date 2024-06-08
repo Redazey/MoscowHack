@@ -1,11 +1,8 @@
 package tests
 
 import (
-	"log"
-	"moscowhack/internal/app/config"
-	"moscowhack/internal/app/service/cacher"
 	"moscowhack/pkg/cache"
-	"moscowhack/pkg/logger"
+	"moscowhack/tests/suite"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -18,15 +15,7 @@ var dummydata = map[string]string{
 }
 
 func TestCreateDummyData(t *testing.T) {
-	// инициализируем конфиг, логгер и кэш
-	cfg, err := config.NewConfig()
-	if err != nil {
-		log.Fatalf("Ошибка при попытке спарсить .env файл в структуру: %v", err)
-	}
-
-	logger.Init(cfg.LoggerLevel)
-	cacher.Init(cfg.Cache.CacheEXTime)
-
+	suite.New(t)
 	cache.ClearCache()
 
 	convertedData, hashKey := cache.ConvertMap(dummydata, "username", "password")

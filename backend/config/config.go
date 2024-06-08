@@ -3,14 +3,17 @@ package config
 import (
 	"log"
 
+	"time"
+
 	"github.com/caarlos0/env"
 	"github.com/joho/godotenv"
 )
 
 type Configuration struct {
-	Port        string `env:"ADDRESS" envDefault:"4000"`
-	LoggerLevel string `env:"LOGGER_LEVEL" envDefault:"debug"`
-	IsDebug     bool   `env:"DEBUG" envDefault:"false"`
+	Port        string        `env:"ADDRESS" envDefault:"4000"`
+	LoggerLevel string        `env:"LOGGER_LEVEL" envDefault:"debug"`
+	IsDebug     bool          `env:"DEBUG" envDefault:"false"`
+	GRPCTimeout time.Duration `env:"GRPC_TIMEOUT" envDefault:"10h"`
 	DB          DB
 	Redis       Redis
 	Cache       Cache
@@ -41,6 +44,7 @@ type Redis struct {
 
 	-------GENERAL------
 	Port          string
+	gRPCTimeout   time.Duration
 	LoggerLevel   string
 	IsDebug       bool
 	---------DB---------

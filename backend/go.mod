@@ -3,6 +3,7 @@ module moscowhack
 go 1.22.3
 
 require (
+	github.com/brianvoe/gofakeit/v6 v6.23.2
 	github.com/caarlos0/env v3.5.0+incompatible
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang-migrate/migrate/v4 v4.16.2
