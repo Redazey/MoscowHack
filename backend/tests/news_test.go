@@ -3,7 +3,6 @@ package tests
 import (
 	"log"
 	pbNews "moscowhack/gen/go/news"
-	"moscowhack/internal/app/lib/jwt"
 	"moscowhack/tests/suite"
 	"testing"
 
@@ -13,35 +12,80 @@ import (
 
 func TestNews(t *testing.T) {
 	ctx, st := suite.New(t)
+	var (
+		Id         = gofakeit.Uint64()
+		Title      = gofakeit.Book().Title
+		Text       = "Test text for text news"
+		Datetime   = gofakeit.Date().GoString()
+		Categories = gofakeit.CarModel()
+	)
 
-	/*
-		id:         gofakeit.Int8(),
-		title:      gofakeit.BookTitle(),
-		text:       "Test text for test news",
-		datetime:   gofakeit.Date(),
-		categories: gofakeit.Categories(),
-	*/
+	exceptedNews := pbNews.NewsResponse{
+		News: map[string]*pbNews.NewsItem{
+			"testnews": {
+				Id:         Id,
+				Title:      Title,
+				Text:       Text,
+				Datetime:   Datetime,
+				Categories: Categories,
+			},
+		},
+	}
+
+	NewsReq := &pbNews.NewsRequest{
+		Id:         Id,
+		Title:      Title,
+		Text:       Text,
+		Datetime:   Datetime,
+		Categories: Categories,
+	}
 
 	req := &pbNews.NewsRequest{
-		Id:       string(gofakeit.Int8()),
-		Category: gofakeit.CarModel(),
+		Id:         Id,
+		Categories: Categories,
 	}
-	exceptedKey, _ := jwt.Keygen(req.Username, req.Password)
 
-	t.Run("NewUserRegistration Test", func(t *testing.T) {
-		response, err := st.AuthClient.Registration(ctx, req)
+	t.Run("AddNews Test", func(t *testing.T) {
+
+		response, err := st.NewsClient.AddNews(ctx, NewsReq)
+		if err != nil {
+			log.Fatalf("Error when adding news: %v", err)
+		}
+
+		assert.Equal(t, Id, response.Id)
+	})
+
+	t.Run("GetNews Test", func(t *testing.T) {
+
+		response, err := st.NewsClient.GetNews(ctx, req)
 		if err != nil {
 			log.Fatalf("Error when calling Registration: %v", err)
 		}
 
-		assert.Equal(t, exceptedKey, response.Key)
+		assert.NotNil(t, response.News)
 	})
-	t.Run("UserLogin Test", func(t *testing.T) {
-		response, err := st.AuthClient.Login(ctx, req)
+	t.Run("GetNewsById Test", func(t *testing.T) {
+		response, err := st.NewsClient.GetNewsById(ctx, req)
 		if err != nil {
 			log.Fatalf("Error when calling Login: %v", err)
 		}
 
-		assert.Equal(t, exceptedKey, response.Key)
+		assert.Equal(t, exceptedNews.News, response.News, "Excepted value: %v, recieved: %v", exceptedNews.News, response.News)
+	})
+	t.Run("GetNewsByCategory Test", func(t *testing.T) {
+		response, err := st.NewsClient.GetNewsByCategory(ctx, req)
+		if err != nil {
+			log.Fatalf("Error when calling Login: %v", err)
+		}
+
+		assert.Equal(t, exceptedNews.News, response.News, "Excepted value: %v, recieved: %v", exceptedNews.News, response.News)
+	})
+	t.Run("DelNews Test", func(t *testing.T) {
+		response, err := st.NewsClient.DelNews(ctx, NewsReq)
+		if err != nil {
+			log.Fatalf("Error when deleting news: %v", err)
+		}
+
+		assert.Equal(t, "", response.Err)
 	})
 }

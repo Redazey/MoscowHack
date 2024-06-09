@@ -3,16 +3,13 @@ package grpcNews
 import (
 	"context"
 	"errors"
-	"fmt"
-	"google.golang.org/grpc"
 	pb "moscowhack/gen/go/news"
-	"strconv"
 )
 
 type News interface {
-	GetNewsService(ctx context.Context) (*pb.NewsItem, error)
-	GetNewsByIdService(ctx context.Context, id int) (*pb.NewsItem, error)
-	GetNewsByCategoryService(ctx context.Context, categoryId string) (*pb.NewsItem, error)
+	GetNewsService(ctx context.Context) (map[string]*pb.NewsItem, error)
+	GetNewsByIdService(ctx context.Context, id int) (map[string]*pb.NewsItem, error)
+	GetNewsByCategoryService(ctx context.Context, categoryId string) (map[string]*pb.NewsItem, error)
 	AddNewsService(ctx context.Context, title string, text string, datetime string, categories string) (int, error)
 	DelNewsService(ctx context.Context, newsID int) error
 }
@@ -20,10 +17,6 @@ type News interface {
 type Endpoint struct {
 	News News
 	pb.UnimplementedNewsServiceServer
-}
-
-func Register(gRPCServer *grpc.Server, news News) {
-	pb.RegisterNewsServiceServer(gRPCServer, &Endpoint{News: news})
 }
 
 func New(news News) *Endpoint {
@@ -38,28 +31,20 @@ func (e *Endpoint) GetNews(ctx context.Context, req *pb.NewsRequest) (*pb.NewsRe
 		return &pb.NewsResponse{}, err
 	}
 
-	newsItem := map[string]*pb.NewsItem{"NewsItem": newsData}
-	return &pb.NewsResponse{News: newsItem}, nil
+	return &pb.NewsResponse{News: newsData}, nil
 }
 
 func (e *Endpoint) GetNewsById(ctx context.Context, req *pb.NewsRequest) (*pb.NewsResponse, error) {
-	if req.Id == "" {
+	if req.Id == 0 {
 		return nil, errors.New("id новости не указан")
 	}
 
-	id, err := strconv.Atoi(req.Id)
+	newsData, err := e.News.GetNewsByIdService(ctx, int(req.Id))
 	if err != nil {
 		return &pb.NewsResponse{}, err
 	}
 
-	newsData, err := e.News.GetNewsByIdService(ctx, id)
-	if err != nil {
-		return &pb.NewsResponse{}, err
-	}
-
-	newsItem := map[string]*pb.NewsItem{"NewsItem": newsData}
-
-	return &pb.NewsResponse{News: newsItem}, nil
+	return &pb.NewsResponse{News: newsData}, nil
 }
 
 func (e *Endpoint) GetNewsByCategory(ctx context.Context, req *pb.NewsRequest) (*pb.NewsResponse, error) {
@@ -72,12 +57,10 @@ func (e *Endpoint) GetNewsByCategory(ctx context.Context, req *pb.NewsRequest) (
 		return &pb.NewsResponse{}, err
 	}
 
-	newsItem := map[string]*pb.NewsItem{"NewsItem": newsData}
-
-	return &pb.NewsResponse{News: newsItem}, nil
+	return &pb.NewsResponse{News: newsData}, nil
 }
 
-func (e *Endpoint) AddNews(ctx context.Context, req *pb.NewsRequest) (*pb.NewsResponse, error) {
+func (e *Endpoint) AddNews(ctx context.Context, req *pb.NewsRequest) (*pb.ChangeNewsResponse, error) {
 	if req.Title == "" {
 		return nil, errors.New("заголовок новости не указан")
 	}
@@ -93,26 +76,21 @@ func (e *Endpoint) AddNews(ctx context.Context, req *pb.NewsRequest) (*pb.NewsRe
 
 	id, err := e.News.AddNewsService(ctx, req.Title, req.Text, req.Datetime, req.Categories)
 	if err != nil {
-		return &pb.NewsResponse{Err: error.Error(err)}, err
+		return &pb.ChangeNewsResponse{Err: error.Error(err)}, err
 	}
 
-	return &pb.NewsResponse{Id: fmt.Sprint(id)}, nil
+	return &pb.ChangeNewsResponse{Id: uint64(id)}, nil
 }
 
-func (e *Endpoint) DelNews(ctx context.Context, req *pb.NewsRequest) (*pb.NewsResponse, error) {
-	if req.Id == "" {
+func (e *Endpoint) DelNews(ctx context.Context, req *pb.NewsRequest) (*pb.ChangeNewsResponse, error) {
+	if req.Id == 0 {
 		return nil, errors.New("id новости не указан")
 	}
 
-	id, err := strconv.Atoi(req.Id)
+	err := e.News.DelNewsService(ctx, int(req.Id))
 	if err != nil {
-		return &pb.NewsResponse{Err: error.Error(err)}, err
+		return &pb.ChangeNewsResponse{Err: error.Error(err)}, err
 	}
 
-	err = e.News.DelNewsService(ctx, id)
-	if err != nil {
-		return &pb.NewsResponse{Err: error.Error(err)}, err
-	}
-
-	return &pb.NewsResponse{Err: ""}, nil
+	return &pb.ChangeNewsResponse{Err: ""}, nil
 }

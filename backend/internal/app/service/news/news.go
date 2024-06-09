@@ -18,7 +18,7 @@ func New() *Service {
 	return &Service{}
 }
 
-func (s *Service) GetNewsService(ctx context.Context) (*news.NewsItem, error) {
+func (s *Service) GetNewsService(ctx context.Context) (map[string]*news.NewsItem, error) {
 	// Initialize newsSlice
 	newsMap := make(map[string]map[string]interface{})
 
@@ -30,9 +30,8 @@ func (s *Service) GetNewsService(ctx context.Context) (*news.NewsItem, error) {
 		}
 
 		newsContentMap := createNewsContentMap(newsMap)
-		newsItem := news.NewsItem{NewsItem: newsContentMap}
 
-		return &newsItem, nil
+		return newsContentMap, nil
 	}
 
 	// Данных нет
@@ -77,12 +76,11 @@ func (s *Service) GetNewsService(ctx context.Context) (*news.NewsItem, error) {
 	}
 
 	newsContentMap := createNewsContentMap(newsMap)
-	newsItem := news.NewsItem{NewsItem: newsContentMap}
 
-	return &newsItem, nil
+	return newsContentMap, nil
 }
 
-func (s *Service) GetNewsByIdService(ctx context.Context, id int) (*news.NewsItem, error) {
+func (s *Service) GetNewsByIdService(ctx context.Context, id int) (map[string]*news.NewsItem, error) {
 	// Initialize newsSlice
 	newsMap := make(map[string]map[string]interface{})
 
@@ -94,9 +92,8 @@ func (s *Service) GetNewsByIdService(ctx context.Context, id int) (*news.NewsIte
 		}
 
 		newsContentMap := createNewsContentMap(newsMap)
-		newsItem := news.NewsItem{NewsItem: newsContentMap}
 
-		return &newsItem, nil
+		return newsContentMap, nil
 	}
 
 	// Данных нет
@@ -142,12 +139,11 @@ func (s *Service) GetNewsByIdService(ctx context.Context, id int) (*news.NewsIte
 	}
 
 	newsContentMap := createNewsContentMap(newsMap)
-	newsItem := news.NewsItem{NewsItem: newsContentMap}
 
-	return &newsItem, nil
+	return newsContentMap, nil
 }
 
-func (s *Service) GetNewsByCategoryService(ctx context.Context, categoryId string) (*news.NewsItem, error) {
+func (s *Service) GetNewsByCategoryService(ctx context.Context, categoryId string) (map[string]*news.NewsItem, error) {
 	// Initialize newsSlice
 	newsMap := make(map[string]map[string]interface{})
 
@@ -159,9 +155,8 @@ func (s *Service) GetNewsByCategoryService(ctx context.Context, categoryId strin
 		}
 
 		newsContentMap := createNewsContentMap(newsMap)
-		newsItem := news.NewsItem{NewsItem: newsContentMap}
 
-		return &newsItem, nil
+		return newsContentMap, nil
 	}
 
 	// Данных нет
@@ -205,9 +200,8 @@ func (s *Service) GetNewsByCategoryService(ctx context.Context, categoryId strin
 	}
 
 	newsContentMap := createNewsContentMap(newsMap)
-	newsItem := news.NewsItem{NewsItem: newsContentMap}
 
-	return &newsItem, nil
+	return newsContentMap, nil
 }
 
 func (s *Service) AddNewsService(ctx context.Context, title string, text string, datetime string, categories string) (int, error) {
@@ -302,11 +296,11 @@ func (s *Service) DelNewsService(ctx context.Context, newsID int) error {
 	return nil
 }
 
-func createNewsContentMap(newsMap map[string]map[string]interface{}) map[string]*news.NewsContent {
-	newsContentMap := make(map[string]*news.NewsContent)
+func createNewsContentMap(newsMap map[string]map[string]interface{}) map[string]*news.NewsItem {
+	newsContentMap := make(map[string]*news.NewsItem)
 	for _, data := range newsMap {
-		newsContent := &news.NewsContent{
-			Id:         data["id"].(string),
+		newsContent := &news.NewsItem{
+			Id:         data["id"].(uint64),
 			Title:      data["title"].(string),
 			Text:       data["text"].(string),
 			Datetime:   data["datetime"].(string),

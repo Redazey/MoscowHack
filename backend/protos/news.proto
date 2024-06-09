@@ -4,7 +4,7 @@ option go_package = "./news";
 import "google/api/annotations.proto";
 
 message NewsRequest {
-    string id = 1;
+    uint64 id = 1;
     string title = 2;
     string text = 3;
     string datetime = 4;
@@ -13,20 +13,19 @@ message NewsRequest {
 
 message NewsResponse {
     map<string, NewsItem> news = 1;
-    string id = 2;
-    string err = 3;
 }
 
 message NewsItem {
-    map<string, NewsContent> newsItem = 1;
-}
-
-message NewsContent {
-    string id = 1;
+    uint64 id = 1;
     string title = 2;
     string text = 3;
     string datetime = 4;
     string categories = 5;
+}
+
+message ChangeNewsResponse {
+    uint64 id = 1;
+    string err = 2;
 }
 
 service NewsService {
@@ -45,13 +44,13 @@ service NewsService {
             get: "/news/category/{category}"
         };
     }
-    rpc AddNews(NewsRequest) returns (NewsResponse) {
+    rpc AddNews(NewsRequest) returns (ChangeNewsResponse) {
         option (google.api.http) = {
             post: "/news/add"
             body: "*"
         };
     }
-    rpc DelNews(NewsRequest) returns (NewsResponse) {
+    rpc DelNews(NewsRequest) returns (ChangeNewsResponse) {
         option (google.api.http) = {
             delete: "/news/del/{id}"
         };

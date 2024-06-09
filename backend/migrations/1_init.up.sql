@@ -13,7 +13,7 @@ create table users
 );
 
 alter table users
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on users to hack;
 
@@ -25,7 +25,7 @@ create table roles
 );
 
 alter table roles
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on roles to hack;
 
@@ -42,7 +42,7 @@ create table userroles
 );
 
 alter table userroles
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on userroles to hack;
 
@@ -54,7 +54,7 @@ create table categories
 );
 
 alter table categories
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on categories to hack;
 
@@ -66,7 +66,7 @@ create table "categoriesVacancies"
 );
 
 alter table "categoriesVacancies"
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on "categoriesVacancies" to hack;
 
@@ -79,7 +79,7 @@ create table educations
 );
 
 alter table educations
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on educations to hack;
 
@@ -101,7 +101,7 @@ create table "workExperience"
 );
 
 alter table "workExperience"
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on "workExperience" to hack;
 
@@ -116,7 +116,7 @@ create table requirements
 );
 
 alter table requirements
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on requirements to hack;
 
@@ -128,7 +128,7 @@ create table skills
 );
 
 alter table skills
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on skills to hack;
 
@@ -143,7 +143,7 @@ create table "requirementsWorkExperience"
 );
 
 alter table "requirementsWorkExperience"
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on "requirementsWorkExperience" to hack;
 
@@ -158,7 +158,7 @@ create table "requirementsSkills"
 );
 
 alter table "requirementsSkills"
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on "requirementsSkills" to hack;
 
@@ -172,7 +172,7 @@ create table specializations
 );
 
 alter table specializations
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on specializations to hack;
 
@@ -192,7 +192,7 @@ create table vacancies
 );
 
 alter table vacancies
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on vacancies to hack;
 
@@ -206,7 +206,7 @@ create table news
 );
 
 alter table news
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on news to hack;
 
@@ -221,7 +221,7 @@ create table "categoriesNews"
 );
 
 alter table "categoriesNews"
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on "categoriesNews" to hack;
 
@@ -233,7 +233,7 @@ create table genders
 );
 
 alter table genders
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on genders to hack;
 
@@ -245,7 +245,7 @@ create table positions
 );
 
 alter table positions
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on positions to hack;
 
@@ -258,7 +258,7 @@ create table portfolios
 );
 
 alter table portfolios
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on portfolios to hack;
 
@@ -270,7 +270,7 @@ create table socials
 );
 
 alter table socials
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on socials to hack;
 
@@ -295,7 +295,7 @@ create table resumes
 );
 
 alter table resumes
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on resumes to hack;
 
@@ -315,7 +315,7 @@ create table "jobSeekers"
 );
 
 alter table "jobSeekers"
-    owner to postgres;
+    owner to hack;
 
 create unique index jobseekers_userid_uindex
     on "jobSeekers" (userid);
@@ -330,7 +330,7 @@ create table recruiters
 );
 
 alter table recruiters
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on recruiters to hack;
 
@@ -347,7 +347,7 @@ create table interviews
 );
 
 alter table interviews
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on interviews to hack;
 
@@ -363,7 +363,7 @@ create table "workSchedules"
 );
 
 alter table "workSchedules"
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on "workSchedules" to hack;
 
@@ -380,7 +380,7 @@ create table appointments
 );
 
 alter table appointments
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on appointments to hack;
 
@@ -394,7 +394,7 @@ create table "daysOff"
 );
 
 alter table "daysOff"
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on "daysOff" to hack;
 
@@ -413,7 +413,7 @@ create table users
 );
 
 alter table users
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on users to hack;
 
@@ -425,7 +425,7 @@ create table roles
 );
 
 alter table roles
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on roles to hack;
 
@@ -442,7 +442,7 @@ create table userroles
 );
 
 alter table userroles
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on userroles to hack;
 
@@ -454,7 +454,7 @@ create table categories
 );
 
 alter table categories
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on categories to hack;
 
@@ -466,7 +466,7 @@ create table "categoriesVacancies"
 );
 
 alter table "categoriesVacancies"
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on "categoriesVacancies" to hack;
 
@@ -479,7 +479,7 @@ create table educations
 );
 
 alter table educations
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on educations to hack;
 
@@ -501,7 +501,7 @@ create table "workExperience"
 );
 
 alter table "workExperience"
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on "workExperience" to hack;
 
@@ -516,7 +516,7 @@ create table requirements
 );
 
 alter table requirements
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on requirements to hack;
 
@@ -528,7 +528,7 @@ create table skills
 );
 
 alter table skills
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on skills to hack;
 
@@ -543,7 +543,7 @@ create table "requirementsWorkExperience"
 );
 
 alter table "requirementsWorkExperience"
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on "requirementsWorkExperience" to hack;
 
@@ -558,7 +558,7 @@ create table "requirementsSkills"
 );
 
 alter table "requirementsSkills"
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on "requirementsSkills" to hack;
 
@@ -572,7 +572,7 @@ create table specializations
 );
 
 alter table specializations
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on specializations to hack;
 
@@ -592,7 +592,7 @@ create table vacancies
 );
 
 alter table vacancies
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on vacancies to hack;
 
@@ -606,7 +606,7 @@ create table news
 );
 
 alter table news
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on news to hack;
 
@@ -621,7 +621,7 @@ create table "categoriesNews"
 );
 
 alter table "categoriesNews"
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on "categoriesNews" to hack;
 
@@ -633,7 +633,7 @@ create table genders
 );
 
 alter table genders
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on genders to hack;
 
@@ -645,7 +645,7 @@ create table positions
 );
 
 alter table positions
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on positions to hack;
 
@@ -658,7 +658,7 @@ create table portfolios
 );
 
 alter table portfolios
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on portfolios to hack;
 
@@ -670,7 +670,7 @@ create table socials
 );
 
 alter table socials
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on socials to hack;
 
@@ -695,7 +695,7 @@ create table resumes
 );
 
 alter table resumes
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on resumes to hack;
 
@@ -715,7 +715,7 @@ create table "jobSeekers"
 );
 
 alter table "jobSeekers"
-    owner to postgres;
+    owner to hack;
 
 create unique index jobseekers_userid_uindex
     on "jobSeekers" (userid);
@@ -730,7 +730,7 @@ create table recruiters
 );
 
 alter table recruiters
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on recruiters to hack;
 
@@ -747,7 +747,7 @@ create table interviews
 );
 
 alter table interviews
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on interviews to hack;
 
@@ -763,7 +763,7 @@ create table "workSchedules"
 );
 
 alter table "workSchedules"
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on "workSchedules" to hack;
 
@@ -780,7 +780,7 @@ create table appointments
 );
 
 alter table appointments
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on appointments to hack;
 
@@ -794,7 +794,7 @@ create table "daysOff"
 );
 
 alter table "daysOff"
-    owner to postgres;
+    owner to hack;
 
 grant delete, insert, select, update on "daysOff" to hack;
 
