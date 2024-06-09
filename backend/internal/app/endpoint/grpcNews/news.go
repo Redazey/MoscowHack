@@ -79,7 +79,7 @@ func (e *Endpoint) AddNews(ctx context.Context, req *pb.NewsRequest) (*pb.Change
 		return &pb.ChangeNewsResponse{Err: error.Error(err)}, err
 	}
 
-	return &pb.ChangeNewsResponse{Id: uint64(id)}, nil
+	return &pb.ChangeNewsResponse{Id: id}, nil
 }
 
 func (e *Endpoint) DelNews(ctx context.Context, req *pb.NewsRequest) (*pb.ChangeNewsResponse, error) {

@@ -44,13 +44,12 @@ func (s *Service) GetNewsService(ctx context.Context) (map[string]*news.NewsItem
 		GROUP BY n.id;
 	`)
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		var id int
+		var id int32
 		var title, text, datetime, categories string
 		err := rows.Scan(
 			&id,
@@ -113,7 +112,7 @@ func (s *Service) GetNewsByIdService(ctx context.Context, id int32) (map[string]
 	defer rows.Close()
 
 	for rows.Next() {
-		var id int
+		var id int32
 		var title, text, datetime, categories string
 		err := rows.Scan(
 			&id,
@@ -169,13 +168,12 @@ func (s *Service) GetNewsByCategoryService(ctx context.Context, categoryId strin
     WHERE cn."categoryID" IN (` + categoryId + `)`)
 
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		var id int
+		var id int32
 		var title, text, datetime, categories string
 		err := rows.Scan(
 			&id,
@@ -220,7 +218,7 @@ func (s *Service) AddNewsService(ctx context.Context, title string, text string,
 	}
 
 	// Добавление новости в таблицу news
-	var newsID int
+	var newsID int32
 	err = tx.QueryRowx("INSERT INTO news (title, text, datetime) VALUES ($1, $2, $3) RETURNING id", title, text, t).Scan(&newsID)
 	if err != nil {
 		errRollback := tx.Rollback()
@@ -260,7 +258,7 @@ func (s *Service) AddNewsService(ctx context.Context, title string, text string,
 		return 0, err
 	}
 
-	return int32(newsID), nil
+	return newsID, nil
 }
 
 func (s *Service) DelNewsService(ctx context.Context, newsID int32) error {
@@ -300,11 +298,8 @@ func (s *Service) DelNewsService(ctx context.Context, newsID int32) error {
 }
 
 func createNewsContentMap(newsMap map[string]map[string]interface{}) map[string]*news.NewsItem {
-	fmt.Println(newsMap)
-
 	newsContentMap := make(map[string]*news.NewsItem)
 	for _, data := range newsMap {
-		fmt.Println(data["id"].(string))
 		id, err := strconv.ParseInt(strings.TrimSpace(data["id"].(string)), 10, 32)
 		if err != nil {
 			log.Fatalf("Error converting string to int32: %v", err)
