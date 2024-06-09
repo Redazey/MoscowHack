@@ -1,8 +1,6 @@
 package app
 
 import (
-	"go.uber.org/zap"
-	"google.golang.org/grpc"
 	"log"
 	"moscowhack/config"
 	pbAuth "moscowhack/gen/go/auth"
@@ -18,6 +16,9 @@ import (
 	"net"
 	"net/http"
 	_ "net/http/pprof"
+
+	"go.uber.org/zap"
+	"google.golang.org/grpc"
 )
 
 type App struct {
