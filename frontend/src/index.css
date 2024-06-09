@@ -16,6 +16,7 @@
     --background-color: #f6f7f8;
     --footer-background-color: #ffffff;
     --text-color: black;
+    --main-button-color: red;
 
     background-color:  var(--background-color);
 

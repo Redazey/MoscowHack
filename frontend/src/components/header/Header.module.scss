@@ -5,8 +5,14 @@
   padding: 10px;
   background-color: var(--footer-background-color);
   color: var(--text-color);
-  position: relative;
+  position: fixed;
+  width: 100%;
+  height: 10%;
 
+  @media (max-width: 768px) {
+    flex-direction: column;
+    height: auto;
+  }
 
   .logo {
     display: flex;
@@ -32,6 +38,10 @@
       &:hover {
         text-decoration: underline;
       }
+
+      @media (max-width: 768px) {
+        margin: 5px;
+      }
     }
   }
 
@@ -52,28 +62,35 @@
       padding: 5px 10px;
       border-radius: 5px;
       cursor: pointer;
+      background-color: var(--main-button-color);
+      color: white;
+
+      @media (max-width: 768px) {
+        display: none;
+      }
     }
 
-    .settings {
-      position: relative;
-      img {
-        width: 30px;
-        height: 30px;
-        cursor: pointer;
+    button.dropdown-btn {
+      @media (max-width: 768px) {
+        order: -1;
+        margin-right: 10px;
       }
-      .settings-popup {
-        display: none;
-        position: absolute;
-        top: 50px;
-        right: 0;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        padding: 10px;
-      }
-      &:hover {
-        .settings-popup {
-          display: block;
-        }
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      padding: 10px;
+
+      @media (max-width: 768px) {
+        position: relative;
+        top: auto;
+        width: 100%;
+        margin-top: 10px;
       }
     }
   }

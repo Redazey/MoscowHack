@@ -12,14 +12,14 @@ const Footer = () => {
                 </ul>
             </div>
             <div className={classes.columnRight}>
-                <h3>Связатся с нами</h3>
+                <h3>Связаться с нами</h3>
                 <ul>
                     <li><a href="#">97jertov97@gmail.com</a></li>
                     <li><a href="#">1lyaaksenov@mail.com</a></li>
                 </ul>
             </div>
             <div className={classes.columnRight}>
-                <h3>О разработке</h3>
+                <h3>Про разработку</h3>
                 <ul>
                     <li>
                        <a>Сделанно командой малосольные огурчики в рамках Хакатона: "Лидеры цифровой трансформации"</a>
