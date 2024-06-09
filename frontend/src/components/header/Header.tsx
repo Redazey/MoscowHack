@@ -1,11 +1,17 @@
 // @ts-ignore
-import React from 'react';
+import React,  { useState } from 'react';
 import classes from './Header.module.scss';
 const Header = () => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const toggleDropdown = () => {
+        setIsOpen(!isOpen);
+    };
+
     return (
-        <header className={classes.header}>
+        <nav className={classes.header}>
             <div className={classes.logo}>
-                <img src="../../assets/Images/HeadSoftLogo.jpg" alt="Логотип"/>
+                <img src="/../../assets/Images/HeadSoftLogo.jpg" alt="Логотип"/>
                     <h1>HeadSoft</h1>
             </div>
             <div className={classes.menu}>
@@ -14,14 +20,22 @@ const Header = () => {
                 <a href="#">Вакансии</a>
             </div>
             <div className={classes.user}>
-                <img src="avatar.png" alt="Аватар"/>
+                <img src="/../../assets/Images/Profile.jpg" alt="Аватар"/>
                     <button className={classes.login}>Войти</button>
-                    <div className={classes.settings}>
-                        <img src="settings.png" alt="Настройки"/>
-
+                <button onClick={toggleDropdown} className="dropdown-btn">
+                    Меню
+                </button>
+                {isOpen && (
+                    <div className="dropdown-menu">
+                        <ul>
+                            <li>Пункт 1</li>
+                            <li>Пункт 2</li>
+                            <li>Пункт 3</li>
+                        </ul>
                     </div>
+                )}
             </div>
-        </header>
+        </nav>
 
 );
 };

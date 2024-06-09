@@ -5,6 +5,7 @@
   padding: 10px;
   background-color: var(--footer-background-color);
   color: var(--text-color);
+  position: relative;
 
 
   .logo {
@@ -47,8 +48,6 @@
 
     .login {
       margin-right: 10px;
-      background-color: #0066cc;
-      color: #fff;
       border: none;
       padding: 5px 10px;
       border-radius: 5px;
