@@ -1,0 +1,206 @@
+.auth-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+  
+    .main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f9f9f9;
+  
+      .auth-content {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        max-width: 400px;
+  
+        .auth-box {
+          width: 100%;
+          background-color: #fff;
+          padding: 40px;
+          border-radius: 8px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          text-align: center;
+  
+          h2 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+          }
+  
+          form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+  
+            input {
+              padding: 10px;
+              font-size: 1rem;
+              border: 1px solid #ccc;
+              border-radius: 4px;
+              background-color: #f2f4f7;
+            }
+  
+            button {
+              padding: 10px;
+              font-size: 1rem;
+              border: none;
+              border-radius: 50px;
+              background-color: #e74c3c;
+              color: #fff;
+              cursor: pointer;
+  
+              &:hover {
+                background-color: #c0392b;
+              }
+            }
+          }
+  
+          .register-link {
+            margin-top: 20px;
+            font-size: 0.9rem;
+  
+            a {
+              color: #e74c3c;
+              text-decoration: none;
+  
+              &:hover {
+                text-decoration: underline;
+              }
+            }
+          }
+        }
+  
+        .register-box {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          padding: 20px 40px;
+          margin-top: 20px;
+          border-radius: 8px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          background-color: #fff;
+        }
+      }
+    }
+  
+    .footer {
+      text-align: center;
+      padding: 10px;
+      background-color: #fff;
+      border-top: 1px solid #ccc;
+  
+      p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: #999;
+      }
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .header {
+      flex-direction: column;
+      align-items: flex-start;
+  
+      .nav {
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+      }
+  
+      .login-link {
+        margin-top: 10px;
+      }
+    }
+  
+    .main {
+      padding: 20px;
+  
+      .auth-content {
+        max-width: 100%;
+      }
+  
+      .auth-box {
+        padding: 20px;
+      }
+  
+      .register-box {
+        padding: 20px;
+      }
+    }
+  
+    .footer {
+      padding: 20px;
+    }
+  
+    .main {
+      margin-bottom: 20px; // Добавляем промежуток между последним div и footer
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .header {
+      padding: 10px;
+  
+      .logo {
+        font-size: 1.2rem;
+      }
+  
+      .nav a {
+        font-size: 0.9rem;
+      }
+  
+      .login-link a {
+        font-size: 0.9rem;
+      }
+    }
+  
+    .main {
+      .auth-content {
+        gap: 15px;
+      }
+  
+      .auth-box {
+        padding: 15px;
+  
+        h2 {
+          font-size: 1.2rem;
+        }
+  
+        form {
+          gap: 10px;
+  
+          input, button {
+            font-size: 0.9rem;
+            padding: 8px;
+          }
+        }
+      }
+  
+      .register-box {
+        padding: 15px;
+        p {
+          font-size: 0.8rem;
+        }
+      }
+    }
+  
+    .footer {
+      padding: 15px;
+  
+      p {
+        font-size: 0.8rem;
+      }
+    }
+  
+    .main {
+      margin-bottom: 20px;
+    }
+  }
+  

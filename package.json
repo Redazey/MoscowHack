@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "react-router-dom": "^6.23.1",
+    "react-scripts": "^5.0.1",
     "vite": "^5.2.12"
   }
 }
