@@ -1,0 +1,64 @@
+syntax = "proto3";
+package vacancies;
+option go_package = "./vacancies";
+import "google/api/annotations.proto";
+
+message VacanciesRequest {
+  int32 id = 1;
+  string name = 2;
+  string departmentCompany = 3;
+  string description = 4;
+  string categoryVacancies = 5;
+  string requirements = 6;
+  string workingConditions = 7;
+  string geolocationCompany = 8;
+}
+
+message VacanciesResponse {
+  map<string, VacanciesItem> vacancies = 1;
+}
+
+message VacanciesItem {
+  int32 id = 1;
+  string name = 2;
+  string departmentCompany = 3;
+  string description = 4;
+  string categoryVacancies = 5;
+  string requirements = 6;
+  string workingConditions = 7;
+  string geolocationCompany = 8;
+}
+
+message ChangeVacanciesResponse {
+  int32 id = 1;
+  string err = 2;
+}
+
+service VacanciesService {
+  rpc GetVacancies(VacanciesRequest) returns (VacanciesResponse) {
+    option (google.api.http) = {
+      get: "/vacancies"
+    };
+  }
+  rpc GetVacanciesById(VacanciesRequest) returns (VacanciesResponse) {
+    option (google.api.http) = {
+      get: "/vacancies/id/{id}"
+    };
+  }
+  rpc GetVacanciesByCategory(VacanciesRequest) returns (VacanciesResponse) {
+    option (google.api.http) = {
+      get: "/vacancies/category/{category}"
+    };
+  }
+  rpc AddVacancies(VacanciesRequest) returns (ChangeVacanciesResponse) {
+    option (google.api.http) = {
+      post: "/vacancies/add"
+      body: "*"
+    };
+  }
+  rpc DelVacancies(VacanciesRequest) returns (ChangeVacanciesResponse) {
+    option (google.api.http) = {
+      delete: "/vacancies/del/{id}"
+    };
+  }
+}
