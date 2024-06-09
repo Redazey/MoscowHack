@@ -54,7 +54,7 @@
 ### vacancies
 - id: уникальный идентификатор вакансии.
 - name: название вакансии.
-- departmentCompany: департамент компании.
+- departmentCompany: отдел или подразделение компании.
 - description: описание вакансии.
 - categoryVacanciesID: идентификатор категории вакансий, ссылается на таблицу categoriesVacancies.
 - requirementsID: идентификатор требований, ссылается на таблицу requirements.

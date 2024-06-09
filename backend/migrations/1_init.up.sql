@@ -19,7 +19,7 @@ create table roles
     name text not null
 );
 
-create table userroles
+create table "userRoles"
 (
     id     serial
         primary key,
@@ -76,8 +76,7 @@ create table requirements
         primary key,
     "educationID"      integer not null
         references educations,
-    "workExperienceID" integer not null
-        references "workExperience"
+    "experienceYears" integer not null
 );
 
 create table skills
@@ -116,6 +115,21 @@ create table specializations
         references "categoriesVacancies"
 );
 
+CREATE TABLE "WorkingConditions" (
+     id SERIAL PRIMARY KEY,                       -- Идентификатор записи
+     "workMode" BOOLEAN NOT NULL,              -- Удаленная работа или работа из офиса
+     salary DECIMAL(10, 2) NOT NULL,              -- Заработная плата
+     "workHoursPerDay" DECIMAL(4, 2) NOT NULL,   -- Количество часов работы в день
+     "workSchedule" VARCHAR(10) NOT NULL,          -- График работы (5/2, 2/2 и т.д.)
+     "salaryTaxIncluded" BOOLEAN NOT NULL         -- ЗП с вычетом налога (TRUE) или без вычета налога (FALSE)
+);
+
+CREATE TABLE stack (
+   id SERIAL PRIMARY KEY,
+   name TEXT NOT NULL,                        -- Языки программирования или технологии, используемые в компании
+   type INTEGER NOT NULL                  -- Тип технологии (бэкенд, фронтенд, базы данных)
+);
+
 create table vacancies
 (
     id                    serial
@@ -127,8 +141,17 @@ create table vacancies
         references "categoriesVacancies",
     "requirementsID"      integer not null
         references requirements,
-    "workingConditionsID" integer,
+    "workingConditionsID" integer not null
+        references "WorkingConditions",
     "geolocationCompany"  text
+);
+
+CREATE TABLE "vacanciesStack" (
+      "vacancyId" INTEGER NOT NULL
+          REFERENCES vacancies(id),
+      "stackId" INTEGER NOT NULL
+          REFERENCES stack(id),
+      PRIMARY KEY ("vacancyId", "stackId")
 );
 
 create table news
