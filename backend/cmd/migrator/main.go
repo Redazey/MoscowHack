@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"flag"
 	"fmt"
 	"log"
 	"moscowhack/config"
@@ -12,6 +13,11 @@ import (
 )
 
 func main() {
+	var migrationsPath string
+	// Путь до папки с миграциями.
+	flag.StringVar(&migrationsPath, "migrations-path", "", "path to migrations")
+	flag.Parse()
+
 	cfg, err := config.NewConfig()
 	if err != nil {
 		log.Fatalf("Ошибка при инициализации конфига: %s", err)
@@ -20,7 +26,7 @@ func main() {
 	connStr := fmt.Sprintf("postgresql://%s:%s@%s:5432/%s?sslmode=disable", cfg.DB.DBUser, cfg.DB.DBPassword, cfg.DB.DBHost, cfg.DB.DBName)
 
 	m, err := migrate.New(
-		"file://migrations",
+		"file://"+migrationsPath,
 		connStr)
 	if err != nil {
 		log.Fatal(err)
