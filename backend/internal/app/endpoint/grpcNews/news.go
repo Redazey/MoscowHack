@@ -8,10 +8,10 @@ import (
 
 type News interface {
 	GetNewsService(ctx context.Context) (map[string]*pb.NewsItem, error)
-	GetNewsByIdService(ctx context.Context, id int) (map[string]*pb.NewsItem, error)
+	GetNewsByIdService(ctx context.Context, id int32) (map[string]*pb.NewsItem, error)
 	GetNewsByCategoryService(ctx context.Context, categoryId string) (map[string]*pb.NewsItem, error)
-	AddNewsService(ctx context.Context, title string, text string, datetime string, categories string) (int, error)
-	DelNewsService(ctx context.Context, newsID int) error
+	AddNewsService(ctx context.Context, title string, text string, datetime string, categories string) (int32, error)
+	DelNewsService(ctx context.Context, newsID int32) error
 }
 
 type Endpoint struct {
@@ -39,7 +39,7 @@ func (e *Endpoint) GetNewsById(ctx context.Context, req *pb.NewsRequest) (*pb.Ne
 		return nil, errors.New("id новости не указан")
 	}
 
-	newsData, err := e.News.GetNewsByIdService(ctx, int(req.Id))
+	newsData, err := e.News.GetNewsByIdService(ctx, req.Id)
 	if err != nil {
 		return &pb.NewsResponse{}, err
 	}
@@ -79,7 +79,7 @@ func (e *Endpoint) AddNews(ctx context.Context, req *pb.NewsRequest) (*pb.Change
 		return &pb.ChangeNewsResponse{Err: error.Error(err)}, err
 	}
 
-	return &pb.ChangeNewsResponse{Id: uint64(id)}, nil
+	return &pb.ChangeNewsResponse{Id: id}, nil
 }
 
 func (e *Endpoint) DelNews(ctx context.Context, req *pb.NewsRequest) (*pb.ChangeNewsResponse, error) {
@@ -87,7 +87,7 @@ func (e *Endpoint) DelNews(ctx context.Context, req *pb.NewsRequest) (*pb.Change
 		return nil, errors.New("id новости не указан")
 	}
 
-	err := e.News.DelNewsService(ctx, int(req.Id))
+	err := e.News.DelNewsService(ctx, req.Id)
 	if err != nil {
 		return &pb.ChangeNewsResponse{Err: error.Error(err)}, err
 	}

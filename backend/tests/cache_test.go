@@ -15,8 +15,11 @@ var dummydata = map[string]string{
 }
 
 func TestCreateDummyData(t *testing.T) {
-	suite.New(t)
-	cache.ClearCache()
+	_, st := suite.New(t)
+	err := cache.ClearCache(st.Rdb)
+	if err != nil {
+		assert.FailNow(t, err.Error())
+	}
 
 	convertedData, hashKey := cache.ConvertMap(dummydata, "username", "password")
 
