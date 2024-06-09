@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: postgres
+    restart: unless-stopped
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: hack
+      POSTGRES_PASSWORD: 123456789
+      POSTGRES_DB: hack_db
+    ports:
+      - "5432:5432"
+
+  moscowhack:
+    container_name: moscowhack
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+      network: host
+    volumes:
+      - ./:/app
+      - ./config/hosts:/etc/hosts
+    links:
+      - postgres
+    ports:
+      - "8080:8080"
+
+  moscowhack-tests:
+    container_name: moscowhack-tests
+    build:
+      context: .
+      dockerfile: Dockerfile_tests
+      network: host
+    volumes:
+      - ./:/app
+    links:
+      - postgres
+      - moscowhack
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: unless-stopped
+    volumes:
+      - ./config/redis/:/usr/local/etc/redis
+    ports:
+      - "6379:6379"
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]

@@ -1,0 +1,13 @@
+FROM golang:latest as dev
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
+
+RUN go mod download
+
+COPY . .
+
+RUN go run cmd/migrator/main.go --migrations-path=./tests/migrations
+
+CMD ["go", "test", "./tests/"]
