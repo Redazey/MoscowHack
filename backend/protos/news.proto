@@ -4,7 +4,7 @@ option go_package = "./news";
 import "google/api/annotations.proto";
 
 message NewsRequest {
-    uint64 id = 1;
+    int32 id = 1;
     string title = 2;
     string text = 3;
     string datetime = 4;
@@ -16,7 +16,7 @@ message NewsResponse {
 }
 
 message NewsItem {
-    uint64 id = 1;
+    int32 id = 1;
     string title = 2;
     string text = 3;
     string datetime = 4;
@@ -24,7 +24,7 @@ message NewsItem {
 }
 
 message ChangeNewsResponse {
-    uint64 id = 1;
+    int32 id = 1;
     string err = 2;
 }
 

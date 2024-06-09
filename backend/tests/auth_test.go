@@ -7,7 +7,7 @@ import (
 	"moscowhack/tests/suite"
 	"testing"
 
-	"github.com/brianvoe/gofakeit/v6"
+	gofakeit "github.com/brianvoe/gofakeit/v6"
 	"github.com/stretchr/testify/assert"
 )
 

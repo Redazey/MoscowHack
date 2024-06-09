@@ -3,6 +3,7 @@ package news
 import (
 	"context"
 	"fmt"
+	"log"
 	"moscowhack/gen/go/news"
 	"moscowhack/pkg/cache"
 	"moscowhack/pkg/db"
@@ -49,7 +50,8 @@ func (s *Service) GetNewsService(ctx context.Context) (map[string]*news.NewsItem
 	defer rows.Close()
 
 	for rows.Next() {
-		var id, title, text, datetime, categories string
+		var id int
+		var title, text, datetime, categories string
 		err := rows.Scan(
 			&id,
 			&title,
@@ -61,8 +63,8 @@ func (s *Service) GetNewsService(ctx context.Context) (map[string]*news.NewsItem
 			return nil, err
 		}
 
-		newsMap[id] = map[string]interface{}{
-			"id":         id,
+		newsMap[fmt.Sprint(id)] = map[string]interface{}{
+			"id":         fmt.Sprint(id),
 			"title":      title,
 			"text":       text,
 			"datetime":   datetime,
@@ -80,7 +82,7 @@ func (s *Service) GetNewsService(ctx context.Context) (map[string]*news.NewsItem
 	return newsContentMap, nil
 }
 
-func (s *Service) GetNewsByIdService(ctx context.Context, id int) (map[string]*news.NewsItem, error) {
+func (s *Service) GetNewsByIdService(ctx context.Context, id int32) (map[string]*news.NewsItem, error) {
 	// Initialize newsSlice
 	newsMap := make(map[string]map[string]interface{})
 
@@ -111,7 +113,8 @@ func (s *Service) GetNewsByIdService(ctx context.Context, id int) (map[string]*n
 	defer rows.Close()
 
 	for rows.Next() {
-		var id, title, text, datetime, categories string
+		var id int
+		var title, text, datetime, categories string
 		err := rows.Scan(
 			&id,
 			&title,
@@ -123,14 +126,13 @@ func (s *Service) GetNewsByIdService(ctx context.Context, id int) (map[string]*n
 			return nil, err
 		}
 
-		newsMap[id] = map[string]interface{}{
-			"id":         id,
+		newsMap[fmt.Sprint(id)] = map[string]interface{}{
+			"id":         fmt.Sprint(id),
 			"title":      title,
 			"text":       text,
 			"datetime":   datetime,
 			"categories": categories,
 		}
-		fmt.Println(newsMap[id])
 	}
 
 	err = cache.SaveCache("news_"+fmt.Sprint(id), newsMap)
@@ -173,7 +175,8 @@ func (s *Service) GetNewsByCategoryService(ctx context.Context, categoryId strin
 	defer rows.Close()
 
 	for rows.Next() {
-		var id, title, text, datetime, categories string
+		var id int
+		var title, text, datetime, categories string
 		err := rows.Scan(
 			&id,
 			&title,
@@ -185,8 +188,8 @@ func (s *Service) GetNewsByCategoryService(ctx context.Context, categoryId strin
 			return nil, err
 		}
 
-		newsMap[id] = map[string]interface{}{
-			"id":         id,
+		newsMap[fmt.Sprint(id)] = map[string]interface{}{
+			"id":         fmt.Sprint(id),
 			"title":      title,
 			"text":       text,
 			"datetime":   datetime,
@@ -204,7 +207,7 @@ func (s *Service) GetNewsByCategoryService(ctx context.Context, categoryId strin
 	return newsContentMap, nil
 }
 
-func (s *Service) AddNewsService(ctx context.Context, title string, text string, datetime string, categories string) (int, error) {
+func (s *Service) AddNewsService(ctx context.Context, title string, text string, datetime string, categories string) (int32, error) {
 	t, err := time.Parse("2006-01-02 15:04:05", datetime)
 	if err != nil {
 		return 0, err
@@ -257,10 +260,10 @@ func (s *Service) AddNewsService(ctx context.Context, title string, text string,
 		return 0, err
 	}
 
-	return newsID, nil
+	return int32(newsID), nil
 }
 
-func (s *Service) DelNewsService(ctx context.Context, newsID int) error {
+func (s *Service) DelNewsService(ctx context.Context, newsID int32) error {
 	// Начало транзакции
 	tx, err := db.Conn.Beginx()
 	if err != nil {
@@ -297,10 +300,18 @@ func (s *Service) DelNewsService(ctx context.Context, newsID int) error {
 }
 
 func createNewsContentMap(newsMap map[string]map[string]interface{}) map[string]*news.NewsItem {
+	fmt.Println(newsMap)
+
 	newsContentMap := make(map[string]*news.NewsItem)
 	for _, data := range newsMap {
+		fmt.Println(data["id"].(string))
+		id, err := strconv.ParseInt(strings.TrimSpace(data["id"].(string)), 10, 32)
+		if err != nil {
+			log.Fatalf("Error converting string to int32: %v", err)
+		}
+
 		newsContent := &news.NewsItem{
-			Id:         data["id"].(uint64),
+			Id:         int32(id),
 			Title:      data["title"].(string),
 			Text:       data["text"].(string),
 			Datetime:   data["datetime"].(string),

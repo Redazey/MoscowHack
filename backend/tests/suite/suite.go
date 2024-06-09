@@ -2,6 +2,7 @@ package suite
 
 import (
 	"context"
+	"github.com/redis/go-redis/v9"
 	"moscowhack/config"
 	"testing"
 
@@ -15,6 +16,7 @@ import (
 type Suite struct {
 	*testing.T
 	Cfg        *config.Configuration
+	Rdb        *redis.Client
 	NewsClient pbNews.NewsServiceClient
 	AuthClient pbAuth.AuthServiceClient
 }
@@ -25,7 +27,7 @@ func New(t *testing.T) (context.Context, *Suite) {
 	t.Parallel() // Разрешаем параллельный запуск тестов
 
 	// Читаем конфиг из файла
-	cfg, err := config.NewConfig("C:/MoscowHack/backend/.env")
+	cfg, err := config.NewConfig("../.env")
 	if err != nil {
 		t.Fatalf("ошибка при инициализации файла конфигурации: %s", err)
 	}
@@ -38,6 +40,18 @@ func New(t *testing.T) (context.Context, *Suite) {
 		t.Helper()
 		cancelCtx()
 	})
+
+	// Создаем кеш
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     cfg.Redis.RedisAddr + ":" + cfg.Redis.RedisPort,
+		Username: cfg.Redis.RedisUsername,
+		Password: cfg.Redis.RedisPassword,
+		DB:       cfg.Redis.RedisDBId,
+	})
+	err = rdb.Ping(ctx).Err()
+	if err != nil {
+		t.Fatalf("redis connection failed: %v", err)
+	}
 
 	// Создаем клиент
 	cc, err := grpc.NewClient("localhost:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -52,6 +66,7 @@ func New(t *testing.T) (context.Context, *Suite) {
 	return ctx, &Suite{
 		T:          t,
 		Cfg:        cfg,
+		Rdb:        rdb,
 		AuthClient: authClient,
 		NewsClient: newsClient,
 	}

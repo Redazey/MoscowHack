@@ -13,11 +13,11 @@ import (
 func TestNews(t *testing.T) {
 	ctx, st := suite.New(t)
 	var (
-		Id         = gofakeit.Uint64()
+		Id         = gofakeit.Int32()
 		Title      = gofakeit.Book().Title
 		Text       = "Test text for text news"
-		Datetime   = gofakeit.Date().GoString()
-		Categories = gofakeit.CarModel()
+		Datetime   = "2024-02-27 19:38:05"
+		Categories = "1,2"
 	)
 
 	exceptedNews := pbNews.NewsResponse{

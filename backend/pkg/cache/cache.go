@@ -221,10 +221,11 @@ func DeleteEX(table string) error {
 
 нужна в основном для дэбага
 */
-func ClearCache() {
+func ClearCache(Rdb *redis.Client) error {
 	// Удаление всего кэша из Redis
 	err := Rdb.FlushAll(Ctx).Err()
 	if err != nil {
-		return
+		return err
 	}
+	return nil
 }
