@@ -2,6 +2,7 @@
   position: relative;
   height: 400px;
   overflow: hidden;
+  //background-image: url('../../assets/Images/NewsImage.jpg');
   .slider__news {
     height: 100%;
     background-size: cover;
@@ -9,6 +10,7 @@
     align-items: flex-end;
     padding: 20px;
     color: white;
+    transition: background-image 0.5s ease;
 
     .slider__content {
       flex: 1;
