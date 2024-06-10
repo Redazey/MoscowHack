@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import classes from './NewsBlock.module.scss';
+import NewsImage from '../../assets/Images/NewsImage.jpg';
+import { motion } from 'framer-motion';
 
 const newsData = [
     {
@@ -42,13 +44,18 @@ const NewsBlock: React.FC = () => {
 
     return (
         <div className={classes.slider}>
-            <div className={classes.slider__news} style={{ backgroundImage: `url(${newsData[currentNewsIndex].image})` }}>
+            <motion.div
+                className={classes.slider__news}
+                style={{backgroundImage: `url(${newsData[currentNewsIndex].image})`}}
+                initial={{opacity: 0}}
+                animate={{opacity: 1}}
+                transition={{duration: 0.5}}>
                 <div className={classes.slider__content}>
                     <h2>{newsData[currentNewsIndex].title}</h2>
                     <p>{newsData[currentNewsIndex].summary}</p>
                     <button>Подробнее</button>
                 </div>
-            </div>
+            </motion.div>
             <button className={classes.slider__prev} onClick={showPrevNews}>←</button>
             <button className={classes.slider__next} onClick={showNextNews}>→</button>
         </div>
