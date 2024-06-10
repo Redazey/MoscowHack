@@ -1,0 +1,20 @@
+syntax = "proto3";
+package news;
+option go_package = "./news";
+import "google/api/annotations.proto";
+
+message ResumeRequest {
+    bytes resumeDoc = 1;
+}
+
+message ResumeResponse {
+    map<string, string> resumeMap = 1;
+}
+
+service ResumeService {
+    rpc ParseResume(ResumeRequest) returns (ResumeResponse) {
+        option (google.api.http) = {
+            get: "/resume"
+        };
+    }
+}
