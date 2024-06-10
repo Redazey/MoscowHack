@@ -23,8 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type VacanciesServiceClient interface {
 	GetVacancies(ctx context.Context, in *VacanciesRequest, opts ...grpc.CallOption) (*VacanciesResponse, error)
-	GetVacanciesById(ctx context.Context, in *VacanciesRequest, opts ...grpc.CallOption) (*VacanciesResponse, error)
-	GetVacanciesByCategory(ctx context.Context, in *VacanciesRequest, opts ...grpc.CallOption) (*VacanciesResponse, error)
+	GetVacanciesById(ctx context.Context, in *VacanciesRequest, opts ...grpc.CallOption) (*VacanciesIdResponse, error)
+	GetVacanciesByFilter(ctx context.Context, in *VacanciesFilterRequest, opts ...grpc.CallOption) (*VacanciesResponse, error)
 	AddVacancies(ctx context.Context, in *VacanciesRequest, opts ...grpc.CallOption) (*ChangeVacanciesResponse, error)
 	DelVacancies(ctx context.Context, in *VacanciesRequest, opts ...grpc.CallOption) (*ChangeVacanciesResponse, error)
 }
@@ -46,8 +46,8 @@ func (c *vacanciesServiceClient) GetVacancies(ctx context.Context, in *Vacancies
 	return out, nil
 }
 
-func (c *vacanciesServiceClient) GetVacanciesById(ctx context.Context, in *VacanciesRequest, opts ...grpc.CallOption) (*VacanciesResponse, error) {
-	out := new(VacanciesResponse)
+func (c *vacanciesServiceClient) GetVacanciesById(ctx context.Context, in *VacanciesRequest, opts ...grpc.CallOption) (*VacanciesIdResponse, error) {
+	out := new(VacanciesIdResponse)
 	err := c.cc.Invoke(ctx, "/vacancies.VacanciesService/GetVacanciesById", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -55,9 +55,9 @@ func (c *vacanciesServiceClient) GetVacanciesById(ctx context.Context, in *Vacan
 	return out, nil
 }
 
-func (c *vacanciesServiceClient) GetVacanciesByCategory(ctx context.Context, in *VacanciesRequest, opts ...grpc.CallOption) (*VacanciesResponse, error) {
+func (c *vacanciesServiceClient) GetVacanciesByFilter(ctx context.Context, in *VacanciesFilterRequest, opts ...grpc.CallOption) (*VacanciesResponse, error) {
 	out := new(VacanciesResponse)
-	err := c.cc.Invoke(ctx, "/vacancies.VacanciesService/GetVacanciesByCategory", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/vacancies.VacanciesService/GetVacanciesByFilter", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -87,8 +87,8 @@ func (c *vacanciesServiceClient) DelVacancies(ctx context.Context, in *Vacancies
 // for forward compatibility
 type VacanciesServiceServer interface {
 	GetVacancies(context.Context, *VacanciesRequest) (*VacanciesResponse, error)
-	GetVacanciesById(context.Context, *VacanciesRequest) (*VacanciesResponse, error)
-	GetVacanciesByCategory(context.Context, *VacanciesRequest) (*VacanciesResponse, error)
+	GetVacanciesById(context.Context, *VacanciesRequest) (*VacanciesIdResponse, error)
+	GetVacanciesByFilter(context.Context, *VacanciesFilterRequest) (*VacanciesResponse, error)
 	AddVacancies(context.Context, *VacanciesRequest) (*ChangeVacanciesResponse, error)
 	DelVacancies(context.Context, *VacanciesRequest) (*ChangeVacanciesResponse, error)
 	mustEmbedUnimplementedVacanciesServiceServer()
@@ -101,11 +101,11 @@ type UnimplementedVacanciesServiceServer struct {
 func (UnimplementedVacanciesServiceServer) GetVacancies(context.Context, *VacanciesRequest) (*VacanciesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetVacancies not implemented")
 }
-func (UnimplementedVacanciesServiceServer) GetVacanciesById(context.Context, *VacanciesRequest) (*VacanciesResponse, error) {
+func (UnimplementedVacanciesServiceServer) GetVacanciesById(context.Context, *VacanciesRequest) (*VacanciesIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetVacanciesById not implemented")
 }
-func (UnimplementedVacanciesServiceServer) GetVacanciesByCategory(context.Context, *VacanciesRequest) (*VacanciesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetVacanciesByCategory not implemented")
+func (UnimplementedVacanciesServiceServer) GetVacanciesByFilter(context.Context, *VacanciesFilterRequest) (*VacanciesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetVacanciesByFilter not implemented")
 }
 func (UnimplementedVacanciesServiceServer) AddVacancies(context.Context, *VacanciesRequest) (*ChangeVacanciesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddVacancies not implemented")
@@ -162,20 +162,20 @@ func _VacanciesService_GetVacanciesById_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
-func _VacanciesService_GetVacanciesByCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(VacanciesRequest)
+func _VacanciesService_GetVacanciesByFilter_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VacanciesFilterRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(VacanciesServiceServer).GetVacanciesByCategory(ctx, in)
+		return srv.(VacanciesServiceServer).GetVacanciesByFilter(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/vacancies.VacanciesService/GetVacanciesByCategory",
+		FullMethod: "/vacancies.VacanciesService/GetVacanciesByFilter",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VacanciesServiceServer).GetVacanciesByCategory(ctx, req.(*VacanciesRequest))
+		return srv.(VacanciesServiceServer).GetVacanciesByFilter(ctx, req.(*VacanciesFilterRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -232,8 +232,8 @@ var VacanciesService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _VacanciesService_GetVacanciesById_Handler,
 		},
 		{
-			MethodName: "GetVacanciesByCategory",
-			Handler:    _VacanciesService_GetVacanciesByCategory_Handler,
+			MethodName: "GetVacanciesByFilter",
+			Handler:    _VacanciesService_GetVacanciesByFilter_Handler,
 		},
 		{
 			MethodName: "AddVacancies",

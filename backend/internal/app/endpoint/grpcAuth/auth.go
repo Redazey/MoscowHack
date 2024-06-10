@@ -25,6 +25,9 @@ func New(auth Auth) *Endpoint {
 	}
 }
 
+// Login
+// Функция принимает контекст выполнения и параметры запроса.
+// В запросе должны быть указаны имя пользователя (Username) и пароль (Password).
 func (e *Endpoint) Login(ctx context.Context, req *pb.AuthRequest) (*pb.AuthResponse, error) {
 	if req.Username == "" {
 		return nil, status.Error(codes.InvalidArgument, "username пустое значение")
@@ -46,7 +49,9 @@ func (e *Endpoint) Login(ctx context.Context, req *pb.AuthRequest) (*pb.AuthResp
 	return &pb.AuthResponse{Key: token}, nil
 }
 
-// передаем в эту функцию username и password
+// Registration
+// Функция принимает контекст выполнения и параметры запроса.
+// В запросе должны быть указаны имя пользователя (Username) и пароль (Password).
 func (e *Endpoint) Registration(ctx context.Context, req *pb.AuthRequest) (*pb.AuthResponse, error) {
 	if req.Username == "" {
 		return nil, status.Error(codes.InvalidArgument, "username пустое значение")

@@ -14,8 +14,25 @@ message VacanciesRequest {
   string geolocationCompany = 8;
 }
 
+message VacanciesFilterRequest {
+  string departmentCompany = 1;
+  string categoryVacancies = 2;
+  int32 experienceStartYear = 3;
+  int32 experienceEndYear = 4;
+  int32 educationId = 5;
+  int32 salary = 6;
+  int32 workHoursPerDay = 7;
+  string workSchedule = 8;
+  bool salaryTaxIncluded = 9;
+  string geolocationCompany = 10;
+}
+
 message VacanciesResponse {
   map<string, VacanciesItem> vacancies = 1;
+}
+
+message VacanciesIdResponse {
+  map<string, VacanciesIdItem> vacancies = 1;
 }
 
 message VacanciesItem {
@@ -29,6 +46,26 @@ message VacanciesItem {
   string geolocationCompany = 8;
 }
 
+message VacanciesIdItem {
+  int32 id = 1;
+  string name = 2;
+  string departmentCompany = 3;
+  string description = 4;
+  string categoryVacancies = 5;
+  int32 experienceYears = 6;
+  int32 educationId = 8;
+  bool workMode = 9;
+  int32 salary = 10;
+  int32 workHoursPerDay = 11;
+  string workSchedule = 12;
+  bool salaryTaxIncluded = 13;
+  string geolocationCompany = 14;
+  string skills = 15;
+  string backendStack = 16;
+  string frontendStack = 17;
+  string databaseStack = 18;
+}
+
 message ChangeVacanciesResponse {
   int32 id = 1;
   string err = 2;
@@ -40,14 +77,15 @@ service VacanciesService {
       get: "/vacancies"
     };
   }
-  rpc GetVacanciesById(VacanciesRequest) returns (VacanciesResponse) {
+  rpc GetVacanciesById(VacanciesRequest) returns (VacanciesIdResponse) {
     option (google.api.http) = {
       get: "/vacancies/id/{id}"
     };
   }
-  rpc GetVacanciesByCategory(VacanciesRequest) returns (VacanciesResponse) {
+  rpc GetVacanciesByFilter(VacanciesFilterRequest) returns (VacanciesResponse) {
     option (google.api.http) = {
-      get: "/vacancies/category/{category}"
+      get: "/vacancies/filter"
+      body: "*"
     };
   }
   rpc AddVacancies(VacanciesRequest) returns (ChangeVacanciesResponse) {
