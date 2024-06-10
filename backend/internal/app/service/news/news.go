@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"moscowhack/gen/go/news"
+	pb "moscowhack/gen/go/news"
 	"moscowhack/pkg/cache"
 	"moscowhack/pkg/db"
 	"strconv"
@@ -19,7 +19,7 @@ func New() *Service {
 	return &Service{}
 }
 
-func (s *Service) GetNewsService(ctx context.Context) (map[string]*news.NewsItem, error) {
+func (s *Service) GetNewsService(ctx context.Context) (map[string]*pb.GetNewsItem, error) {
 	// Initialize newsSlice
 	newsMap := make(map[string]map[string]interface{})
 
@@ -30,7 +30,22 @@ func (s *Service) GetNewsService(ctx context.Context) (map[string]*news.NewsItem
 			return nil, err
 		}
 
-		newsContentMap := createNewsContentMap(newsMap)
+		newsContentMap := make(map[string]*pb.GetNewsItem)
+		for _, data := range newsMap {
+			id, err := strconv.ParseInt(strings.TrimSpace(data["id"].(string)), 10, 32)
+			if err != nil {
+				log.Fatalf("Error converting string to int32: %v", err)
+			}
+
+			newsContent := &pb.GetNewsItem{
+				Id:         int32(id),
+				Title:      data["title"].(string),
+				Text:       data["text"].(string),
+				Datetime:   data["datetime"].(string),
+				Categories: data["categories"].(string),
+			}
+			newsContentMap[data["id"].(string)] = newsContent
+		}
 
 		return newsContentMap, nil
 	}
@@ -76,12 +91,27 @@ func (s *Service) GetNewsService(ctx context.Context) (map[string]*news.NewsItem
 		return nil, err
 	}
 
-	newsContentMap := createNewsContentMap(newsMap)
+	newsContentMap := make(map[string]*pb.GetNewsItem)
+	for _, data := range newsMap {
+		id, err := strconv.ParseInt(strings.TrimSpace(data["id"].(string)), 10, 32)
+		if err != nil {
+			log.Fatalf("Error converting string to int32: %v", err)
+		}
+
+		newsContent := &pb.GetNewsItem{
+			Id:         int32(id),
+			Title:      data["title"].(string),
+			Text:       data["text"].(string),
+			Datetime:   data["datetime"].(string),
+			Categories: data["categories"].(string),
+		}
+		newsContentMap[data["id"].(string)] = newsContent
+	}
 
 	return newsContentMap, nil
 }
 
-func (s *Service) GetNewsByIdService(ctx context.Context, id int32) (map[string]*news.NewsItem, error) {
+func (s *Service) GetNewsByIdService(ctx context.Context, id int32) (*pb.GetNewsByIdResponse, error) {
 	// Initialize newsSlice
 	newsMap := make(map[string]map[string]interface{})
 
@@ -92,14 +122,19 @@ func (s *Service) GetNewsByIdService(ctx context.Context, id int32) (map[string]
 			return nil, err
 		}
 
-		newsContentMap := createNewsContentMap(newsMap)
+		newsContent := &pb.GetNewsByIdResponse{
+			Title:      newsMap[fmt.Sprint(id)]["title"].(string),
+			Text:       newsMap[fmt.Sprint(id)]["text"].(string),
+			Datetime:   newsMap[fmt.Sprint(id)]["datetime"].(string),
+			Categories: newsMap[fmt.Sprint(id)]["categories"].(string),
+		}
 
-		return newsContentMap, nil
+		return newsContent, nil
 	}
 
 	// Данных нет
 	rows, err := db.Conn.Query(`
-		SELECT n.id, n.title, n.text, n.datetime, string_agg(c.name, ',') AS categories
+		SELECT n.title, n.text, n.datetime, string_agg(c.name, ',') AS categories
 		FROM news n
 		JOIN "categoriesNews" cn ON n.id = cn."newsID"
 		JOIN categories c ON cn."categoryID" = c.id
@@ -112,10 +147,8 @@ func (s *Service) GetNewsByIdService(ctx context.Context, id int32) (map[string]
 	defer rows.Close()
 
 	for rows.Next() {
-		var id int32
 		var title, text, datetime, categories string
 		err := rows.Scan(
-			&id,
 			&title,
 			&text,
 			&datetime,
@@ -126,7 +159,6 @@ func (s *Service) GetNewsByIdService(ctx context.Context, id int32) (map[string]
 		}
 
 		newsMap[fmt.Sprint(id)] = map[string]interface{}{
-			"id":         fmt.Sprint(id),
 			"title":      title,
 			"text":       text,
 			"datetime":   datetime,
@@ -139,12 +171,17 @@ func (s *Service) GetNewsByIdService(ctx context.Context, id int32) (map[string]
 		return nil, err
 	}
 
-	newsContentMap := createNewsContentMap(newsMap)
+	newsContent := &pb.GetNewsByIdResponse{
+		Title:      newsMap[fmt.Sprint(id)]["title"].(string),
+		Text:       newsMap[fmt.Sprint(id)]["text"].(string),
+		Datetime:   newsMap[fmt.Sprint(id)]["datetime"].(string),
+		Categories: newsMap[fmt.Sprint(id)]["categories"].(string),
+	}
 
-	return newsContentMap, nil
+	return newsContent, nil
 }
 
-func (s *Service) GetNewsByCategoryService(ctx context.Context, categoryId string) (map[string]*news.NewsItem, error) {
+func (s *Service) GetNewsByCategoryService(ctx context.Context, categoryId string) (map[string]*pb.GetNewsItem, error) {
 	// Initialize newsSlice
 	newsMap := make(map[string]map[string]interface{})
 
@@ -155,7 +192,22 @@ func (s *Service) GetNewsByCategoryService(ctx context.Context, categoryId strin
 			return nil, err
 		}
 
-		newsContentMap := createNewsContentMap(newsMap)
+		newsContentMap := make(map[string]*pb.GetNewsItem)
+		for _, data := range newsMap {
+			id, err := strconv.ParseInt(strings.TrimSpace(data["id"].(string)), 10, 32)
+			if err != nil {
+				log.Fatalf("Error converting string to int32: %v", err)
+			}
+
+			newsContent := &pb.GetNewsItem{
+				Id:         int32(id),
+				Title:      data["title"].(string),
+				Text:       data["text"].(string),
+				Datetime:   data["datetime"].(string),
+				Categories: data["categories"].(string),
+			}
+			newsContentMap[data["id"].(string)] = newsContent
+		}
 
 		return newsContentMap, nil
 	}
@@ -200,7 +252,22 @@ func (s *Service) GetNewsByCategoryService(ctx context.Context, categoryId strin
 		return nil, err
 	}
 
-	newsContentMap := createNewsContentMap(newsMap)
+	newsContentMap := make(map[string]*pb.GetNewsItem)
+	for _, data := range newsMap {
+		id, err := strconv.ParseInt(strings.TrimSpace(data["id"].(string)), 10, 32)
+		if err != nil {
+			log.Fatalf("Error converting string to int32: %v", err)
+		}
+
+		newsContent := &pb.GetNewsItem{
+			Id:         int32(id),
+			Title:      data["title"].(string),
+			Text:       data["text"].(string),
+			Datetime:   data["datetime"].(string),
+			Categories: data["categories"].(string),
+		}
+		newsContentMap[data["id"].(string)] = newsContent
+	}
 
 	return newsContentMap, nil
 }
@@ -295,24 +362,4 @@ func (s *Service) DelNewsService(ctx context.Context, newsID int32) error {
 	}
 
 	return nil
-}
-
-func createNewsContentMap(newsMap map[string]map[string]interface{}) map[string]*news.NewsItem {
-	newsContentMap := make(map[string]*news.NewsItem)
-	for _, data := range newsMap {
-		id, err := strconv.ParseInt(strings.TrimSpace(data["id"].(string)), 10, 32)
-		if err != nil {
-			log.Fatalf("Error converting string to int32: %v", err)
-		}
-
-		newsContent := &news.NewsItem{
-			Id:         int32(id),
-			Title:      data["title"].(string),
-			Text:       data["text"].(string),
-			Datetime:   data["datetime"].(string),
-			Categories: data["categories"].(string),
-		}
-		newsContentMap[data["id"].(string)] = newsContent
-	}
-	return newsContentMap
 }

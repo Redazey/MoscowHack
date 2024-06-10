@@ -3,18 +3,17 @@ package app
 import (
 	"log"
 	"moscowhack/config"
-	pbAuth "moscowhack/gen/go/auth"
 	pbNews "moscowhack/gen/go/news"
-	"moscowhack/internal/app/endpoint/grpcAuth"
+	pbVacancies "moscowhack/gen/go/vacancies"
 	"moscowhack/internal/app/endpoint/grpcNews"
+	"moscowhack/internal/app/endpoint/grpcVacancies"
 	"moscowhack/internal/app/lib/cacher"
-	"moscowhack/internal/app/service/auth"
 	"moscowhack/internal/app/service/news"
+	"moscowhack/internal/app/service/vacancies"
 	"moscowhack/pkg/cache"
 	"moscowhack/pkg/db"
 	"moscowhack/pkg/logger"
 	"net"
-	"net/http"
 	_ "net/http/pprof"
 
 	"go.uber.org/zap"
@@ -22,17 +21,14 @@ import (
 )
 
 type App struct {
-	auth *auth.Service
-	news *news.Service
+	//auth *auth.Service
+	news      *news.Service
+	vacancies *vacancies.Service
 
 	server *grpc.Server
 }
 
 func New() (*App, error) {
-	go func() {
-		log.Println(http.ListenAndServe("localhost:6060", nil))
-	}()
-
 	// инициализируем конфиг, логгер и кэш
 	cfg, err := config.NewConfig()
 	if err != nil {
@@ -49,17 +45,23 @@ func New() (*App, error) {
 	// обьявляем сервисы
 	a.auth = auth.New(cfg)
 	a.news = news.New()
+	a.vacancies = vacancies.New()
 
 	// регистрируем эндпоинты
 	serviceAuth := &grpcAuth.Endpoint{
 		Auth: a.auth,
 	}
-	pbAuth.RegisterAuthServiceServer(a.server, serviceAuth)
+	pbAuth.RegisterAuthServiceServer(a.server, serviceAuth)*/
 
 	serviceNews := &grpcNews.Endpoint{
 		News: a.news,
 	}
 	pbNews.RegisterNewsServiceServer(a.server, serviceNews)
+
+	serviceVacancies := &grpcVacancies.Endpoint{
+		Vacancies: a.vacancies,
+	}
+	pbVacancies.RegisterVacanciesServiceServer(a.server, serviceVacancies)
 
 	err = cache.Init(cfg.Redis.RedisAddr+":"+cfg.Redis.RedisPort, cfg.Redis.RedisUsername, cfg.Redis.RedisPassword, cfg.Redis.RedisDBId)
 	if err != nil {

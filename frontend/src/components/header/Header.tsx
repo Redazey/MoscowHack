@@ -3,7 +3,7 @@ import React,  { useState } from 'react';
 import classes from './Header.module.scss';
 import Logo from '../../assets/Images/HeadSoftLogo.jpg';
 import Profile from '../../assets/Images/Profile.jpg';
-
+import SettingsCog from '../../assets/Images/settings-cog.jpg';
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -24,10 +24,9 @@ const Header = () => {
             </div>
             <div className={classes.user}>
                 <img src={Profile} alt="Аватар"/>
-                <a><div className={classes.login}>Войти</div></a>
-                <button onClick={toggleDropdown} className="dropdown-btn">
-                    Меню
-                </button>
+                <button className={classes.login}>Войти</button>
+                <img src={SettingsCog} onClick={toggleDropdown} className="dropdown-btn"/>
+
                 {isOpen && (
                     <div className="dropdown-menu">
                         <ul>
