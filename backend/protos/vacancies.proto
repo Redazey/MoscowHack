@@ -3,18 +3,16 @@ package vacancies;
 option go_package = "./vacancies";
 import "google/api/annotations.proto";
 
-message VacanciesRequest {
+// Запрос всех вакансий
+message GetVacanciesRequest {}
+
+// Запрос вакансии по Id
+message GetVacanciesByIdRequest {
   int32 id = 1;
-  string name = 2;
-  string departmentCompany = 3;
-  string description = 4;
-  string categoryVacancies = 5;
-  string requirements = 6;
-  string workingConditions = 7;
-  string geolocationCompany = 8;
 }
 
-message VacanciesFilterRequest {
+// Запрос отфильтрованных вакансий
+message GetFilterVacanciesRequest {
   string departmentCompany = 1;
   string categoryVacancies = 2;
   int32 experienceStartYear = 3;
@@ -27,15 +25,37 @@ message VacanciesFilterRequest {
   string geolocationCompany = 10;
 }
 
-message VacanciesResponse {
-  map<string, VacanciesItem> vacancies = 1;
+// Запрос на добавление вакансии
+message AddVacanciesRequest {
+  string name = 1;
+  string departmentCompany = 2;
+  string description = 3;
+  string categoryVacancies = 4;
+  int32 experienceYears = 5;
+  int32 educationId = 6;
+  bool workMode = 7;
+  int32 salary = 8;
+  int32 workHoursPerDay = 9;
+  int32 workSchedule = 10;
+  bool salaryTaxIncluded = 11;
+  string geolocationCompany = 12;
+  string skills = 13;
+  string backendStack = 14;
+  string frontendStack = 15;
+  string databaseStack = 16;
 }
 
-message VacanciesIdResponse {
-  map<string, VacanciesIdItem> vacancies = 1;
+// Запрос на удаление вакансии
+message DelVacanciesRequest {
+  int32 id = 1;
 }
 
-message VacanciesItem {
+
+// Вывод всех/отфильтрованных вакансий
+message GetVacanciesResponse {
+  map<string, GetVacanciesItem> vacancies = 1;
+}
+message GetVacanciesItem {
   int32 id = 1;
   string name = 2;
   string departmentCompany = 3;
@@ -46,55 +66,62 @@ message VacanciesItem {
   string geolocationCompany = 8;
 }
 
-message VacanciesIdItem {
+// Вывод вакансий по Id
+message GetVacanciesByIdResponse {
   int32 id = 1;
   string name = 2;
   string departmentCompany = 3;
   string description = 4;
   string categoryVacancies = 5;
   int32 experienceYears = 6;
-  int32 educationId = 8;
-  bool workMode = 9;
-  int32 salary = 10;
-  int32 workHoursPerDay = 11;
-  string workSchedule = 12;
-  bool salaryTaxIncluded = 13;
-  string geolocationCompany = 14;
-  string skills = 15;
-  string backendStack = 16;
-  string frontendStack = 17;
-  string databaseStack = 18;
+  int32 educationId = 7;
+  bool workMode = 8;
+  int32 salary = 9;
+  int32 workHoursPerDay = 10;
+  int32 workSchedule = 11;
+  bool salaryTaxIncluded = 12;
+  string geolocationCompany = 13;
+  string skills = 14;
+  string backendStack = 15;
+  string frontendStack = 16;
+  string databaseStack = 17;
 }
 
-message ChangeVacanciesResponse {
+// Вывод Id добавленной новости
+message AddVacanciesResponse {
   int32 id = 1;
   string err = 2;
 }
 
+// Вывод ошибки об удалении новости
+message DelVacanciesResponse {
+  string err = 1;
+}
+
 service VacanciesService {
-  rpc GetVacancies(VacanciesRequest) returns (VacanciesResponse) {
+  rpc GetVacancies(GetVacanciesRequest) returns (GetVacanciesResponse) {
     option (google.api.http) = {
       get: "/vacancies"
     };
   }
-  rpc GetVacanciesById(VacanciesRequest) returns (VacanciesIdResponse) {
+  rpc GetVacanciesById(GetVacanciesByIdRequest) returns (GetVacanciesByIdResponse) {
     option (google.api.http) = {
       get: "/vacancies/id/{id}"
     };
   }
-  rpc GetVacanciesByFilter(VacanciesFilterRequest) returns (VacanciesResponse) {
+  rpc GetVacanciesByFilter(GetFilterVacanciesRequest) returns (GetVacanciesResponse) {
     option (google.api.http) = {
       get: "/vacancies/filter"
       body: "*"
     };
   }
-  rpc AddVacancies(VacanciesRequest) returns (ChangeVacanciesResponse) {
+  rpc AddVacancies(AddVacanciesRequest) returns (AddVacanciesResponse) {
     option (google.api.http) = {
       post: "/vacancies/add"
       body: "*"
     };
   }
-  rpc DelVacancies(VacanciesRequest) returns (ChangeVacanciesResponse) {
+  rpc DelVacancies(DelVacanciesRequest) returns (DelVacanciesResponse) {
     option (google.api.http) = {
       delete: "/vacancies/del/{id}"
     };
