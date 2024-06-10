@@ -3,15 +3,17 @@ package grpcAuth
 import (
 	"context"
 	"errors"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	pb "moscowhack/gen/go/auth"
 	"moscowhack/internal/app/errorz"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type Auth interface {
 	UserLogin(context.Context, string, string) (string, error)
 	NewUserRegistration(context.Context, string, string) (string, error)
+	IsAdmin(context.Context, string) (bool, error)
 }
 
 type Endpoint struct {
@@ -25,10 +27,7 @@ func New(auth Auth) *Endpoint {
 	}
 }
 
-// Login
-// Функция принимает контекст выполнения и параметры запроса.
-// В запросе должны быть указаны имя пользователя (Username) и пароль (Password).
-func (e *Endpoint) Login(ctx context.Context, req *pb.AuthRequest) (*pb.AuthResponse, error) {
+func (e *Endpoint) Login(ctx context.Context, req *pb.LoginRequest) (*pb.AuthResponse, error) {
 	if req.Username == "" {
 		return nil, status.Error(codes.InvalidArgument, "username пустое значение")
 	}
@@ -49,10 +48,7 @@ func (e *Endpoint) Login(ctx context.Context, req *pb.AuthRequest) (*pb.AuthResp
 	return &pb.AuthResponse{Key: token}, nil
 }
 
-// Registration
-// Функция принимает контекст выполнения и параметры запроса.
-// В запросе должны быть указаны имя пользователя (Username) и пароль (Password).
-func (e *Endpoint) Registration(ctx context.Context, req *pb.AuthRequest) (*pb.AuthResponse, error) {
+func (e *Endpoint) Registration(ctx context.Context, req *pb.RegistrationRequest) (*pb.AuthResponse, error) {
 	if req.Username == "" {
 		return nil, status.Error(codes.InvalidArgument, "username пустое значение")
 	}
@@ -71,4 +67,21 @@ func (e *Endpoint) Registration(ctx context.Context, req *pb.AuthRequest) (*pb.A
 	}
 
 	return &pb.AuthResponse{Key: token}, nil
+}
+
+func (e *Endpoint) IsAdmin(ctx context.Context, req *pb.IsAdminRequest) (*pb.IsAdminResponse, error) {
+	if req.JwtToken == "" {
+		return nil, status.Error(codes.InvalidArgument, "jwtToken пустое значение")
+	}
+
+	isAdmin, err := e.Auth.IsAdmin(ctx, req.JwtToken)
+	if err != nil {
+		if errors.Is(err, errorz.ErrUserNotFound) {
+			return nil, status.Error(codes.InvalidArgument, "пользователь с таким именем не существует")
+		}
+
+		return nil, status.Error(codes.Internal, "ошибка проверки прав пользователя")
+	}
+
+	return &pb.IsAdminResponse{IsAdmin: isAdmin}, nil
 }

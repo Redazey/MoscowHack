@@ -43,12 +43,12 @@ func New() (*App, error) {
 	a.server = grpc.NewServer()
 
 	// обьявляем сервисы
-	//a.auth = auth.New()
+	a.auth = auth.New(cfg)
 	a.news = news.New()
 	a.vacancies = vacancies.New()
 
 	// регистрируем эндпоинты
-	/*serviceAuth := &grpcAuth.Endpoint{
+	serviceAuth := &grpcAuth.Endpoint{
 		Auth: a.auth,
 	}
 	pbAuth.RegisterAuthServiceServer(a.server, serviceAuth)*/

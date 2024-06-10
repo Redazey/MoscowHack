@@ -12,6 +12,7 @@ import (
 type Configuration struct {
 	Port        string        `env:"ADDRESS" envDefault:"4000"`
 	LoggerLevel string        `env:"LOGGER_LEVEL" envDefault:"debug"`
+	JwtSecret   []byte        `env:"JWT_SECRET, requred"`
 	IsDebug     bool          `env:"DEBUG" envDefault:"false"`
 	GRPCTimeout time.Duration `env:"GRPC_TIMEOUT" envDefault:"10h"`
 	DB          DB
