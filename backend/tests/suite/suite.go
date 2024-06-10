@@ -2,23 +2,29 @@ package suite
 
 import (
 	"context"
-	"github.com/redis/go-redis/v9"
 	"moscowhack/config"
+	"moscowhack/pkg/db"
 	"testing"
+
+	"github.com/jmoiron/sqlx"
+	"github.com/redis/go-redis/v9"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
 	pbAuth "moscowhack/gen/go/auth"
 	pbNews "moscowhack/gen/go/news"
+	pbResume "moscowhack/gen/go/resume"
 )
 
 type Suite struct {
 	*testing.T
-	Cfg        *config.Configuration
-	Rdb        *redis.Client
-	NewsClient pbNews.NewsServiceClient
-	AuthClient pbAuth.AuthServiceClient
+	Cfg          *config.Configuration
+	Rdb          *redis.Client
+	Db           *sqlx.DB
+	NewsClient   pbNews.NewsServiceClient
+	AuthClient   pbAuth.AuthServiceClient
+	ResumeClient pbResume.ResumeServiceClient
 }
 
 // New creates new test suite.
@@ -27,9 +33,14 @@ func New(t *testing.T) (context.Context, *Suite) {
 	t.Parallel() // Разрешаем параллельный запуск тестов
 
 	// Читаем конфиг из файла
-	cfg, err := config.NewConfig("../.env")
+	cfg, err := config.NewConfig("../../.env")
 	if err != nil {
 		t.Fatalf("ошибка при инициализации файла конфигурации: %s", err)
+	}
+
+	err = db.Init(cfg.DB.DBUser, cfg.DB.DBPassword, cfg.DB.DBHost, cfg.DB.DBName)
+	if err != nil {
+		t.Fatalf("ошибка при инициализации БД: %s", err)
 	}
 
 	// Основной родительский контекст
@@ -62,12 +73,15 @@ func New(t *testing.T) (context.Context, *Suite) {
 	// gRPC-клиент сервера Auth
 	newsClient := pbNews.NewNewsServiceClient(cc)
 	authClient := pbAuth.NewAuthServiceClient(cc)
+	resumeClient := pbResume.NewResumeServiceClient(cc)
 
 	return ctx, &Suite{
-		T:          t,
-		Cfg:        cfg,
-		Rdb:        rdb,
-		AuthClient: authClient,
-		NewsClient: newsClient,
+		T:            t,
+		Cfg:          cfg,
+		Rdb:          rdb,
+		Db:           db.Conn,
+		AuthClient:   authClient,
+		NewsClient:   newsClient,
+		ResumeClient: resumeClient,
 	}
 }

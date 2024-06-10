@@ -1,6 +1,6 @@
 syntax = "proto3";
-package news;
-option go_package = "./news";
+package resume;
+option go_package = "./resume";
 import "google/api/annotations.proto";
 
 message ResumeRequest {

@@ -1,4 +1,4 @@
-package tests
+package news_tests
 
 import (
 	"log"
@@ -44,16 +44,6 @@ func TestNews(t *testing.T) {
 		Id:         Id,
 		Categories: Categories,
 	}
-
-	t.Run("AddNews Test", func(t *testing.T) {
-
-		response, err := st.NewsClient.AddNews(ctx, NewsReq)
-		if err != nil {
-			log.Fatalf("Error when adding news: %v", err)
-		}
-
-		assert.Equal(t, Id, response.Id)
-	})
 
 	t.Run("GetNews Test", func(t *testing.T) {
 

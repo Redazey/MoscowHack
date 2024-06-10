@@ -4,7 +4,7 @@
 // - protoc             v5.27.1
 // source: resume.proto
 
-package news
+package resume
 
 import (
 	context "context"
@@ -19,7 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion8
 
 const (
-	ResumeService_ParseResume_FullMethodName = "/news.ResumeService/ParseResume"
+	ResumeService_ParseResume_FullMethodName = "/resume.ResumeService/ParseResume"
 )
 
 // ResumeServiceClient is the client API for ResumeService service.
@@ -97,7 +97,7 @@ func _ResumeService_ParseResume_Handler(srv interface{}, ctx context.Context, de
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ResumeService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "news.ResumeService",
+	ServiceName: "resume.ResumeService",
 	HandlerType: (*ResumeServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
