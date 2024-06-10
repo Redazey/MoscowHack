@@ -3,7 +3,21 @@ package news;
 option go_package = "./news";
 import "google/api/annotations.proto";
 
-message NewsRequest {
+// Запрос всех новостей
+message GetNewsRequest {}
+
+// Запрос новости по Id
+message GetNewsByIdRequest {
+    int32 id = 1;
+}
+
+// Запрос новостей по категориям
+message GetNewsByCategoryRequest {
+    string categories = 1;
+}
+
+// Запрос на добавление новости
+message AddNewsRequest {
     int32 id = 1;
     string title = 2;
     string text = 3;
@@ -11,11 +25,17 @@ message NewsRequest {
     string categories = 5;
 }
 
-message NewsResponse {
-    map<string, NewsItem> news = 1;
+// Запрос на удаление новости
+message DelNewsRequest {
+    int32 id = 1;
 }
 
-message NewsItem {
+
+// Вывод всех/категоризированных новостей
+message GetNewsResponse {
+    map<string, GetNewsItem> news = 1;
+}
+message GetNewsItem {
     int32 id = 1;
     string title = 2;
     string text = 3;
@@ -23,34 +43,48 @@ message NewsItem {
     string categories = 5;
 }
 
-message ChangeNewsResponse {
+// Вывод новости по Id
+message GetNewsByIdResponse {
+    string title = 2;
+    string text = 3;
+    string datetime = 4;
+    string categories = 5;
+}
+
+// Добавление новости
+message AddNewsResponse {
     int32 id = 1;
     string err = 2;
 }
 
+// Удаление новости
+message DelNewsResponse {
+    string err = 1;
+}
+
 service NewsService {
-    rpc GetNews(NewsRequest) returns (NewsResponse) {
+    rpc GetNews(GetNewsRequest) returns (GetNewsResponse) {
         option (google.api.http) = {
             get: "/news"
         };
     }
-    rpc GetNewsById(NewsRequest) returns (NewsResponse) {
+    rpc GetNewsById(GetNewsByIdRequest) returns (GetNewsByIdResponse) {
         option (google.api.http) = {
             get: "/news/id/{id}"
         };
     }
-    rpc GetNewsByCategory(NewsRequest) returns (NewsResponse) {
+    rpc GetNewsByCategory(GetNewsByCategoryRequest) returns (GetNewsResponse) {
         option (google.api.http) = {
             get: "/news/category/{category}"
         };
     }
-    rpc AddNews(NewsRequest) returns (ChangeNewsResponse) {
+    rpc AddNews(AddNewsRequest) returns (AddNewsResponse) {
         option (google.api.http) = {
             post: "/news/add"
             body: "*"
         };
     }
-    rpc DelNews(NewsRequest) returns (ChangeNewsResponse) {
+    rpc DelNews(DelNewsRequest) returns (DelNewsResponse) {
         option (google.api.http) = {
             delete: "/news/del/{id}"
         };
