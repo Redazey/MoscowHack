@@ -1,21 +1,21 @@
 import React, {useEffect, useState} from 'react';
-import "./NewsBlock.module.scss";
+import classes from './NewsBlock.module.scss';
 
 const newsData = [
     {
-        title: 'Новая коллекция осенней одежды уже в продаже',
-        summary: 'Узнайте о последних трендах и сезонных скидках на осеннюю одежду.',
-        image: 'https://example.com/news1.jpgааа',
+        title: 'Новость 1',
+        summary: 'Описание Новости 1 маленькое смешное',
+        image: '../../assets/Images/settings-cog.jpg',
     },
     {
-        title: 'Завершение акции "Скидки на технику"',
-        summary: 'Поторопитесь воспользоваться скидками на ноутбуки, смартфоны и другую технику!',
-        image: 'https://example.com/news2.jpg',
+        title: 'Новость 2',
+        summary: 'Описание Новости 1 маленькое смешное',
+        image: '../../assets/Images/settings-cog.jpg',
     },
     {
-        title: 'Открытие нового ресторана "Вкусные истории"',
-        summary: 'Приглашаем вас на открытие нового ресторана с изысканным меню и уютной атмосферой.',
-        image: 'https://example.com/news3.jpg',
+        title: 'Новость 3',
+        summary: 'Описание Новости 1 маленькое смешное',
+        image: '../../assets/Images/settings-cog.jpg',
     }
 ];
 
@@ -39,17 +39,18 @@ const NewsBlock: React.FC = () => {
         setCurrentNewsIndex((prevIndex) => (prevIndex + 1) % newsData.length);
     }
 
+
     return (
-        <div className="slider">
-            <div className="slider__news" style={{ backgroundImage: `url(${newsData[currentNewsIndex].image})` }}>
-                <div className="slider__content">
+        <div className={classes.slider}>
+            <div className={classes.slider__news} style={{ backgroundImage: `url(${newsData[currentNewsIndex].image})` }}>
+                <div className={classes.slider__content}>
                     <h2>{newsData[currentNewsIndex].title}</h2>
                     <p>{newsData[currentNewsIndex].summary}</p>
                     <button>Подробнее</button>
                 </div>
             </div>
-            <button className="slider__prev" onClick={showPrevNews}>Предыдущая новость</button>
-            <button className="slider__next" onClick={showNextNews}>Следующая новость</button>
+            <button className={classes.slider__prev} onClick={showPrevNews}>←</button>
+            <button className={classes.slider__next} onClick={showNextNews}>→</button>
         </div>
     );
 }

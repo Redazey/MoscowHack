@@ -24,7 +24,7 @@ const Header = () => {
             </div>
             <div className={classes.user}>
                 <img src={Profile} alt="Аватар"/>
-                <a><div className={classes.login}>Войти</div></a>
+                <button className={classes.login}>Войти</button>
                 <img src={SettingsCog} onClick={toggleDropdown} className="dropdown-btn"/>
 
                 {isOpen && (
