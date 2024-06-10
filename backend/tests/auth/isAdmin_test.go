@@ -10,7 +10,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func IsAdminTest(t *testing.T) {
+func TestIsAdmin(t *testing.T) {
+	ctx, st := suite.New(t)
 	// 1 - админ, 2 - юзер
 	AdminData, err := MockUser(1)
 	if err != nil {
@@ -22,10 +23,8 @@ func IsAdminTest(t *testing.T) {
 		log.Fatalf("Ошибка при добавлении тестового пользователя в бд: %v", err)
 	}
 
-	ctx, st := suite.New(t)
-
 	t.Run("IsAdmin Test", func(t *testing.T) {
-		tokenString, _ := jwt.Keygen(AdminData["username"].(string), AdminData["password"].(string), st.Cfg.JwtSecret)
+		tokenString, _ := jwt.Keygen(AdminData["email"].(string), AdminData["password"].(string), st.Cfg.JwtSecret)
 
 		IsAdminReq := &pbAuth.IsAdminRequest{
 			JwtToken: tokenString,
@@ -40,7 +39,7 @@ func IsAdminTest(t *testing.T) {
 	})
 
 	t.Run("IsNotAdmin Test", func(t *testing.T) {
-		tokenString, _ := jwt.Keygen(UserData["username"].(string), UserData["password"].(string), st.Cfg.JwtSecret)
+		tokenString, _ := jwt.Keygen(UserData["email"].(string), UserData["password"].(string), st.Cfg.JwtSecret)
 
 		IsAdminReq := &pbAuth.IsAdminRequest{
 			JwtToken: tokenString,

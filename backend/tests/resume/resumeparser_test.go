@@ -9,10 +9,10 @@ import (
 	"testing"
 )
 
-func ParseResumeTest(t *testing.T) {
+func TestParseResume(t *testing.T) {
 	ctx, st := suite.New(t)
 
-	file, err := os.ReadFile(".../.tests/resume/resumes/BA Senior.doc")
+	file, err := os.ReadFile("./resumes/BA Senior.doc")
 	if err != nil {
 		fmt.Println("Ошибка при чтении файла:", err)
 	}
@@ -21,10 +21,10 @@ func ParseResumeTest(t *testing.T) {
 		ResumeDoc: file,
 	}
 
-	t.Run("UserLogin Test", func(t *testing.T) {
+	t.Run("ResumeParser Test", func(t *testing.T) {
 		response, err := st.ResumeClient.ParseResume(ctx, req)
 		if err != nil {
-			log.Fatalf("Error when calling Login: %v", err)
+			log.Fatalf("Error when calling ResumeParser: %v", err)
 		}
 		fmt.Printf("Вывод: %v", response.ResumeMap)
 

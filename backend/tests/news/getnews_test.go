@@ -22,6 +22,9 @@ func TestGetNews(t *testing.T) {
 
 	req := &pbNews.NewsRequest{
 		Id:         Id,
+		Title:      Title,
+		Text:       Text,
+		Datetime:   Datetime,
 		Categories: Categories,
 	}
 

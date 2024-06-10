@@ -5,7 +5,7 @@ create table users
     surname    text not null,
     name       text not null,
     patronymic text,
-    age        integer,
+    birthdate  date,
     photourl   text,
     email      text not null,
     password   text not null,

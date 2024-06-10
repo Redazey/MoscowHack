@@ -23,12 +23,12 @@ func New(cfg *config.Configuration) *Service {
 	}
 }
 
-func (s *Service) UserLogin(ctx context.Context, username string, password string) (string, error) {
+func (s *Service) UserLogin(ctx context.Context, email string, password string) (string, error) {
 	msg := map[string]string{
-		"username": username,
+		"email":    email,
 		"password": password,
 	}
-	userData, hashKey := cache.ConvertMap(msg, "username", "password")
+	userData, hashKey := cache.ConvertMap(msg, "email", "password")
 
 	cachePwd, err := cache.IsDataInCache("users", hashKey, "password")
 	if err != nil {
@@ -39,7 +39,7 @@ func (s *Service) UserLogin(ctx context.Context, username string, password strin
 	if cachePwd != "" && cachePwd != password {
 		return "", errorz.ErrUserNotFound
 	} else if cachePwd == "" {
-		dbMap, err := db.FetchUserData(username)
+		dbMap, err := db.FetchUserData(email)
 		if err != nil {
 			return "", err
 		}
@@ -49,7 +49,7 @@ func (s *Service) UserLogin(ctx context.Context, username string, password strin
 	}
 
 	// генерируем jwt токен и данных юзера для использования в дальнейшем
-	key, err := jwt.Keygen(username, password, s.Cfg.JwtSecret)
+	key, err := jwt.Keygen(email, password, s.Cfg.JwtSecret)
 	if err != nil {
 		logger.Error("ошибка при генерации токена: ", zap.Error(err))
 		return "", err
@@ -65,12 +65,12 @@ func (s *Service) UserLogin(ctx context.Context, username string, password strin
 	return key, nil
 }
 
-func (s *Service) NewUserRegistration(ctx context.Context, username string, password string) (string, error) {
+func (s *Service) NewUserRegistration(ctx context.Context, email string, password string) (string, error) {
 	msg := map[string]string{
-		"username": username,
+		"email":    email,
 		"password": password,
 	}
-	userData, hashKey := cache.ConvertMap(msg, "username", "password")
+	userData, hashKey := cache.ConvertMap(msg, "email", "password")
 
 	cachePwd, err := cache.IsDataInCache("users", hashKey, "password")
 	if err != nil {
@@ -79,7 +79,7 @@ func (s *Service) NewUserRegistration(ctx context.Context, username string, pass
 
 	// если пароль у юзера есть, значит и юзер существует
 	if cachePwd == "" {
-		dbMap, err := db.FetchUserData(username)
+		dbMap, err := db.FetchUserData(email)
 		if err != sql.ErrNoRows && err != nil {
 			return "", err
 		}
@@ -95,7 +95,7 @@ func (s *Service) NewUserRegistration(ctx context.Context, username string, pass
 		return "", err
 	}
 
-	key, err := jwt.Keygen(username, password, s.Cfg.JwtSecret)
+	key, err := jwt.Keygen(email, password, s.Cfg.JwtSecret)
 	if err != nil {
 		logger.Error("ошибка при генерации токена: ", zap.Error(err))
 		return "", err
@@ -110,7 +110,7 @@ func (s *Service) IsAdmin(ctx context.Context, tokenString string) (bool, error)
 		return false, err
 	}
 
-	_, hashKey := cache.ConvertMap(UserData, "username", "password")
+	_, hashKey := cache.ConvertMap(UserData, "email", "password")
 
 	roleId, err := cache.IsDataInCache("users", hashKey, "roleId")
 	if err != nil {

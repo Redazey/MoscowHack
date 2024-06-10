@@ -8,13 +8,13 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-func Keygen(username string, pwd string, secretKey string) (string, error) {
+func Keygen(email string, pwd string, secretKey string) (string, error) {
 	// Создаем новый JWT токен
 	token := jwt.New(jwt.SigningMethodHS256)
 
 	// Указываем параметры для токена
 	claims := token.Claims.(jwt.MapClaims)
-	claims["username"] = username
+	claims["email"] = email
 	claims["password"] = pwd
 	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
 

@@ -16,12 +16,18 @@ func TestAuth(t *testing.T) {
 	ClearTable("users")
 
 	RegReq := &pbAuth.RegistrationRequest{
-		Username: gofakeit.Name(),
-		Password: gofakeit.Password(true, true, true, true, false, 10),
-		RoleId:   1,
+		Surname:    gofakeit.Name(),
+		Name:       gofakeit.Name(),
+		Patronymic: gofakeit.Name(),
+		Birthdate:  gofakeit.Date().String(),
+		Photourl:   "testimg",
+		Push:       gofakeit.Bool(),
+		Email:      gofakeit.Email(),
+		Password:   gofakeit.Password(true, true, true, true, false, 10),
+		RoleId:     1,
 	}
 
-	exceptedKey, _ := jwt.Keygen(RegReq.Username, RegReq.Password, st.Cfg.JwtSecret)
+	exceptedKey, _ := jwt.Keygen(RegReq.Email, RegReq.Password, st.Cfg.JwtSecret)
 
 	t.Run("NewUserRegistration Test", func(t *testing.T) {
 		response, err := st.AuthClient.Registration(ctx, RegReq)
