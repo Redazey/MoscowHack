@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"database/sql"
+	"moscowhack/config"
 	"moscowhack/internal/app/errorz"
 	"moscowhack/internal/app/lib/db"
 	"moscowhack/internal/app/lib/jwt"
@@ -13,10 +14,13 @@ import (
 )
 
 type Service struct {
+	Cfg *config.Configuration
 }
 
-func New() *Service {
-	return &Service{}
+func New(cfg *config.Configuration) *Service {
+	return &Service{
+		Cfg: cfg,
+	}
 }
 
 func (s *Service) UserLogin(ctx context.Context, username string, password string) (string, error) {
@@ -45,7 +49,7 @@ func (s *Service) UserLogin(ctx context.Context, username string, password strin
 	}
 
 	// генерируем jwt токен и данных юзера для использования в дальнейшем
-	key, err := jwt.Keygen(username, password)
+	key, err := jwt.Keygen(username, password, s.Cfg.JwtSecret)
 	if err != nil {
 		logger.Error("ошибка при генерации токена: ", zap.Error(err))
 		return "", err
@@ -91,11 +95,35 @@ func (s *Service) NewUserRegistration(ctx context.Context, username string, pass
 		return "", err
 	}
 
-	key, err := jwt.Keygen(username, password)
+	key, err := jwt.Keygen(username, password, s.Cfg.JwtSecret)
 	if err != nil {
 		logger.Error("ошибка при генерации токена: ", zap.Error(err))
 		return "", err
 	}
 
 	return key, nil
+}
+
+func (s *Service) IsAdmin(ctx context.Context, tokenString string) (bool, error) {
+	UserData, err := jwt.UserDataFromJwt(tokenString, s.Cfg.JwtSecret)
+	if err != nil {
+		return false, err
+	}
+
+	_, hashKey := cache.ConvertMap(UserData, "username", "password")
+
+	roleId, err := cache.IsDataInCache("users", hashKey, "roleId")
+	if err != nil {
+		return false, err
+	}
+
+	if roleId.(int) != 0 {
+		if roleId == 1 {
+			return true, nil
+		} else {
+			return false, nil
+		}
+	}
+
+	return false, nil
 }
