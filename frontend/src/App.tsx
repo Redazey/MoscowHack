@@ -19,20 +19,17 @@ function App() {
         {
             id: 2,
             title: "UX/UI Designer",
-            image: "designer.jpg",
+            image: "https://avatars.mds.yandex.net/i?id=7b54c931dac60a19dbcfa251f839cde0a2536a4d-9221733-images-thumbs&n=13",
             salary: "$2500 - $3500",
             description: "Ищем талантливого UX/UI Designer с опытом работы в веб-дизайне.",
         },
         {
             id: 3,
             title: "Data Scientist",
-            image: "data.jpg",
+            image: "https://avatars.mds.yandex.net/i?id=3d1dc9fe8e02b6a1f20e4feae2f158a32158cdf2-9100256-images-thumbs&n=13",
             salary: "$4000 - $5000",
             description: "Требуется профессиональный Data Scientist для анализа больших данных.",
         },
-
-
-
     ];
 
   return (
