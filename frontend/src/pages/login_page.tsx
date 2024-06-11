@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './login_style.scss';
-import Header from './components/header/Header';
+import Header from '../components/header/Header';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
