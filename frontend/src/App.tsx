@@ -6,14 +6,17 @@ import NewsBlock from "./components/newsBlock/NewsBlock.tsx";
 import NewsSlider from "./components/newsBlock/test/NewsSlider.tsx";
 
 
+
 function App() {
 
   return (
+    <React.StrictMode>
       <Router>
           <Header/>
             <NewsBlock/>
           <Footer/>
       </Router>
+    </React.StrictMode>
   )
 }
 
