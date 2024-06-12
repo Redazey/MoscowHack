@@ -1,21 +1,22 @@
 import React, {useEffect, useState} from 'react';
 import classes from './NewsBlock.module.scss';
+import { motion } from 'framer-motion';
 
 const newsData = [
     {
         title: 'Новость 1',
         summary: 'Описание Новости 1 маленькое смешное',
-        image: '../../assets/Images/settings-cog.jpg',
+        image: 'https://static.tildacdn.com/tild3965-3739-4737-b264-386636383831/6ee009ba2a9eaa55b320.jpg',
     },
     {
         title: 'Новость 2',
         summary: 'Описание Новости 1 маленькое смешное',
-        image: '../../assets/Images/settings-cog.jpg',
+        image: 'https://gas-kvas.com/uploads/posts/2023-03/1678093271_gas-kvas-com-p-chernie-risunki-na-krasivom-fone-kraskami-36.jpg',
     },
     {
         title: 'Новость 3',
         summary: 'Описание Новости 1 маленькое смешное',
-        image: '../../assets/Images/settings-cog.jpg',
+        image: 'https://gas-kvas.com/uploads/posts/2023-03/1678093271_gas-kvas-com-p-chernie-risunki-na-krasivom-fone-kraskami-36.jpg',
     }
 ];
 
@@ -26,7 +27,7 @@ const NewsBlock: React.FC = () => {
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentNewsIndex((prevIndex) => (prevIndex + 1) % newsData.length);
-        }, 7000);
+        }, 30000);
 
         return () => clearInterval(interval);
     }, []);
@@ -42,13 +43,18 @@ const NewsBlock: React.FC = () => {
 
     return (
         <div className={classes.slider}>
-            <div className={classes.slider__news} style={{ backgroundImage: `url(${newsData[currentNewsIndex].image})` }}>
+            <motion.div
+                className={classes.slider__news}
+                style={{backgroundImage: `url(${newsData[currentNewsIndex].image})`}}
+                initial={{opacity: 0}}
+                animate={{opacity: 1}}
+                transition={{duration: 0.5}}>
                 <div className={classes.slider__content}>
                     <h2>{newsData[currentNewsIndex].title}</h2>
                     <p>{newsData[currentNewsIndex].summary}</p>
                     <button>Подробнее</button>
                 </div>
-            </div>
+            </motion.div>
             <button className={classes.slider__prev} onClick={showPrevNews}>←</button>
             <button className={classes.slider__next} onClick={showNextNews}>→</button>
         </div>

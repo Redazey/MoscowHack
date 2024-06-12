@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func LoginTest(t *testing.T) {
+func TestLogin(t *testing.T) {
 	ctx, st := suite.New(t)
 	UserData, err := MockUser(1)
 	if err != nil {
@@ -18,11 +18,11 @@ func LoginTest(t *testing.T) {
 	}
 
 	loginReq := &pbAuth.LoginRequest{
-		Username: UserData["username"].(string),
+		Email:    UserData["email"].(string),
 		Password: UserData["password"].(string),
 	}
 
-	exceptedKey, _ := jwt.Keygen(loginReq.Username, loginReq.Password, st.Cfg.JwtSecret)
+	exceptedKey, _ := jwt.Keygen(loginReq.Email, loginReq.Password, st.Cfg.JwtSecret)
 
 	t.Run("UserLogin Test", func(t *testing.T) {
 		response, err := st.AuthClient.Login(ctx, loginReq)

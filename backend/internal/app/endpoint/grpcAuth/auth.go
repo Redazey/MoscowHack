@@ -28,7 +28,7 @@ func New(auth Auth) *Endpoint {
 }
 
 func (e *Endpoint) Login(ctx context.Context, req *pb.LoginRequest) (*pb.AuthResponse, error) {
-	if req.Username == "" {
+	if req.Email == "" {
 		return nil, status.Error(codes.InvalidArgument, "username пустое значение")
 	}
 
@@ -36,7 +36,7 @@ func (e *Endpoint) Login(ctx context.Context, req *pb.LoginRequest) (*pb.AuthRes
 		return nil, status.Error(codes.InvalidArgument, "password пустое значение")
 	}
 
-	token, err := e.Auth.UserLogin(ctx, req.GetUsername(), req.GetPassword())
+	token, err := e.Auth.UserLogin(ctx, req.Email, req.Password)
 	if err != nil {
 		if errors.Is(err, errorz.ErrUserNotFound) {
 			return nil, status.Error(codes.InvalidArgument, "неверный username или password")
@@ -49,7 +49,7 @@ func (e *Endpoint) Login(ctx context.Context, req *pb.LoginRequest) (*pb.AuthRes
 }
 
 func (e *Endpoint) Registration(ctx context.Context, req *pb.RegistrationRequest) (*pb.AuthResponse, error) {
-	if req.Username == "" {
+	if req.Email == "" {
 		return nil, status.Error(codes.InvalidArgument, "username пустое значение")
 	}
 
@@ -57,7 +57,7 @@ func (e *Endpoint) Registration(ctx context.Context, req *pb.RegistrationRequest
 		return nil, status.Error(codes.InvalidArgument, "password пустое значение")
 	}
 
-	token, err := e.Auth.NewUserRegistration(ctx, req.GetUsername(), req.GetPassword())
+	token, err := e.Auth.NewUserRegistration(ctx, req.Email, req.Password)
 	if err != nil {
 		if errors.Is(err, errorz.ErrUserExists) {
 			return nil, status.Error(codes.InvalidArgument, "пользователь с таким именем уже существует")

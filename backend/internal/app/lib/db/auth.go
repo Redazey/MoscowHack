@@ -6,10 +6,10 @@ import (
 )
 
 // принимает таблицу как string и возвращает таблицу в виде map
-func FetchUserData(username string) (map[string]string, error) {
-	rows, err := db.Conn.Query(`SELECT username, password, roleid 
+func FetchUserData(email string) (map[string]string, error) {
+	rows, err := db.Conn.Query(`SELECT email, password, roleid 
 						   FROM users
-						   WHERE username = $1`, username)
+						   WHERE email = $1`, email)
 	if err != nil {
 		return nil, err
 	}

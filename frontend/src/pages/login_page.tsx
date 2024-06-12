@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './login_style.scss';
-import Header from './components/header/Header';
+import Header from '../components/header/Header';
+import Footer_small from '../components/footer_small/footer_small';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
@@ -32,12 +33,7 @@ root.render(
           <RegisterLink />
         </div>
       </main>
-      <footer className="footer">
-        <p>
-          © Сделано командой "Малосольные огурчики!!!" в рамках Хакатона:
-          "Лидеры цифровой трансформации"
-        </p>
-      </footer>
+      <Footer_small/>
     </div>
   </React.StrictMode>
 );

@@ -12,13 +12,19 @@ message IsAdminResponse {
 }
 
 message RegistrationRequest {
-    string username = 1;
-    string password = 2;
-    int64  roleId = 3;
+    string surname = 1;
+    string name = 2;
+    string patronymic = 3;
+    string email = 4;
+    string password = 5;
+    int64  roleId = 6;
+    string birthdate = 7;
+    string photourl = 8;
+    bool push = 9;
 }
 
 message LoginRequest {
-  string username = 1;
+  string email = 1;
   string password = 2;
 }
 
