@@ -1,4 +1,4 @@
-package tests
+package auth_tests
 
 import (
 	"log"
@@ -13,25 +13,20 @@ import (
 
 func TestAuth(t *testing.T) {
 	ctx, st := suite.New(t)
+	ClearTable("users")
 
-	req := &pbAuth.AuthRequest{
+	RegReq := &pbAuth.RegistrationRequest{
 		Username: gofakeit.Name(),
 		Password: gofakeit.Password(true, true, true, true, false, 10),
+		RoleId:   1,
 	}
-	exceptedKey, _ := jwt.Keygen(req.Username, req.Password)
+
+	exceptedKey, _ := jwt.Keygen(RegReq.Username, RegReq.Password, st.Cfg.JwtSecret)
 
 	t.Run("NewUserRegistration Test", func(t *testing.T) {
-		response, err := st.AuthClient.Registration(ctx, req)
+		response, err := st.AuthClient.Registration(ctx, RegReq)
 		if err != nil {
 			log.Fatalf("Error when calling Registration: %v", err)
-		}
-
-		assert.Equal(t, exceptedKey, response.Key)
-	})
-	t.Run("UserLogin Test", func(t *testing.T) {
-		response, err := st.AuthClient.Login(ctx, req)
-		if err != nil {
-			log.Fatalf("Error when calling Login: %v", err)
 		}
 
 		assert.Equal(t, exceptedKey, response.Key)
