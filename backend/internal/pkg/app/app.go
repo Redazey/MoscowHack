@@ -3,25 +3,27 @@ package app
 import (
 	"log"
 	"moscowhack/config"
+	pbAuth "moscowhack/gen/go/auth"
 	pbNews "moscowhack/gen/go/news"
 	pbVacancies "moscowhack/gen/go/vacancies"
+	"moscowhack/internal/app/endpoint/grpcAuth"
 	"moscowhack/internal/app/endpoint/grpcNews"
 	"moscowhack/internal/app/endpoint/grpcVacancies"
 	"moscowhack/internal/app/lib/cacher"
+	"moscowhack/internal/app/service/auth"
 	"moscowhack/internal/app/service/news"
 	"moscowhack/internal/app/service/vacancies"
 	"moscowhack/pkg/cache"
 	"moscowhack/pkg/db"
 	"moscowhack/pkg/logger"
 	"net"
-	_ "net/http/pprof"
 
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
 
 type App struct {
-	//auth *auth.Service
+	auth      *auth.Service
 	news      *news.Service
 	vacancies *vacancies.Service
 
@@ -43,7 +45,7 @@ func New() (*App, error) {
 	a.server = grpc.NewServer()
 
 	// обьявляем сервисы
-	a.auth = auth.New(cfg)
+	a.auth = auth.New()
 	a.news = news.New()
 	a.vacancies = vacancies.New()
 
@@ -51,7 +53,7 @@ func New() (*App, error) {
 	serviceAuth := &grpcAuth.Endpoint{
 		Auth: a.auth,
 	}
-	pbAuth.RegisterAuthServiceServer(a.server, serviceAuth)*/
+	pbAuth.RegisterAuthServiceServer(a.server, serviceAuth)
 
 	serviceNews := &grpcNews.Endpoint{
 		News: a.news,

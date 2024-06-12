@@ -3,6 +3,8 @@ package news
 import (
 	"context"
 	"fmt"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"log"
 	pb "moscowhack/gen/go/news"
 	"moscowhack/pkg/cache"
@@ -28,6 +30,10 @@ func (s *Service) GetNewsService(ctx context.Context) (map[string]*pb.GetNewsIte
 		newsMap, err = cache.ReadCache("news")
 		if err != nil {
 			return nil, err
+		}
+
+		if _, notFound := newsMap["notFound"]; notFound {
+			return nil, status.Error(codes.NotFound, "нет значений в БД")
 		}
 
 		newsContentMap := make(map[string]*pb.GetNewsItem)
@@ -63,6 +69,7 @@ func (s *Service) GetNewsService(ctx context.Context) (map[string]*pb.GetNewsIte
 	}
 	defer rows.Close()
 
+	found := false
 	for rows.Next() {
 		var id int32
 		var title, text, datetime, categories string
@@ -84,6 +91,13 @@ func (s *Service) GetNewsService(ctx context.Context) (map[string]*pb.GetNewsIte
 			"datetime":   datetime,
 			"categories": categories,
 		}
+
+		found = true
+	}
+
+	if !found {
+		newsMap["notFound"] = map[string]interface{}{"message": "нет значений в БД"}
+		return nil, status.Error(codes.NotFound, "нет значений в БД")
 	}
 
 	err = cache.SaveCache("news", newsMap)
@@ -122,6 +136,10 @@ func (s *Service) GetNewsByIdService(ctx context.Context, id int32) (*pb.GetNews
 			return nil, err
 		}
 
+		if _, notFound := newsMap["notFound"]; notFound {
+			return nil, status.Error(codes.NotFound, "нет значений в БД")
+		}
+
 		newsContent := &pb.GetNewsByIdResponse{
 			Title:      newsMap[fmt.Sprint(id)]["title"].(string),
 			Text:       newsMap[fmt.Sprint(id)]["text"].(string),
@@ -146,8 +164,9 @@ func (s *Service) GetNewsByIdService(ctx context.Context, id int32) (*pb.GetNews
 	}
 	defer rows.Close()
 
-	for rows.Next() {
-		var title, text, datetime, categories string
+	found := false
+	var title, text, datetime, categories string
+	if rows.Next() {
 		err := rows.Scan(
 			&title,
 			&text,
@@ -157,13 +176,19 @@ func (s *Service) GetNewsByIdService(ctx context.Context, id int32) (*pb.GetNews
 		if err != nil {
 			return nil, err
 		}
+		found = true
+	}
 
-		newsMap[fmt.Sprint(id)] = map[string]interface{}{
-			"title":      title,
-			"text":       text,
-			"datetime":   datetime,
-			"categories": categories,
-		}
+	if !found {
+		newsMap["notFound"] = map[string]interface{}{"message": "нет значений в БД"}
+		return nil, status.Error(codes.NotFound, "нет значений в БД")
+	}
+
+	newsMap[fmt.Sprint(id)] = map[string]interface{}{
+		"title":      title,
+		"text":       text,
+		"datetime":   datetime,
+		"categories": categories,
 	}
 
 	err = cache.SaveCache("news_"+fmt.Sprint(id), newsMap)
@@ -190,6 +215,10 @@ func (s *Service) GetNewsByCategoryService(ctx context.Context, categoryId strin
 		newsMap, err = cache.ReadCache("news_category_" + categoryId)
 		if err != nil {
 			return nil, err
+		}
+
+		if _, notFound := newsMap["notFound"]; notFound {
+			return nil, status.Error(codes.NotFound, "нет значений в БД")
 		}
 
 		newsContentMap := make(map[string]*pb.GetNewsItem)
@@ -224,6 +253,7 @@ func (s *Service) GetNewsByCategoryService(ctx context.Context, categoryId strin
 	}
 	defer rows.Close()
 
+	found := false
 	for rows.Next() {
 		var id int32
 		var title, text, datetime, categories string
@@ -245,6 +275,13 @@ func (s *Service) GetNewsByCategoryService(ctx context.Context, categoryId strin
 			"datetime":   datetime,
 			"categories": categories,
 		}
+
+		found = true
+	}
+
+	if !found {
+		newsMap["notFound"] = map[string]interface{}{"message": "нет значений в БД"}
+		return nil, status.Error(codes.NotFound, "нет значений в БД")
 	}
 
 	err = cache.SaveCache("news_category_"+fmt.Sprint(categoryId), newsMap)
@@ -357,6 +394,24 @@ func (s *Service) DelNewsService(ctx context.Context, newsID int32) error {
 
 	// Фиксация транзакции
 	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	// Очистка всего кеша
+	err = cache.DeleteCache("news")
+	if err != nil {
+		return err
+	}
+
+	// Очистка кеша категорий
+	err = cache.DeleteCacheByPattern("news_category_*")
+	if err != nil {
+		return err
+	}
+
+	// Очистка кеша конкретной новости
+	err = cache.DeleteCache("news_" + fmt.Sprint(newsID))
 	if err != nil {
 		return err
 	}
