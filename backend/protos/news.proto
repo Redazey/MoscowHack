@@ -44,6 +44,7 @@ message GetNewsItem {
 
 // Вывод новости по Id
 message GetNewsByIdResponse {
+    int32 id = 1;
     string title = 2;
     string text = 3;
     string datetime = 4;
