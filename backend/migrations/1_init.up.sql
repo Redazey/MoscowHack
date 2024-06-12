@@ -118,8 +118,8 @@ create table specializations
 CREATE TABLE "WorkingConditions" (
      id SERIAL PRIMARY KEY,                       -- Идентификатор записи
      "workMode" BOOLEAN NOT NULL,              -- Удаленная работа или работа из офиса
-     salary DECIMAL(10, 2) NOT NULL,              -- Заработная плата
-     "workHoursPerDay" DECIMAL(4, 2) NOT NULL,   -- Количество часов работы в день
+     salary NUMERIC NOT NULL,              -- Заработная плата
+     "workHoursPerDay" INTEGER NOT NULL,   -- Количество часов работы в день
      "workSchedule" VARCHAR(10) NOT NULL,          -- График работы (5/2, 2/2 и т.д.)
      "salaryTaxIncluded" BOOLEAN NOT NULL         -- ЗП с вычетом налога (TRUE) или без вычета налога (FALSE)
 );

@@ -189,6 +189,50 @@ func ReadCache(table string) (map[string]map[string]interface{}, error) {
 }
 
 /*
+Функция для удаления значений по хэш-ключу
+*/
+func DeleteCache(table string) error {
+	// Удаляем хэш целиком
+	err := Rdb.Del(Ctx, table).Err()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+/*
+Функция для удаления значений по шаблону
+
+пример pattern: news_category_*, где * - любое подстановочное значение
+*/
+func DeleteCacheByPattern(pattern string) error {
+	var cursor uint64
+	for {
+		// Ищем ключи по шаблону
+		keys, nextCursor, err := Rdb.Scan(Ctx, cursor, pattern, 10).Result()
+		if err != nil {
+			return err
+		}
+
+		// Удаляем найденные ключи
+		if len(keys) > 0 {
+			err = Rdb.Del(Ctx, keys...).Err()
+			if err != nil {
+				return err
+			}
+		}
+
+		// Обновляем курсор
+		cursor = nextCursor
+		if cursor == 0 {
+			break
+		}
+	}
+
+	return nil
+}
+
+/*
 Функция, которая удаляет все протухшие ключ-значения из выбранной таблицы
 
 автоматически применяется при сохранении кэша при помощи функции SaveCache

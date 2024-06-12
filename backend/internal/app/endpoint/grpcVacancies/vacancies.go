@@ -8,11 +8,11 @@ import (
 )
 
 type Vacancies interface {
-	GetVacanciesService(ctx context.Context) (map[string]*pb.VacanciesItem, error)
-	GetVacanciesByIdService(ctx context.Context, id int32) (map[string]*pb.VacanciesIdItem, error)
-	GetVacanciesByFilterService(ctx context.Context, vacanciesMap map[string]string) (map[string]*pb.VacanciesItem, error)
+	GetVacanciesService(ctx context.Context) (map[string]*pb.GetVacanciesItem, error)
+	GetVacanciesByIdService(ctx context.Context, id int32) (*pb.GetVacanciesByIdResponse, error)
+	GetVacanciesByFilterService(ctx context.Context, vacanciesMap map[string]string) (map[string]*pb.GetVacanciesItem, error)
 	AddVacanciesService(ctx context.Context, vacanciesMap map[string]string) (int32, error)
-	//DelVacanciesService(ctx context.Context, newsID int32) error
+	//DelVacanciesService(ctx context.Context, vacanciesID int32) error
 }
 
 type Endpoint struct {
@@ -26,37 +26,37 @@ func New(vacancies Vacancies) *Endpoint {
 	}
 }
 
-func (e *Endpoint) GetVacancies(ctx context.Context, req *pb.VacanciesRequest) (*pb.VacanciesResponse, error) {
+func (e *Endpoint) GetVacancies(ctx context.Context, req *pb.GetVacanciesRequest) (*pb.GetVacanciesResponse, error) {
 	vacanciesData, err := e.Vacancies.GetVacanciesService(ctx)
 	if err != nil {
-		return &pb.VacanciesResponse{}, err
+		return &pb.GetVacanciesResponse{}, err
 	}
 
-	return &pb.VacanciesResponse{Vacancies: vacanciesData}, nil
+	return &pb.GetVacanciesResponse{Vacancies: vacanciesData}, nil
 }
 
-func (e *Endpoint) GetVacanciesById(ctx context.Context, req *pb.VacanciesRequest) (*pb.VacanciesResponse, error) {
+func (e *Endpoint) GetVacanciesById(ctx context.Context, req *pb.GetVacanciesByIdRequest) (*pb.GetVacanciesByIdResponse, error) {
 	if req.Id == 0 {
 		return nil, errors.New("id вакансии не указан")
 	}
 
 	newsData, err := e.Vacancies.GetVacanciesByIdService(ctx, req.Id)
 	if err != nil {
-		return &pb.VacanciesResponse{}, err
+		return &pb.GetVacanciesByIdResponse{}, err
 	}
 
-	return &pb.VacanciesResponse{Vacancies: newsData}, nil
+	return newsData, nil
 }
 
-func (e *Endpoint) GetVacanciesByFilter(ctx context.Context, req *pb.VacanciesFilterRequest) (*pb.VacanciesResponse, error) {
+func (e *Endpoint) GetVacanciesByFilter(ctx context.Context, req *pb.GetFilterVacanciesRequest) (*pb.GetVacanciesResponse, error) {
 	vacanciesMap := map[string]string{
 		"departmentCompany":   req.DepartmentCompany,
 		"categoryVacancies":   req.CategoryVacancies,
-		"experienceStartYear": string(req.ExperienceStartYear),
-		"experienceEndYear":   string(req.ExperienceEndYear),
-		"educationId":         string(req.EducationId),
-		"salary":              string(req.Salary),
-		"workHoursPerDay":     string(req.WorkHoursPerDay),
+		"experienceStartYear": fmt.Sprint(req.ExperienceStartYear),
+		"experienceEndYear":   fmt.Sprint(req.ExperienceEndYear),
+		"educationId":         fmt.Sprint(req.EducationId),
+		"salary":              fmt.Sprint(req.Salary),
+		"workHoursPerDay":     fmt.Sprint(req.WorkHoursPerDay),
 		"workSchedule":        req.WorkSchedule,
 		"salaryTaxIncluded":   fmt.Sprint(req.SalaryTaxIncluded),
 		"geolocationCompany":  req.GeolocationCompany,
@@ -64,24 +64,23 @@ func (e *Endpoint) GetVacanciesByFilter(ctx context.Context, req *pb.VacanciesFi
 
 	newsData, err := e.Vacancies.GetVacanciesByFilterService(ctx, vacanciesMap)
 	if err != nil {
-		return &pb.VacanciesResponse{}, err
+		return &pb.GetVacanciesResponse{}, err
 	}
 
-	return &pb.VacanciesResponse{Vacancies: newsData}, nil
+	return &pb.GetVacanciesResponse{Vacancies: newsData}, nil
 }
 
-func (e *Endpoint) AddVacancies(ctx context.Context, req *pb.VacanciesIdItem) (*pb.ChangeVacanciesResponse, error) {
+func (e *Endpoint) AddVacancies(ctx context.Context, req *pb.AddVacanciesRequest) (*pb.AddVacanciesResponse, error) {
 	vacanciesMap := map[string]string{
-		"id":                 string(req.Id),
 		"name":               req.Name,
 		"departmentCompany":  req.DepartmentCompany,
 		"description":        req.Description,
 		"categoryVacancies":  req.CategoryVacancies,
-		"experienceYears":    string(req.ExperienceYears),
-		"educationId":        string(req.EducationId),
+		"experienceYears":    fmt.Sprint(req.ExperienceYears),
+		"educationId":        fmt.Sprint(req.EducationId),
 		"workMode":           fmt.Sprint(req.WorkMode),
-		"salary":             string(req.Salary),
-		"workHoursPerDay":    string(req.WorkHoursPerDay),
+		"salary":             fmt.Sprint(req.Salary),
+		"workHoursPerDay":    fmt.Sprint(req.WorkHoursPerDay),
 		"workSchedule":       req.WorkSchedule,
 		"salaryTaxIncluded":  fmt.Sprint(req.SalaryTaxIncluded),
 		"geolocationCompany": req.GeolocationCompany,
@@ -93,21 +92,21 @@ func (e *Endpoint) AddVacancies(ctx context.Context, req *pb.VacanciesIdItem) (*
 
 	id, err := e.Vacancies.AddVacanciesService(ctx, vacanciesMap)
 	if err != nil {
-		return &pb.ChangeVacanciesResponse{Err: error.Error(err)}, err
+		return &pb.AddVacanciesResponse{Err: error.Error(err)}, err
 	}
 
-	return &pb.ChangeVacanciesResponse{Id: id}, nil
+	return &pb.AddVacanciesResponse{Id: id}, nil
 }
 
-/*func (e *Endpoint) DelVacancies(ctx context.Context, req *pb.VacanciesRequest) (*pb.ChangeVacanciesResponse, error) {
+/*func (e *Endpoint) DelVacancies(ctx context.Context, req *pb.DelVacanciesRequest) (*pb.DelVacanciesResponse, error) {
 	if req.Id == 0 {
 		return nil, errors.New("id новости не указан")
 	}
 
 	err := e.Vacancies.DelVacanciesService(ctx, req.Id)
 	if err != nil {
-		return &pb.ChangeVacanciesResponse{Err: error.Error(err)}, err
+		return &pb.DelVacanciesResponse{Err: error.Error(err)}, err
 	}
 
-	return &pb.ChangeVacanciesResponse{Err: ""}, nil
+	return &pb.DelVacanciesResponse{Err: ""}, nil
 }*/
