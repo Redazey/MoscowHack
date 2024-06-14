@@ -8,11 +8,11 @@ import (
 )
 
 type Vacancies interface {
-	GetVacanciesService(ctx context.Context) (map[string]*pb.GetVacanciesItem, error)
-	GetVacanciesByIdService(ctx context.Context, id int32) (*pb.GetVacanciesByIdResponse, error)
-	GetVacanciesByFilterService(ctx context.Context, vacanciesMap map[string]string) (map[string]*pb.GetVacanciesItem, error)
-	AddVacanciesService(ctx context.Context, vacanciesMap map[string]string) (int32, error)
-	//DelVacanciesService(ctx context.Context, vacanciesID int32) error
+	GetVacanciesService() (map[string]*pb.GetVacanciesItem, error)
+	GetVacanciesByIdService(int32) (*pb.GetVacanciesByIdResponse, error)
+	GetVacanciesByFilterService(map[string]string) (map[string]*pb.GetVacanciesItem, error)
+	AddVacanciesService(map[string]string) (int32, error)
+	DelVacanciesService(int32) error
 }
 
 type Endpoint struct {
@@ -20,14 +20,8 @@ type Endpoint struct {
 	pb.UnimplementedVacanciesServiceServer
 }
 
-func New(vacancies Vacancies) *Endpoint {
-	return &Endpoint{
-		Vacancies: vacancies,
-	}
-}
-
-func (e *Endpoint) GetVacancies(ctx context.Context, req *pb.GetVacanciesRequest) (*pb.GetVacanciesResponse, error) {
-	vacanciesData, err := e.Vacancies.GetVacanciesService(ctx)
+func (e *Endpoint) GetVacancies(_ context.Context, _ *pb.GetVacanciesRequest) (*pb.GetVacanciesResponse, error) {
+	vacanciesData, err := e.Vacancies.GetVacanciesService()
 	if err != nil {
 		return &pb.GetVacanciesResponse{}, err
 	}
@@ -35,12 +29,12 @@ func (e *Endpoint) GetVacancies(ctx context.Context, req *pb.GetVacanciesRequest
 	return &pb.GetVacanciesResponse{Vacancies: vacanciesData}, nil
 }
 
-func (e *Endpoint) GetVacanciesById(ctx context.Context, req *pb.GetVacanciesByIdRequest) (*pb.GetVacanciesByIdResponse, error) {
+func (e *Endpoint) GetVacanciesById(_ context.Context, req *pb.GetVacanciesByIdRequest) (*pb.GetVacanciesByIdResponse, error) {
 	if req.Id == 0 {
 		return nil, errors.New("id вакансии не указан")
 	}
 
-	newsData, err := e.Vacancies.GetVacanciesByIdService(ctx, req.Id)
+	newsData, err := e.Vacancies.GetVacanciesByIdService(req.Id)
 	if err != nil {
 		return &pb.GetVacanciesByIdResponse{}, err
 	}
@@ -48,7 +42,7 @@ func (e *Endpoint) GetVacanciesById(ctx context.Context, req *pb.GetVacanciesByI
 	return newsData, nil
 }
 
-func (e *Endpoint) GetVacanciesByFilter(ctx context.Context, req *pb.GetFilterVacanciesRequest) (*pb.GetVacanciesResponse, error) {
+func (e *Endpoint) GetVacanciesByFilter(_ context.Context, req *pb.GetFilterVacanciesRequest) (*pb.GetVacanciesResponse, error) {
 	vacanciesMap := map[string]string{
 		"departmentCompany":   req.DepartmentCompany,
 		"categoryVacancies":   req.CategoryVacancies,
@@ -62,7 +56,7 @@ func (e *Endpoint) GetVacanciesByFilter(ctx context.Context, req *pb.GetFilterVa
 		"geolocationCompany":  req.GeolocationCompany,
 	}
 
-	newsData, err := e.Vacancies.GetVacanciesByFilterService(ctx, vacanciesMap)
+	newsData, err := e.Vacancies.GetVacanciesByFilterService(vacanciesMap)
 	if err != nil {
 		return &pb.GetVacanciesResponse{}, err
 	}
@@ -70,7 +64,7 @@ func (e *Endpoint) GetVacanciesByFilter(ctx context.Context, req *pb.GetFilterVa
 	return &pb.GetVacanciesResponse{Vacancies: newsData}, nil
 }
 
-func (e *Endpoint) AddVacancies(ctx context.Context, req *pb.AddVacanciesRequest) (*pb.AddVacanciesResponse, error) {
+func (e *Endpoint) AddVacancies(_ context.Context, req *pb.AddVacanciesRequest) (*pb.AddVacanciesResponse, error) {
 	vacanciesMap := map[string]string{
 		"name":               req.Name,
 		"departmentCompany":  req.DepartmentCompany,
@@ -90,7 +84,7 @@ func (e *Endpoint) AddVacancies(ctx context.Context, req *pb.AddVacanciesRequest
 		"databaseStack":      req.DatabaseStack,
 	}
 
-	id, err := e.Vacancies.AddVacanciesService(ctx, vacanciesMap)
+	id, err := e.Vacancies.AddVacanciesService(vacanciesMap)
 	if err != nil {
 		return &pb.AddVacanciesResponse{Err: error.Error(err)}, err
 	}
@@ -98,15 +92,15 @@ func (e *Endpoint) AddVacancies(ctx context.Context, req *pb.AddVacanciesRequest
 	return &pb.AddVacanciesResponse{Id: id}, nil
 }
 
-/*func (e *Endpoint) DelVacancies(ctx context.Context, req *pb.DelVacanciesRequest) (*pb.DelVacanciesResponse, error) {
+func (e *Endpoint) DelVacancies(_ context.Context, req *pb.DelVacanciesRequest) (*pb.DelVacanciesResponse, error) {
 	if req.Id == 0 {
 		return nil, errors.New("id новости не указан")
 	}
 
-	err := e.Vacancies.DelVacanciesService(ctx, req.Id)
+	err := e.Vacancies.DelVacanciesService(req.Id)
 	if err != nil {
 		return &pb.DelVacanciesResponse{Err: error.Error(err)}, err
 	}
 
 	return &pb.DelVacanciesResponse{Err: ""}, nil
-}*/
+}

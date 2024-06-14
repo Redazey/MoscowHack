@@ -11,9 +11,9 @@ import (
 )
 
 type Auth interface {
-	UserLogin(context.Context, string, string) (string, error)
-	NewUserRegistration(context.Context, string, string) (string, error)
-	IsAdmin(context.Context, string) (bool, error)
+	UserLogin(string, string) (string, error)
+	NewUserRegistration(string, string) (string, error)
+	IsAdmin(string) (bool, error)
 }
 
 type Endpoint struct {
@@ -21,13 +21,7 @@ type Endpoint struct {
 	pb.UnimplementedAuthServiceServer
 }
 
-func New(auth Auth) *Endpoint {
-	return &Endpoint{
-		Auth: auth,
-	}
-}
-
-func (e *Endpoint) Login(ctx context.Context, req *pb.LoginRequest) (*pb.AuthResponse, error) {
+func (e *Endpoint) Login(_ context.Context, req *pb.LoginRequest) (*pb.AuthResponse, error) {
 	if req.Email == "" {
 		return nil, status.Error(codes.InvalidArgument, "username пустое значение")
 	}
@@ -36,7 +30,7 @@ func (e *Endpoint) Login(ctx context.Context, req *pb.LoginRequest) (*pb.AuthRes
 		return nil, status.Error(codes.InvalidArgument, "password пустое значение")
 	}
 
-	token, err := e.Auth.UserLogin(ctx, req.Email, req.Password)
+	token, err := e.Auth.UserLogin(req.Email, req.Password)
 	if err != nil {
 		if errors.Is(err, errorz.ErrUserNotFound) {
 			return nil, status.Error(codes.InvalidArgument, "неверный username или password")
@@ -48,7 +42,7 @@ func (e *Endpoint) Login(ctx context.Context, req *pb.LoginRequest) (*pb.AuthRes
 	return &pb.AuthResponse{Key: token}, nil
 }
 
-func (e *Endpoint) Registration(ctx context.Context, req *pb.RegistrationRequest) (*pb.AuthResponse, error) {
+func (e *Endpoint) Registration(_ context.Context, req *pb.RegistrationRequest) (*pb.AuthResponse, error) {
 	if req.Email == "" {
 		return nil, status.Error(codes.InvalidArgument, "username пустое значение")
 	}
@@ -57,7 +51,7 @@ func (e *Endpoint) Registration(ctx context.Context, req *pb.RegistrationRequest
 		return nil, status.Error(codes.InvalidArgument, "password пустое значение")
 	}
 
-	token, err := e.Auth.NewUserRegistration(ctx, req.Email, req.Password)
+	token, err := e.Auth.NewUserRegistration(req.Email, req.Password)
 	if err != nil {
 		if errors.Is(err, errorz.ErrUserExists) {
 			return nil, status.Error(codes.InvalidArgument, "пользователь с таким именем уже существует")
@@ -69,12 +63,12 @@ func (e *Endpoint) Registration(ctx context.Context, req *pb.RegistrationRequest
 	return &pb.AuthResponse{Key: token}, nil
 }
 
-func (e *Endpoint) IsAdmin(ctx context.Context, req *pb.IsAdminRequest) (*pb.IsAdminResponse, error) {
+func (e *Endpoint) IsAdmin(_ context.Context, req *pb.IsAdminRequest) (*pb.IsAdminResponse, error) {
 	if req.JwtToken == "" {
 		return nil, status.Error(codes.InvalidArgument, "jwtToken пустое значение")
 	}
 
-	isAdmin, err := e.Auth.IsAdmin(ctx, req.JwtToken)
+	isAdmin, err := e.Auth.IsAdmin(req.JwtToken)
 	if err != nil {
 		if errors.Is(err, errorz.ErrUserNotFound) {
 			return nil, status.Error(codes.InvalidArgument, "пользователь с таким именем не существует")

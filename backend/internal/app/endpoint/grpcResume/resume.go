@@ -19,12 +19,6 @@ type Endpoint struct {
 	pb.UnimplementedResumeServiceServer
 }
 
-func New(resumeParser Resume) *Endpoint {
-	return &Endpoint{
-		Resume: resumeParser,
-	}
-}
-
 func (e *Endpoint) ParseResume(ctx context.Context, req *pb.ResumeRequest) (*pb.ResumeResponse, error) {
 	if req.ResumeDoc == nil {
 		return nil, status.Error(codes.InvalidArgument, "username пустое значение")

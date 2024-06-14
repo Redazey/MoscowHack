@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"context"
 	"database/sql"
 	"moscowhack/config"
 	"moscowhack/internal/app/errorz"
@@ -23,7 +22,7 @@ func New(cfg *config.Configuration) *Service {
 	}
 }
 
-func (s *Service) UserLogin(ctx context.Context, email string, password string) (string, error) {
+func (s *Service) UserLogin(email string, password string) (string, error) {
 	msg := map[string]string{
 		"email":    email,
 		"password": password,
@@ -65,7 +64,7 @@ func (s *Service) UserLogin(ctx context.Context, email string, password string) 
 	return key, nil
 }
 
-func (s *Service) NewUserRegistration(ctx context.Context, email string, password string) (string, error) {
+func (s *Service) NewUserRegistration(email string, password string) (string, error) {
 	msg := map[string]string{
 		"email":    email,
 		"password": password,
@@ -104,7 +103,7 @@ func (s *Service) NewUserRegistration(ctx context.Context, email string, passwor
 	return key, nil
 }
 
-func (s *Service) IsAdmin(ctx context.Context, tokenString string) (bool, error) {
+func (s *Service) IsAdmin(tokenString string) (bool, error) {
 	UserData, err := jwt.UserDataFromJwt(tokenString, s.Cfg.JwtSecret)
 	if err != nil {
 		return false, err
