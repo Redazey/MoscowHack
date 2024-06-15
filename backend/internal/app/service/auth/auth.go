@@ -102,7 +102,7 @@ func (s *Service) NewUserRegistration(ctx context.Context, req *pb.RegistrationR
 	return key, nil
 }
 
-func (s *Service) IsAdmin(ctx context.Context, tokenString string) (bool, error) {
+func (s *Service) IsAdmin(tokenString string) (bool, error) {
 	UserData, err := jwt.UserDataFromJwt(tokenString, s.Cfg.JwtSecret)
 	if err != nil {
 		return false, err

@@ -36,7 +36,7 @@ message AddVacanciesRequest {
   bool workMode = 7;
   int32 salary = 8;
   int32 workHoursPerDay = 9;
-  int32 workSchedule = 10;
+  string workSchedule = 10;
   bool salaryTaxIncluded = 11;
   string geolocationCompany = 12;
   string skills = 13;
@@ -68,17 +68,16 @@ message GetVacanciesItem {
 
 // Вывод вакансий по Id
 message GetVacanciesByIdResponse {
-  int32 id = 1;
   string name = 2;
   string departmentCompany = 3;
   string description = 4;
   string categoryVacancies = 5;
   int32 experienceYears = 6;
-  int32 educationId = 7;
+  string educationName = 7;
   bool workMode = 8;
   int32 salary = 9;
   int32 workHoursPerDay = 10;
-  int32 workSchedule = 11;
+  string workSchedule = 11;
   bool salaryTaxIncluded = 12;
   string geolocationCompany = 13;
   string skills = 14;

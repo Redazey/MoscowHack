@@ -7,11 +7,11 @@ import (
 )
 
 type News interface {
-	GetNewsService(ctx context.Context) (map[string]*pb.GetNewsItem, error)
-	GetNewsByIdService(ctx context.Context, id int32) (*pb.GetNewsByIdResponse, error)
-	GetNewsByCategoryService(ctx context.Context, categoryId string) (map[string]*pb.GetNewsItem, error)
-	AddNewsService(ctx context.Context, title string, text string, datetime string, categories string) (int32, error)
-	DelNewsService(ctx context.Context, newsID int32) error
+	GetNewsService() (map[string]*pb.GetNewsItem, error)
+	GetNewsByIdService(int32) (*pb.GetNewsByIdResponse, error)
+	GetNewsByCategoryService(string) (map[string]*pb.GetNewsItem, error)
+	AddNewsService(string, string, string, string) (int32, error)
+	DelNewsService(int32) error
 }
 
 type Endpoint struct {
@@ -19,14 +19,8 @@ type Endpoint struct {
 	pb.UnimplementedNewsServiceServer
 }
 
-func New(news News) *Endpoint {
-	return &Endpoint{
-		News: news,
-	}
-}
-
-func (e *Endpoint) GetNews(ctx context.Context, req *pb.GetNewsRequest) (*pb.GetNewsResponse, error) {
-	newsData, err := e.News.GetNewsService(ctx)
+func (e *Endpoint) GetNews(_ context.Context, _ *pb.GetNewsRequest) (*pb.GetNewsResponse, error) {
+	newsData, err := e.News.GetNewsService()
 	if err != nil {
 		return &pb.GetNewsResponse{}, err
 	}
@@ -34,12 +28,12 @@ func (e *Endpoint) GetNews(ctx context.Context, req *pb.GetNewsRequest) (*pb.Get
 	return &pb.GetNewsResponse{News: newsData}, nil
 }
 
-func (e *Endpoint) GetNewsById(ctx context.Context, req *pb.GetNewsByIdRequest) (*pb.GetNewsByIdResponse, error) {
+func (e *Endpoint) GetNewsById(_ context.Context, req *pb.GetNewsByIdRequest) (*pb.GetNewsByIdResponse, error) {
 	if req.Id == 0 {
 		return nil, errors.New("id новости не указан")
 	}
 
-	newsData, err := e.News.GetNewsByIdService(ctx, req.Id)
+	newsData, err := e.News.GetNewsByIdService(req.Id)
 	if err != nil {
 		return &pb.GetNewsByIdResponse{}, err
 	}
@@ -47,12 +41,12 @@ func (e *Endpoint) GetNewsById(ctx context.Context, req *pb.GetNewsByIdRequest) 
 	return newsData, nil
 }
 
-func (e *Endpoint) GetNewsByCategory(ctx context.Context, req *pb.GetNewsByCategoryRequest) (*pb.GetNewsResponse, error) {
+func (e *Endpoint) GetNewsByCategory(_ context.Context, req *pb.GetNewsByCategoryRequest) (*pb.GetNewsResponse, error) {
 	if req.Categories == "" {
 		return nil, errors.New("id категории не указан")
 	}
 
-	newsData, err := e.News.GetNewsByCategoryService(ctx, req.Categories)
+	newsData, err := e.News.GetNewsByCategoryService(req.Categories)
 	if err != nil {
 		return &pb.GetNewsResponse{}, err
 	}
@@ -60,7 +54,7 @@ func (e *Endpoint) GetNewsByCategory(ctx context.Context, req *pb.GetNewsByCateg
 	return &pb.GetNewsResponse{News: newsData}, nil
 }
 
-func (e *Endpoint) AddNews(ctx context.Context, req *pb.AddNewsRequest) (*pb.AddNewsResponse, error) {
+func (e *Endpoint) AddNews(_ context.Context, req *pb.AddNewsRequest) (*pb.AddNewsResponse, error) {
 	if req.Title == "" {
 		return nil, errors.New("заголовок новости не указан")
 	}
@@ -74,7 +68,7 @@ func (e *Endpoint) AddNews(ctx context.Context, req *pb.AddNewsRequest) (*pb.Add
 		return nil, errors.New("id категорий новости не указан")
 	}
 
-	id, err := e.News.AddNewsService(ctx, req.Title, req.Text, req.Datetime, req.Categories)
+	id, err := e.News.AddNewsService(req.Title, req.Text, req.Datetime, req.Categories)
 	if err != nil {
 		return &pb.AddNewsResponse{Err: error.Error(err)}, err
 	}
@@ -82,12 +76,12 @@ func (e *Endpoint) AddNews(ctx context.Context, req *pb.AddNewsRequest) (*pb.Add
 	return &pb.AddNewsResponse{Id: id}, nil
 }
 
-func (e *Endpoint) DelNews(ctx context.Context, req *pb.DelNewsRequest) (*pb.DelNewsResponse, error) {
+func (e *Endpoint) DelNews(_ context.Context, req *pb.DelNewsRequest) (*pb.DelNewsResponse, error) {
 	if req.Id == 0 {
 		return nil, errors.New("id новости не указан")
 	}
 
-	err := e.News.DelNewsService(ctx, req.Id)
+	err := e.News.DelNewsService(req.Id)
 	if err != nil {
 		return &pb.DelNewsResponse{Err: error.Error(err)}, err
 	}

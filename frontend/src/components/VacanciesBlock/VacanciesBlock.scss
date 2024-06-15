@@ -1,0 +1,46 @@
+.vacancies-block {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.vacancy-card {
+  width: 300px;
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.vacancy-card img {
+  width: 100%;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.vacancy-card h3 {
+  font-size: 1.2em;
+  color: #333;
+}
+
+.vacancy-card p {
+  margin-bottom: 10px;
+}
+
+button {
+  display: inline-block;
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background-color 0.3s, color 0.3s;
+}
+button:hover {
+  background-color: #333;
+  color: #fff;
+}

@@ -5,6 +5,10 @@ import (
 	"moscowhack/config"
 	pbAuth "moscowhack/gen/go/auth"
 	pbNews "moscowhack/gen/go/news"
+<<<<<<< HEAD
+=======
+	pbVacancies "moscowhack/gen/go/vacancies"
+>>>>>>> d08626531473f42acf1fcd31aea7296b3ecef074
 	"moscowhack/internal/app/endpoint/grpcAuth"
 	"moscowhack/internal/app/endpoint/grpcNews"
 	"moscowhack/internal/app/lib/cacher"
@@ -14,15 +18,15 @@ import (
 	"moscowhack/pkg/db"
 	"moscowhack/pkg/logger"
 	"net"
-	_ "net/http/pprof"
 
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
 
 type App struct {
-	auth *auth.Service
-	news *news.Service
+	auth      *auth.Service
+	news      *news.Service
+	vacancies *vacancies.Service
 
 	server *grpc.Server
 }

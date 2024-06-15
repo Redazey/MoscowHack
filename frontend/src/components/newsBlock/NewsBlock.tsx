@@ -16,7 +16,7 @@ const newsData = [
     {
         title: 'Новость 3',
         summary: 'Описание Новости 1 маленькое смешное',
-        image: '../../assets/Images/settings-cog.jpg',
+        image: 'https://gas-kvas.com/uploads/posts/2023-03/1678093271_gas-kvas-com-p-chernie-risunki-na-krasivom-fone-kraskami-36.jpg',
     }
 ];
 
