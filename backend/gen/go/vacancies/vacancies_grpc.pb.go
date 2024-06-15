@@ -19,11 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion8
 
 const (
-	VacanciesService_GetVacancies_FullMethodName           = "/vacancies.VacanciesService/GetVacancies"
-	VacanciesService_GetVacanciesById_FullMethodName       = "/vacancies.VacanciesService/GetVacanciesById"
-	VacanciesService_GetVacanciesByCategory_FullMethodName = "/vacancies.VacanciesService/GetVacanciesByCategory"
-	VacanciesService_AddVacancies_FullMethodName           = "/vacancies.VacanciesService/AddVacancies"
-	VacanciesService_DelVacancies_FullMethodName           = "/vacancies.VacanciesService/DelVacancies"
+	VacanciesService_GetVacancies_FullMethodName         = "/vacancies.VacanciesService/GetVacancies"
+	VacanciesService_GetVacanciesById_FullMethodName     = "/vacancies.VacanciesService/GetVacanciesById"
+	VacanciesService_GetVacanciesByFilter_FullMethodName = "/vacancies.VacanciesService/GetVacanciesByFilter"
+	VacanciesService_AddVacancies_FullMethodName         = "/vacancies.VacanciesService/AddVacancies"
+	VacanciesService_DelVacancies_FullMethodName         = "/vacancies.VacanciesService/DelVacancies"
 )
 
 // VacanciesServiceClient is the client API for VacanciesService service.
@@ -46,8 +46,9 @@ func NewVacanciesServiceClient(cc grpc.ClientConnInterface) VacanciesServiceClie
 }
 
 func (c *vacanciesServiceClient) GetVacancies(ctx context.Context, in *GetVacanciesRequest, opts ...grpc.CallOption) (*GetVacanciesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetVacanciesResponse)
-	err := c.cc.Invoke(ctx, "/vacancies.VacanciesService/GetVacancies", in, out, opts...)
+	err := c.cc.Invoke(ctx, VacanciesService_GetVacancies_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -55,8 +56,9 @@ func (c *vacanciesServiceClient) GetVacancies(ctx context.Context, in *GetVacanc
 }
 
 func (c *vacanciesServiceClient) GetVacanciesById(ctx context.Context, in *GetVacanciesByIdRequest, opts ...grpc.CallOption) (*GetVacanciesByIdResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetVacanciesByIdResponse)
-	err := c.cc.Invoke(ctx, "/vacancies.VacanciesService/GetVacanciesById", in, out, opts...)
+	err := c.cc.Invoke(ctx, VacanciesService_GetVacanciesById_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -64,8 +66,9 @@ func (c *vacanciesServiceClient) GetVacanciesById(ctx context.Context, in *GetVa
 }
 
 func (c *vacanciesServiceClient) GetVacanciesByFilter(ctx context.Context, in *GetFilterVacanciesRequest, opts ...grpc.CallOption) (*GetVacanciesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetVacanciesResponse)
-	err := c.cc.Invoke(ctx, "/vacancies.VacanciesService/GetVacanciesByFilter", in, out, opts...)
+	err := c.cc.Invoke(ctx, VacanciesService_GetVacanciesByFilter_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -73,8 +76,9 @@ func (c *vacanciesServiceClient) GetVacanciesByFilter(ctx context.Context, in *G
 }
 
 func (c *vacanciesServiceClient) AddVacancies(ctx context.Context, in *AddVacanciesRequest, opts ...grpc.CallOption) (*AddVacanciesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AddVacanciesResponse)
-	err := c.cc.Invoke(ctx, "/vacancies.VacanciesService/AddVacancies", in, out, opts...)
+	err := c.cc.Invoke(ctx, VacanciesService_AddVacancies_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -82,8 +86,9 @@ func (c *vacanciesServiceClient) AddVacancies(ctx context.Context, in *AddVacanc
 }
 
 func (c *vacanciesServiceClient) DelVacancies(ctx context.Context, in *DelVacanciesRequest, opts ...grpc.CallOption) (*DelVacanciesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DelVacanciesResponse)
-	err := c.cc.Invoke(ctx, "/vacancies.VacanciesService/DelVacancies", in, out, opts...)
+	err := c.cc.Invoke(ctx, VacanciesService_DelVacancies_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -180,7 +185,7 @@ func _VacanciesService_GetVacanciesByFilter_Handler(srv interface{}, ctx context
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/vacancies.VacanciesService/GetVacanciesByFilter",
+		FullMethod: VacanciesService_GetVacanciesByFilter_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(VacanciesServiceServer).GetVacanciesByFilter(ctx, req.(*GetFilterVacanciesRequest))

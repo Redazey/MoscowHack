@@ -7,9 +7,10 @@ import (
 
 // принимает таблицу как string и возвращает таблицу в виде map
 func FetchUserData(email string) (map[string]string, error) {
-	rows, err := db.Conn.Query(`SELECT email, password, roleid 
-						   FROM users
-						   WHERE email = $1`, email)
+	rows, err := db.Conn.Query(`SELECT users.*, userroles.roleid 
+		FROM users 
+		LEFT JOIN userroles ON users.id = userroles.userid
+		`, email)
 	if err != nil {
 		return nil, err
 	}

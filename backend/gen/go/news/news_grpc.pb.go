@@ -46,8 +46,9 @@ func NewNewsServiceClient(cc grpc.ClientConnInterface) NewsServiceClient {
 }
 
 func (c *newsServiceClient) GetNews(ctx context.Context, in *GetNewsRequest, opts ...grpc.CallOption) (*GetNewsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetNewsResponse)
-	err := c.cc.Invoke(ctx, "/news.NewsService/GetNews", in, out, opts...)
+	err := c.cc.Invoke(ctx, NewsService_GetNews_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -55,8 +56,9 @@ func (c *newsServiceClient) GetNews(ctx context.Context, in *GetNewsRequest, opt
 }
 
 func (c *newsServiceClient) GetNewsById(ctx context.Context, in *GetNewsByIdRequest, opts ...grpc.CallOption) (*GetNewsByIdResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetNewsByIdResponse)
-	err := c.cc.Invoke(ctx, "/news.NewsService/GetNewsById", in, out, opts...)
+	err := c.cc.Invoke(ctx, NewsService_GetNewsById_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -64,8 +66,9 @@ func (c *newsServiceClient) GetNewsById(ctx context.Context, in *GetNewsByIdRequ
 }
 
 func (c *newsServiceClient) GetNewsByCategory(ctx context.Context, in *GetNewsByCategoryRequest, opts ...grpc.CallOption) (*GetNewsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetNewsResponse)
-	err := c.cc.Invoke(ctx, "/news.NewsService/GetNewsByCategory", in, out, opts...)
+	err := c.cc.Invoke(ctx, NewsService_GetNewsByCategory_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -73,8 +76,9 @@ func (c *newsServiceClient) GetNewsByCategory(ctx context.Context, in *GetNewsBy
 }
 
 func (c *newsServiceClient) AddNews(ctx context.Context, in *AddNewsRequest, opts ...grpc.CallOption) (*AddNewsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AddNewsResponse)
-	err := c.cc.Invoke(ctx, "/news.NewsService/AddNews", in, out, opts...)
+	err := c.cc.Invoke(ctx, NewsService_AddNews_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -82,8 +86,9 @@ func (c *newsServiceClient) AddNews(ctx context.Context, in *AddNewsRequest, opt
 }
 
 func (c *newsServiceClient) DelNews(ctx context.Context, in *DelNewsRequest, opts ...grpc.CallOption) (*DelNewsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DelNewsResponse)
-	err := c.cc.Invoke(ctx, "/news.NewsService/DelNews", in, out, opts...)
+	err := c.cc.Invoke(ctx, NewsService_DelNews_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}

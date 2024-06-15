@@ -12,7 +12,7 @@ import (
 
 type Auth interface {
 	UserLogin(context.Context, string, string) (string, error)
-	NewUserRegistration(context.Context, string, string) (string, error)
+	NewUserRegistration(context.Context, *pb.RegistrationRequest) (string, error)
 	IsAdmin(context.Context, string) (bool, error)
 }
 
@@ -57,7 +57,7 @@ func (e *Endpoint) Registration(ctx context.Context, req *pb.RegistrationRequest
 		return nil, status.Error(codes.InvalidArgument, "password пустое значение")
 	}
 
-	token, err := e.Auth.NewUserRegistration(ctx, req.Email, req.Password)
+	token, err := e.Auth.NewUserRegistration(ctx, req)
 	if err != nil {
 		if errors.Is(err, errorz.ErrUserExists) {
 			return nil, status.Error(codes.InvalidArgument, "пользователь с таким именем уже существует")

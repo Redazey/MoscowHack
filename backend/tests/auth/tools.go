@@ -21,34 +21,62 @@ func MockUser(roleId int) (map[string]interface{}, error) {
 		"roleId":     roleId,
 	}
 
-	// SQL запрос для вставки данных
-	sqlStatement := `INSERT INTO Users (surname, name, patronymic, birthdate, photourl, push, email, password, roleId) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
-
 	// Выполнение SQL запроса
-	_, err := db.Conn.Exec(sqlStatement, UserData["surname"], UserData["name"], UserData["patronymic"],
+	_, err := db.Conn.Exec(
+		`INSERT IGNORE INTO users (surname, name, patronymic, birthdate, photourl, email, password, push) 
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+		UserData["surname"], UserData["name"], UserData["patronymic"],
 		UserData["birthdate"], UserData["photourl"], UserData["push"],
-		UserData["email"], UserData["password"], UserData["roleId"])
+		UserData["email"], UserData["password"], UserData["roleId"],
+	)
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Println("Данные успешно добавлены в таблицу Users")
+	// Добавляем роли
+	// Выполнение SQL запроса
+	_, err = db.Conn.Exec(
+		`INSERT IGNORE INTO roles (name) VALUES ('admin'), ('user')`,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	// Выполнение SQL скрипта для связывания пользователя с ролями
+	_, err = db.Conn.Exec(`
+		WITH new_user AS (
+			SELECT id FROM users WHERE email = $1
+		)
+		INSERT IGNORE INTO userroles (userid, roleid) 
+		SELECT new_user.id, roles.id 
+		FROM new_user, roles 
+		WHERE roles.name IN ('admin', 'user')`,
+		UserData["email"],
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println("Данные о пользователе успешно добавлены")
 
 	return UserData, nil
 }
 
 // Очищает таблицу в бд
-func ClearTable(table string) error {
-	// SQL запрос для очистки
-	sqlStatement := fmt.Sprintf(`DELETE FROM %s`, table)
+func ClearTable(tables []string) error {
+	for i := range tables {
+		// SQL запрос для очистки
+		sqlStatement := fmt.Sprintf(`DELETE FROM %s`, tables[i])
 
-	// Выполнение SQL запроса
-	_, err := db.Conn.Exec(sqlStatement)
-	if err != nil {
-		return err
+		// Выполнение SQL запроса
+		_, err := db.Conn.Exec(sqlStatement)
+		if err != nil {
+			return err
+		}
 	}
 
-	fmt.Println("Таблица очищена")
+	fmt.Println("Таблицы очищена")
 
 	return nil
 }

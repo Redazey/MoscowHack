@@ -56,7 +56,7 @@ columns - поля, по которым будет сгенерирован md5h
 	}
 	+ md5hash key
 */
-func ConvertMap(inputMap map[string]string, columns ...string) (map[string]map[string]interface{}, string) {
+func ConvertMap(inputMap map[string]interface{}, columns ...string) (map[string]map[string]interface{}, string) {
 	var mainKey string
 
 	hash := md5.Sum([]byte(strings.Join(columns, "")))
@@ -70,6 +70,16 @@ func ConvertMap(inputMap map[string]string, columns ...string) (map[string]map[s
 	}
 
 	return outputMap, mainKey
+}
+
+// Функция для получения хэш значения из вводимых полей
+func GetHash(columns ...string) string {
+	var hashKey string
+
+	hash := md5.Sum([]byte(strings.Join(columns, "")))
+	hashKey = hex.EncodeToString(hash[:])
+
+	return hashKey
 }
 
 /*
