@@ -66,7 +66,6 @@ npm run dev
 - Аксенов Илья - Backend-разработчик
 - Нешкреба Кирилл - Fullstack-разработчик
 - Назаренко Иван - Frontend-разработчик
-- Агабалаев Касым - Frontend-разработчик, дизайнер
 
 # Лицензия
 Этот проект лицензируется под лицензией MIT. Подробнее см. [LICENSE](https://github.com/Redazey/MoscowHack/blob/main/LICENSE).
