@@ -1,0 +1,636 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: ""
+    version: 0.0.1
+paths:
+    /auth/IsAdmin:
+        get:
+            tags:
+                - AuthService
+            operationId: AuthService_IsAdmin
+            parameters:
+                - name: jwtToken
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/IsAdminResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /auth/login:
+        get:
+            tags:
+                - AuthService
+            operationId: AuthService_Login
+            parameters:
+                - name: email
+                  in: query
+                  schema:
+                    type: string
+                - name: password
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AuthResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /auth/registration:
+        get:
+            tags:
+                - AuthService
+            operationId: AuthService_Registration
+            parameters:
+                - name: surname
+                  in: query
+                  schema:
+                    type: string
+                - name: name
+                  in: query
+                  schema:
+                    type: string
+                - name: patronymic
+                  in: query
+                  schema:
+                    type: string
+                - name: email
+                  in: query
+                  schema:
+                    type: string
+                - name: password
+                  in: query
+                  schema:
+                    type: string
+                - name: roleId
+                  in: query
+                  schema:
+                    type: string
+                - name: birthdate
+                  in: query
+                  schema:
+                    type: string
+                - name: photourl
+                  in: query
+                  schema:
+                    type: string
+                - name: push
+                  in: query
+                  schema:
+                    type: boolean
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AuthResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /news:
+        get:
+            tags:
+                - NewsService
+            operationId: NewsService_GetNews
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetNewsResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /news/add:
+        post:
+            tags:
+                - NewsService
+            operationId: NewsService_AddNews
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AddNewsRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AddNewsResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /news/category/{category}:
+        get:
+            tags:
+                - NewsService
+            operationId: NewsService_GetNewsByCategory
+            parameters:
+                - name: category
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: categories
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetNewsResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /news/del/{id}:
+        delete:
+            tags:
+                - NewsService
+            operationId: NewsService_DelNews
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DelNewsResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /news/id/{id}:
+        get:
+            tags:
+                - NewsService
+            operationId: NewsService_GetNewsById
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetNewsByIdResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /resume:
+        get:
+            tags:
+                - ResumeService
+            operationId: ResumeService_ParseResume
+            parameters:
+                - name: resumeDoc
+                  in: query
+                  schema:
+                    type: string
+                    format: bytes
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ResumeResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /vacancies:
+        get:
+            tags:
+                - VacanciesService
+            operationId: VacanciesService_GetVacancies
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetVacanciesResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /vacancies/add:
+        post:
+            tags:
+                - VacanciesService
+            operationId: VacanciesService_AddVacancies
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AddVacanciesRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AddVacanciesResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /vacancies/del/{id}:
+        delete:
+            tags:
+                - VacanciesService
+            operationId: VacanciesService_DelVacancies
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DelVacanciesResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /vacancies/filter:
+        get:
+            tags:
+                - VacanciesService
+            operationId: VacanciesService_GetVacanciesByFilter
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/GetFilterVacanciesRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetVacanciesResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /vacancies/id/{id}:
+        get:
+            tags:
+                - VacanciesService
+            operationId: VacanciesService_GetVacanciesById
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetVacanciesByIdResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+components:
+    schemas:
+        AddNewsRequest:
+            type: object
+            properties:
+                title:
+                    type: string
+                text:
+                    type: string
+                datetime:
+                    type: string
+                categories:
+                    type: string
+            description: Запрос на добавление новости
+        AddNewsResponse:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int32
+                err:
+                    type: string
+            description: Добавление новости
+        AddVacanciesRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                departmentCompany:
+                    type: string
+                description:
+                    type: string
+                categoryVacancies:
+                    type: string
+                experienceYears:
+                    type: integer
+                    format: int32
+                educationId:
+                    type: integer
+                    format: int32
+                workMode:
+                    type: boolean
+                salary:
+                    type: integer
+                    format: int32
+                workHoursPerDay:
+                    type: integer
+                    format: int32
+                workSchedule:
+                    type: string
+                salaryTaxIncluded:
+                    type: boolean
+                geolocationCompany:
+                    type: string
+                skills:
+                    type: string
+                backendStack:
+                    type: string
+                frontendStack:
+                    type: string
+                databaseStack:
+                    type: string
+            description: Запрос на добавление вакансии
+        AddVacanciesResponse:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int32
+                err:
+                    type: string
+            description: Вывод Id добавленной новости
+        AuthResponse:
+            type: object
+            properties:
+                key:
+                    type: string
+        DelNewsResponse:
+            type: object
+            properties:
+                err:
+                    type: string
+            description: Удаление новости
+        DelVacanciesResponse:
+            type: object
+            properties:
+                err:
+                    type: string
+            description: Вывод ошибки об удалении новости
+        GetFilterVacanciesRequest:
+            type: object
+            properties:
+                departmentCompany:
+                    type: string
+                categoryVacancies:
+                    type: string
+                experienceStartYear:
+                    type: integer
+                    format: int32
+                experienceEndYear:
+                    type: integer
+                    format: int32
+                educationId:
+                    type: integer
+                    format: int32
+                salary:
+                    type: integer
+                    format: int32
+                workHoursPerDay:
+                    type: integer
+                    format: int32
+                workSchedule:
+                    type: string
+                salaryTaxIncluded:
+                    type: boolean
+                geolocationCompany:
+                    type: string
+            description: Запрос отфильтрованных вакансий
+        GetNewsByIdResponse:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int32
+                title:
+                    type: string
+                text:
+                    type: string
+                datetime:
+                    type: string
+                categories:
+                    type: string
+            description: Вывод новости по Id
+        GetNewsItem:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int32
+                title:
+                    type: string
+                text:
+                    type: string
+                datetime:
+                    type: string
+                categories:
+                    type: string
+        GetNewsResponse:
+            type: object
+            properties:
+                news:
+                    type: object
+                    additionalProperties:
+                        $ref: '#/components/schemas/GetNewsItem'
+            description: Вывод всех/категоризированных новостей
+        GetVacanciesByIdResponse:
+            type: object
+            properties:
+                name:
+                    type: string
+                departmentCompany:
+                    type: string
+                description:
+                    type: string
+                categoryVacancies:
+                    type: string
+                experienceYears:
+                    type: integer
+                    format: int32
+                educationName:
+                    type: string
+                workMode:
+                    type: boolean
+                salary:
+                    type: integer
+                    format: int32
+                workHoursPerDay:
+                    type: integer
+                    format: int32
+                workSchedule:
+                    type: string
+                salaryTaxIncluded:
+                    type: boolean
+                geolocationCompany:
+                    type: string
+                skills:
+                    type: string
+                backendStack:
+                    type: string
+                frontendStack:
+                    type: string
+                databaseStack:
+                    type: string
+            description: Вывод вакансий по Id
+        GetVacanciesItem:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int32
+                name:
+                    type: string
+                departmentCompany:
+                    type: string
+                description:
+                    type: string
+                categoryVacancies:
+                    type: string
+                requirements:
+                    type: string
+                workingConditions:
+                    type: string
+                geolocationCompany:
+                    type: string
+        GetVacanciesResponse:
+            type: object
+            properties:
+                vacancies:
+                    type: object
+                    additionalProperties:
+                        $ref: '#/components/schemas/GetVacanciesItem'
+            description: Вывод всех/отфильтрованных вакансий
+        GoogleProtobufAny:
+            type: object
+            properties:
+                '@type':
+                    type: string
+                    description: The type of the serialized message.
+            additionalProperties: true
+            description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+        IsAdminResponse:
+            type: object
+            properties:
+                isAdmin:
+                    type: boolean
+        ResumeResponse:
+            type: object
+            properties:
+                resumeMap:
+                    type: object
+                    additionalProperties:
+                        type: string
+        Status:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
+                    format: int32
+                message:
+                    type: string
+                    description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
+                details:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/GoogleProtobufAny'
+                    description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
+            description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
+tags:
+    - name: AuthService
+    - name: NewsService
+    - name: ResumeService
+    - name: VacanciesService
