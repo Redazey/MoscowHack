@@ -5,15 +5,14 @@ import (
 	"moscowhack/config"
 	pbAuth "moscowhack/gen/go/auth"
 	pbNews "moscowhack/gen/go/news"
-<<<<<<< HEAD
-=======
 	pbVacancies "moscowhack/gen/go/vacancies"
->>>>>>> d08626531473f42acf1fcd31aea7296b3ecef074
 	"moscowhack/internal/app/endpoint/grpcAuth"
 	"moscowhack/internal/app/endpoint/grpcNews"
+	"moscowhack/internal/app/endpoint/grpcVacancies"
 	"moscowhack/internal/app/lib/cacher"
 	"moscowhack/internal/app/service/auth"
 	"moscowhack/internal/app/service/news"
+	"moscowhack/internal/app/service/vacancies"
 	"moscowhack/pkg/cache"
 	"moscowhack/pkg/db"
 	"moscowhack/pkg/logger"
@@ -59,6 +58,11 @@ func New() (*App, error) {
 		News: a.news,
 	}
 	pbNews.RegisterNewsServiceServer(a.server, serviceNews)
+
+	serviceVacancies := &grpcVacancies.Endpoint{
+		Vacancies: a.vacancies,
+	}
+	pbVacancies.VacanciesServiceServer(a.server, serviceVacancies)
 
 	err = cache.Init(cfg.Redis.RedisAddr+":"+cfg.Redis.RedisPort, cfg.Redis.RedisUsername, cfg.Redis.RedisPassword, cfg.Redis.RedisDBId)
 	if err != nil {

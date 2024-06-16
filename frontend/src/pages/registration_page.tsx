@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './registration_style.scss';
 import Header from '../components/header/Header';
 import Footer_small from '../components/footer_small/footer_small';
+import { Link } from 'react-router-dom';
 
 const RegistrationForm: React.FC = () => {
     const [form, setForm] = useState({
@@ -19,11 +20,10 @@ const RegistrationForm: React.FC = () => {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // Handle form submission
     };
 
     return (
-        <React.StrictMode>
+        <>
             <Header/>
             <div className="registration-form">
                 <h2>Регистрация</h2>
@@ -62,11 +62,11 @@ const RegistrationForm: React.FC = () => {
                 </form>
                 <div className="login-link">
                     <span>Есть аккаунт?</span>
-                    <a href="/login">Авторизуйтесь</a>
+                    <Link to="/Login">Авторизуйтесь</Link>
                 </div>
             </div>
-        <Footer_small/>
-    </React.StrictMode>
+            <Footer_small/>
+        </>
     );
 };
 
