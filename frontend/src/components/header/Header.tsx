@@ -1,45 +1,28 @@
-// @ts-ignore
-import React,  { useState } from 'react';
 import classes from './Header.module.scss';
 import Logo from '../../assets/Images/HeadSoftLogo.jpg';
 import Profile from '../../assets/Images/Profile.jpg';
 import SettingsCog from '../../assets/Images/settings-cog.jpg';
+import { Link } from 'react-router-dom';
+
 const Header = () => {
-    const [isOpen, setIsOpen] = useState(false);
-
-    const toggleDropdown = () => {
-        setIsOpen(!isOpen);
-    };
-
     return (
         <nav className={classes.header}>
             <div className={classes.logo}>
                 <img  id="scrolling-image"  src={Logo} alt="Логотип"/>
-                    <h1>HeadSoft</h1>
+                <h1>HeadSoft</h1>
             </div>
             <div className={classes.menu}>
-                <a href="#">Главная</a>
+                <Link to="/">Главная</Link>
                 <a href="#">Новости</a>
                 <a href="#">Вакансии</a>
             </div>
             <div className={classes.user}>
                 <img src={Profile} alt="Аватар"/>
-                <button className={classes.login}>Войти</button>
-                <img src={SettingsCog} onClick={toggleDropdown} className="dropdown-btn"/>
-
-                {isOpen && (
-                    <div className="dropdown-menu">
-                        <ul>
-                            <li>Пункт 1</li>
-                            <li>Пункт 2</li>
-                            <li>Пункт 3</li>
-                        </ul>
-                    </div>
-                )}
+                <Link to="/Login" className={classes.login}>Войти</Link>
+                <img src={SettingsCog} className="dropdown-btn"/>
             </div>
         </nav>
-
-);
+    );
 };
 
 export default Header;

@@ -1,0 +1,35 @@
+<!-- HTML for static distribution bundle build -->
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8">
+    <title>MoscowHack Documentation</title>
+    <link rel="stylesheet" type="text/css" href="dist/swagger-ui.css" />
+    <link rel="stylesheet" type="text/css" href="dist/index.css" />
+    <link rel="icon" type="image/png" href="dist/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="dist/favicon-16x16.png" sizes="16x16" />
+    <style>
+      .swagger-ui .topbar{
+        background-color: #fafafa;
+      }
+      .swagger-ui .topbar .download-url-wrapper{
+        display: none !important;
+      }
+      .topbar-wrapper a {
+        content:url('dist/logo.png');
+        max-width: 260px !important;
+        height: 40px !important;
+      }
+      .swagger-ui .info {
+        margin: 20px 0 !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="swagger-ui"></div>
+    <script src="dist/swagger-ui-bundle.js" charset="UTF-8"> </script>
+    <script src="dist/swagger-ui-standalone-preset.js" charset="UTF-8"> </script>
+    <script src="dist/swagger-initializer.js" charset="UTF-8"> </script>
+  </body>
+</html>

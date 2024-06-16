@@ -47,7 +47,6 @@ func New() (*App, error) {
 	// обьявляем сервисы
 	a.auth = auth.New(cfg)
 	a.news = news.New()
-	a.vacancies = vacancies.New()
 
 	// регистрируем эндпоинты
 	serviceAuth := &grpcAuth.Endpoint{
@@ -63,7 +62,7 @@ func New() (*App, error) {
 	serviceVacancies := &grpcVacancies.Endpoint{
 		Vacancies: a.vacancies,
 	}
-	pbVacancies.RegisterVacanciesServiceServer(a.server, serviceVacancies)
+	pbVacancies.VacanciesServiceServer(a.server, serviceVacancies)
 
 	err = cache.Init(cfg.Redis.RedisAddr+":"+cfg.Redis.RedisPort, cfg.Redis.RedisUsername, cfg.Redis.RedisPassword, cfg.Redis.RedisDBId)
 	if err != nil {

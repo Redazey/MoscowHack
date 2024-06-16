@@ -1,5 +1,3 @@
-// @ts-ignore
-import React from 'react';
 import classes from "./Footer.module.scss";
 const Footer = () => {
     return (
@@ -27,8 +25,6 @@ const Footer = () => {
                 </ul>
             </div>
         </footer>
-
-
     );
 };
 

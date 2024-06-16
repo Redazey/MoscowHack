@@ -3,25 +3,12 @@ package cacher
 import (
 	"fmt"
 	"moscowhack/pkg/cache"
-	"moscowhack/pkg/db"
 
 	"github.com/robfig/cron/v3"
 )
 
 func cacheUpdate() {
-	cacheTables, err := cache.ReadCache("*")
-	if err != nil {
-		return
-	}
-
-	for table := range cacheTables {
-		cacheMap, err := cache.ReadCache(table)
-		if err != nil {
-			continue
-		}
-
-		db.PullData(table, cacheMap)
-	}
+	cache.DeleteEX("*")
 }
 
 func Init(interval string) {

@@ -1,0 +1,859 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: "MoscowHack"
+    description: '
+    <p>Наш проект представляет собой web-приложение, которое предоставляет пользователям функционал коммуникационной площадки. Эта платформа позволяет размещать новости, обмениваться комментариями, получать уведомления и автоматизировать ключевые этапы процесса рекрутинга.</p>
+    
+    <h2>Цель проекта</h2>
+    <p>Провести сравнительный анализ существующих систем поиска работы, выявить их преимущества и недостатки, разработать стратегию создания и развития новой системы поиска работы, а также создать web-приложение, предоставляющее функционал коммуникационной площадки с возможностями размещения новостей, обмена комментариями, получения нотификаций и автоматизации ключевых этапов процесса рекрутинга.</p>
+    
+    <h2>Бизнес-требования</h2>
+    <p>
+        <ol>
+            <li>Провести анализ существующих систем поиска работы.</li>
+            <li>Выявить ключевые преимущества и недостатки анализируемых систем.</li>
+            <li>Разработать стратегию создания и развития новой системы поиска работы.</li>
+            <li>Создать web-приложение с функционалом:
+                <ul>
+                    <li>Регистрация пользователей</li>
+                    <li>Размещение новостей</li>
+                    <li>Обмен комментариями</li>
+                    <li>Получение нотификаций</li>
+                    <li>Автоматизация ключевых этапов процесса рекрутинга</li>
+                </ul>    
+            </li>
+        </ol>
+    </p>
+    
+    <h2>Методы трассировки требований</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID Требования</th>
+                <th>Описание требования</th>
+                <th>Компонент</th>
+                <th>Спецификация</th>
+                <th>Тест-кейс</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>BR1</td>
+                <td>Анализ существующих систем</td>
+                <td>Аналитический отчет</td>
+                <td>SPEC-001</td>
+                <td>TC-001</td>
+            </tr>
+            <tr>
+                <td>BR2</td>
+                <td>Выявление преимуществ и недостатков</td>
+                <td>Аналитический отчет</td>
+                <td>SPEC-002</td>
+                <td>TC-002</td>
+            </tr>
+            <tr>
+                <td>BR3</td>
+                <td>Разработка стратегии</td>
+                <td>Стратегический план</td>
+                <td>SPEC-003</td>
+                <td>TC-003</td>
+            </tr>
+            <tr>
+                <td>BR4</td>
+                <td>Регистрация пользователей</td>
+                <td>Web-приложение</td>
+                <td>SPEC-004</td>
+                <td>TC-004</td>
+            </tr>
+            <tr>
+                <td>BR5</td>
+                <td>Размещение новостей</td>
+                <td>Web-приложение</td>
+                <td>SPEC-005</td>
+                <td>TC-005</td>
+            </tr>
+            <tr>
+                <td>BR6</td>
+                <td>Обмен комментариями</td>
+                <td>Web-приложение</td>
+                <td>SPEC-006</td>
+                <td>TC-006</td>
+            </tr>
+            <tr>
+                <td>BR7</td>
+                <td>Получение нотификаций</td>
+                <td>Web-приложение</td>
+                <td>SPEC-007</td>
+                <td>TC-007</td>
+            </tr>
+            <tr>
+                <td>BR8</td>
+                <td>Автоматизация рекрутинга</td>
+                <td>Web-приложение</td>
+                <td>SPEC-008</td>
+                <td>TC-008</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h2>Программа и методика испытаний</h2>
+
+    <h3>Введение</h3>
+    <p>Цель испытаний - проверить корректность реализации всех функциональных требований, описанных в спецификациях.</p>
+    
+    <h3>Тест-кейсы</h3>
+    
+    <h4>TC-001: Анализ существующих систем</h4>
+    <p><strong>Цель:</strong> Проверка выполнения анализа существующих систем.</p>
+    <ul>
+        <li><strong>Входные данные:</strong> Список систем для анализа.</li>
+        <li><strong>Процедура:</strong> Провести анализ и составить отчет.</li>
+        <li><strong>Ожидаемый результат:</strong> Аналитический отчет, включающий данные о функционале, отзывах и сравнении.</li>
+    </ul>
+    
+    <h4>TC-002: Выявление преимуществ и недостатков</h4>
+    <p><strong>Цель:</strong> Проверка выявления преимуществ и недостатков систем.</p>
+    <ul>
+        <li><strong>Входные данные:</strong> Аналитический отчет.</li>
+        <li><strong>Процедура:</strong> Составить список преимуществ и недостатков.</li>
+        <li><strong>Ожидаемый результат:</strong> Список преимуществ и недостатков.</li>
+    </ul>
+    
+    <h4>TC-003: Разработка стратегии</h4>
+    <p><strong>Цель:</strong> Проверка разработки стратегии создания и развития системы.</p>
+    <ul>
+        <li><strong>Входные данные:</strong> Список преимуществ и недостатков, цели проекта.</li>
+        <li><strong>Процедура:</strong> Составить стратегический план.</li>
+        <li><strong>Ожидаемый результат:</strong> Стратегический план.</li>
+    </ul>
+    
+    <h4>TC-004: Регистрация пользователей</h4>
+    <p><strong>Цель:</strong> Проверка возможности регистрации пользователей.</p>
+    <ul>
+        <li><strong>Входные данные:</strong> Имя, электронная почта, пароль.</li>
+        <li><strong>Процедура:</strong> Зарегистрировать пользователя.</li>
+        <li><strong>Ожидаемый результат:</strong> Система должна зарегистрировать пользователя и выдать токен.</li>
+    </ul>
+    
+    <h4>TC-005: Размещение новостей</h4>
+    <p><strong>Цель:</strong> Проверка возможности размещения новостей.</p>
+    <ul>
+        <li><strong>Входные данные:</strong> Текст новости, изображения (опционально).</li>
+        <li><strong>Процедура:</strong> Разместить новость.</li>
+        <li><strong>Ожидаемый результат:</strong> Новость отображается на сайте.</li>
+    </ul>
+    
+    <h4>TC-006: Обмен комментариями</h4>
+    <p><strong>Цель:</strong> Проверка возможности обмена комментариями.</p>
+    <ul>
+        <li><strong>Входные данные:</strong> Текст комментария.</li>
+        <li><strong>Процедура:</strong> Оставить комментарий.</li>
+        <li><strong>Ожидаемый результат:</strong> Комментарий отображается под соответствующим контентом.</li>
+    </ul>
+    
+    <h4>TC-007: Получение нотификаций</h4>
+    <p><strong>Цель:</strong> Проверка получения нотификаций.</p>
+    <ul>
+        <li><strong>Входные данные:</strong> События (новые комментарии, новости и т.д.).</li>
+        <li><strong>Процедура:</strong> Создать событие и проверить получение нотификации.</li>
+        <li><strong>Ожидаемый результат:</strong> Пользователь получает нотификацию.</li>
+    </ul>
+    
+    <h4>TC-008: Автоматизация рекрутинга</h4>
+    <p><strong>Цель:</strong> Проверка автоматизации ключевых этапов процесса рекрутинга.</p>
+    <ul>
+        <li><strong>Входные данные:</strong> Вакансии, резюме, сопроводительные письма.</li>
+        <li><strong>Процедура:</strong> Выполнить матчинг вакансий и кандидатов.</li>
+        <li><strong>Ожидаемый результат:</strong> Система выполняет матчинг и отправляет уведомления.</li>
+    </ul>
+    
+    <h3>Протоколы испытаний</h3>
+    
+    <h4>Протокол испытаний TC-001: Анализ существующих систем</h4>
+    <ul>
+        <li><strong>Дата:</strong> 2024-06-16</li>
+        <li><strong>Результат:</strong> Не пройдено</li>
+        <li><strong>Комментарии:</strong> Анализ выполнен не полностью, отчет требует доработки.</li>
+    </ul>
+    
+    <h4>Протокол испытаний TC-002: Выявление преимуществ и недостатков</h4>
+    <ul>
+        <li><strong>Дата:</strong> 2024-06-16</li>
+        <li><strong>Результат:</strong> Не пройдено</li>
+        <li><strong>Комментарии:</strong> Преимущества и недостатки выявлены не в полной мере, необходим дополнительный анализ.</li>
+    </ul>
+    
+    <h4>Протокол испытаний TC-003: Разработка стратегии</h4>
+    <ul>
+        <li><strong>Дата:</strong> 2024-06-16</li>
+        <li><strong>Результат:</strong> Не пройдено</li>
+        <li><strong>Комментарии:</strong> Стратегический план разработан частично, требуется дальнейшая проработка.</li>
+    </ul>
+    
+    <h4>Протокол испытаний TC-004: Регистрация пользователей</h4>
+    <ul>
+        <li><strong>Дата:</strong> 2024-06-16</li>
+        <li><strong>Результат:</strong> Не пройдено</li>
+        <li><strong>Комментарии:</strong> Регистрация пользователей не работает корректно, не выдаются токены.</li>
+    </ul>
+    
+    <h4>Протокол испытаний TC-005: Размещение новостей</h4>
+    <ul>
+        <li><strong>Дата:</strong> 2024-06-16</li>
+        <li><strong>Результат:</strong> Не пройдено</li>
+        <li><strong>Комментарии:</strong> Новости не отображаются на сайте после размещения.</li>
+    </ul>
+    
+    <h4>Протокол испытаний TC-006: Обмен комментариями</h4>
+    <ul>
+        <li><strong>Дата:</strong> 2024-06-16</li>
+        <li><strong>Результат:</strong> Не пройдено</li>
+        <li><strong>Комментарии:</strong> Комментарии не отображаются под соответствующим контентом.</li>
+    </ul>
+    
+    <h4>Протокол испытаний TC-007: Получение нотификаций</h4>
+    <ul>
+        <li><strong>Дата:</strong> 2024-06-16</li>
+        <li><strong>Результат:</strong> Не пройдено</li>
+        <li><strong>Комментарии:</strong> Пользователи не получают нотификации о событиях.</li>
+    </ul>
+    
+    <h4>Протокол испытаний TC-008: Автоматизация рекрутинга</h4>
+    <ul>
+        <li><strong>Дата:</strong> 2024-06-16</li>
+        <li><strong>Результат:</strong> Не пройдено</li>
+        <li><strong>Комментарии:</strong> Система не выполняет матчинг вакансий и кандидатов, уведомления не отправляются.</li>
+    </ul>'
+    version: 'v1'
+paths:
+    /auth/IsAdmin:
+        get:
+            tags:
+                - AuthService
+            operationId: AuthService_IsAdmin
+            parameters:
+                - name: jwtToken
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/IsAdminResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /auth/login:
+        get:
+            tags:
+                - AuthService
+            operationId: AuthService_Login
+            parameters:
+                - name: email
+                  in: query
+                  schema:
+                    type: string
+                - name: password
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AuthResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /auth/registration:
+        get:
+            tags:
+                - AuthService
+            operationId: AuthService_Registration
+            parameters:
+                - name: surname
+                  in: query
+                  schema:
+                    type: string
+                - name: name
+                  in: query
+                  schema:
+                    type: string
+                - name: patronymic
+                  in: query
+                  schema:
+                    type: string
+                - name: email
+                  in: query
+                  schema:
+                    type: string
+                - name: password
+                  in: query
+                  schema:
+                    type: string
+                - name: roleId
+                  in: query
+                  schema:
+                    type: string
+                - name: birthdate
+                  in: query
+                  schema:
+                    type: string
+                - name: photourl
+                  in: query
+                  schema:
+                    type: string
+                - name: push
+                  in: query
+                  schema:
+                    type: boolean
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AuthResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /news:
+        get:
+            tags:
+                - NewsService
+            operationId: NewsService_GetNews
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetNewsResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /news/add:
+        post:
+            tags:
+                - NewsService
+            operationId: NewsService_AddNews
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AddNewsRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AddNewsResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /news/category/{category}:
+        get:
+            tags:
+                - NewsService
+            operationId: NewsService_GetNewsByCategory
+            parameters:
+                - name: category
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: categories
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetNewsResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /news/del/{id}:
+        delete:
+            tags:
+                - NewsService
+            operationId: NewsService_DelNews
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DelNewsResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /news/id/{id}:
+        get:
+            tags:
+                - NewsService
+            operationId: NewsService_GetNewsById
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetNewsByIdResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /resume:
+        get:
+            tags:
+                - ResumeService
+            operationId: ResumeService_ParseResume
+            parameters:
+                - name: resumeDoc
+                  in: query
+                  schema:
+                    type: string
+                    format: bytes
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ResumeResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /vacancies:
+        get:
+            tags:
+                - VacanciesService
+            operationId: VacanciesService_GetVacancies
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetVacanciesResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /vacancies/add:
+        post:
+            tags:
+                - VacanciesService
+            operationId: VacanciesService_AddVacancies
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AddVacanciesRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AddVacanciesResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /vacancies/del/{id}:
+        delete:
+            tags:
+                - VacanciesService
+            operationId: VacanciesService_DelVacancies
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DelVacanciesResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /vacancies/filter:
+        get:
+            tags:
+                - VacanciesService
+            operationId: VacanciesService_GetVacanciesByFilter
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/GetFilterVacanciesRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetVacanciesResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /vacancies/id/{id}:
+        get:
+            tags:
+                - VacanciesService
+            operationId: VacanciesService_GetVacanciesById
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetVacanciesByIdResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+components:
+    schemas:
+        AddNewsRequest:
+            type: object
+            properties:
+                title:
+                    type: string
+                text:
+                    type: string
+                datetime:
+                    type: string
+                categories:
+                    type: string
+            description: Запрос на добавление новости
+        AddNewsResponse:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int32
+                err:
+                    type: string
+            description: Добавление новости
+        AddVacanciesRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                departmentCompany:
+                    type: string
+                description:
+                    type: string
+                categoryVacancies:
+                    type: string
+                experienceYears:
+                    type: integer
+                    format: int32
+                educationId:
+                    type: integer
+                    format: int32
+                workMode:
+                    type: boolean
+                salary:
+                    type: integer
+                    format: int32
+                workHoursPerDay:
+                    type: integer
+                    format: int32
+                workSchedule:
+                    type: string
+                salaryTaxIncluded:
+                    type: boolean
+                geolocationCompany:
+                    type: string
+                skills:
+                    type: string
+                backendStack:
+                    type: string
+                frontendStack:
+                    type: string
+                databaseStack:
+                    type: string
+            description: Запрос на добавление вакансии
+        AddVacanciesResponse:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int32
+                err:
+                    type: string
+            description: Вывод Id добавленной новости
+        AuthResponse:
+            type: object
+            properties:
+                key:
+                    type: string
+        DelNewsResponse:
+            type: object
+            properties:
+                err:
+                    type: string
+            description: Удаление новости
+        DelVacanciesResponse:
+            type: object
+            properties:
+                err:
+                    type: string
+            description: Вывод ошибки об удалении новости
+        GetFilterVacanciesRequest:
+            type: object
+            properties:
+                departmentCompany:
+                    type: string
+                categoryVacancies:
+                    type: string
+                experienceStartYear:
+                    type: integer
+                    format: int32
+                experienceEndYear:
+                    type: integer
+                    format: int32
+                educationId:
+                    type: integer
+                    format: int32
+                salary:
+                    type: integer
+                    format: int32
+                workHoursPerDay:
+                    type: integer
+                    format: int32
+                workSchedule:
+                    type: string
+                salaryTaxIncluded:
+                    type: boolean
+                geolocationCompany:
+                    type: string
+            description: Запрос отфильтрованных вакансий
+        GetNewsByIdResponse:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int32
+                title:
+                    type: string
+                text:
+                    type: string
+                datetime:
+                    type: string
+                categories:
+                    type: string
+            description: Вывод новости по Id
+        GetNewsItem:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int32
+                title:
+                    type: string
+                text:
+                    type: string
+                datetime:
+                    type: string
+                categories:
+                    type: string
+        GetNewsResponse:
+            type: object
+            properties:
+                news:
+                    type: object
+                    additionalProperties:
+                        $ref: '#/components/schemas/GetNewsItem'
+            description: Вывод всех/категоризированных новостей
+        GetVacanciesByIdResponse:
+            type: object
+            properties:
+                name:
+                    type: string
+                departmentCompany:
+                    type: string
+                description:
+                    type: string
+                categoryVacancies:
+                    type: string
+                experienceYears:
+                    type: integer
+                    format: int32
+                educationName:
+                    type: string
+                workMode:
+                    type: boolean
+                salary:
+                    type: integer
+                    format: int32
+                workHoursPerDay:
+                    type: integer
+                    format: int32
+                workSchedule:
+                    type: string
+                salaryTaxIncluded:
+                    type: boolean
+                geolocationCompany:
+                    type: string
+                skills:
+                    type: string
+                backendStack:
+                    type: string
+                frontendStack:
+                    type: string
+                databaseStack:
+                    type: string
+            description: Вывод вакансий по Id
+        GetVacanciesItem:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int32
+                name:
+                    type: string
+                departmentCompany:
+                    type: string
+                description:
+                    type: string
+                categoryVacancies:
+                    type: string
+                requirements:
+                    type: string
+                workingConditions:
+                    type: string
+                geolocationCompany:
+                    type: string
+        GetVacanciesResponse:
+            type: object
+            properties:
+                vacancies:
+                    type: object
+                    additionalProperties:
+                        $ref: '#/components/schemas/GetVacanciesItem'
+            description: Вывод всех/отфильтрованных вакансий
+        GoogleProtobufAny:
+            type: object
+            properties:
+                '@type':
+                    type: string
+                    description: The type of the serialized message.
+            additionalProperties: true
+            description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+        IsAdminResponse:
+            type: object
+            properties:
+                isAdmin:
+                    type: boolean
+        ResumeResponse:
+            type: object
+            properties:
+                resumeMap:
+                    type: object
+                    additionalProperties:
+                        type: string
+        Status:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
+                    format: int32
+                message:
+                    type: string
+                    description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
+                details:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/GoogleProtobufAny'
+                    description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
+            description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
+tags:
+    - name: AuthService
+    - name: NewsService
+    - name: ResumeService
+    - name: VacanciesService

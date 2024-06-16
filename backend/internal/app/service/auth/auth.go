@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"moscowhack/config"
+	pb "moscowhack/gen/go/auth"
 	"moscowhack/internal/app/errorz"
 	"moscowhack/internal/app/lib/db"
 	"moscowhack/internal/app/lib/jwt"
@@ -24,11 +25,7 @@ func New(cfg *config.Configuration) *Service {
 }
 
 func (s *Service) UserLogin(ctx context.Context, email string, password string) (string, error) {
-	msg := map[string]string{
-		"email":    email,
-		"password": password,
-	}
-	userData, hashKey := cache.ConvertMap(msg, "email", "password")
+	hashKey := cache.GetHash(email, password)
 
 	cachePwd, err := cache.IsDataInCache("users", hashKey, "password")
 	if err != nil {
@@ -65,10 +62,17 @@ func (s *Service) UserLogin(ctx context.Context, email string, password string) 
 	return key, nil
 }
 
-func (s *Service) NewUserRegistration(ctx context.Context, email string, password string) (string, error) {
-	msg := map[string]string{
-		"email":    email,
-		"password": password,
+func (s *Service) NewUserRegistration(ctx context.Context, req *pb.RegistrationRequest) (string, error) {
+	msg := map[string]interface{}{
+		"surname":    req.Surname,
+		"name":       req.Name,
+		"patronymic": req.Patronymic,
+		"email":      req.Email,
+		"password":   req.Password,
+		"roleid":     req.RoleId,
+		"birthdate":  req.Birthdate,
+		"photourl":   req.Photourl,
+		"push":       req.Push,
 	}
 	userData, hashKey := cache.ConvertMap(msg, "email", "password")
 
@@ -79,7 +83,7 @@ func (s *Service) NewUserRegistration(ctx context.Context, email string, passwor
 
 	// если пароль у юзера есть, значит и юзер существует
 	if cachePwd == "" {
-		dbMap, err := db.FetchUserData(email)
+		dbMap, err := db.FetchUserData(req.Email)
 		if err != sql.ErrNoRows && err != nil {
 			return "", err
 		}
@@ -89,13 +93,7 @@ func (s *Service) NewUserRegistration(ctx context.Context, email string, passwor
 		}
 	}
 
-	err = cache.SaveCache("users", userData)
-	if err != nil {
-		logger.Error("ошибка при регистрации пользователя: ", zap.Error(err))
-		return "", err
-	}
-
-	key, err := jwt.Keygen(email, password, s.Cfg.JwtSecret)
+	key, err := jwt.Keygen(req.Email, req.Password, s.Cfg.JwtSecret)
 	if err != nil {
 		logger.Error("ошибка при генерации токена: ", zap.Error(err))
 		return "", err
@@ -104,7 +102,7 @@ func (s *Service) NewUserRegistration(ctx context.Context, email string, passwor
 	return key, nil
 }
 
-func (s *Service) IsAdmin(ctx context.Context, tokenString string) (bool, error) {
+func (s *Service) IsAdmin(tokenString string) (bool, error) {
 	UserData, err := jwt.UserDataFromJwt(tokenString, s.Cfg.JwtSecret)
 	if err != nil {
 		return false, err
@@ -117,13 +115,22 @@ func (s *Service) IsAdmin(ctx context.Context, tokenString string) (bool, error)
 		return false, err
 	}
 
-	if roleId.(int) != 0 {
-		if roleId == 1 {
-			return true, nil
-		} else {
+	if roleId == 0 {
+		DbUserData, err := db.FetchUserData(UserData["email"])
+		if err != nil {
+			return false, err
+		}
+
+		if DbUserData == nil {
+			return false, errorz.ErrUserNotFound
+		}
+
+		roleId = UserData["roleid"]
+
+		if roleId == 0 {
 			return false, nil
 		}
 	}
 
-	return false, nil
+	return true, nil
 }

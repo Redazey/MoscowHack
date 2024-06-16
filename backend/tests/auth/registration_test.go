@@ -13,7 +13,7 @@ import (
 
 func TestAuth(t *testing.T) {
 	ctx, st := suite.New(t)
-	ClearTable("users")
+	ClearTable([]string{"users", "roles", "userroles"})
 
 	RegReq := &pbAuth.RegistrationRequest{
 		Surname:    gofakeit.Name(),
